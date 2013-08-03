@@ -1,0 +1,12 @@
+@import "fonts.css";
+
+$font-normal: 'rooney-web', 'Georgia', 'Times', serif;
+$font-fancy: 'franklin-gothic-urw-cond', 'Arial Narrow', Arial, Helvetica, Verdana, sans-serif;
+
+body {
+  font-family: $font-normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-fancy;
+}
