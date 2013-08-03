@@ -8,7 +8,7 @@ class Community < ActiveRecord::Base
 
   validates :slug, :leader_first_name, :leader_last_name, presence: true
 
-  before_create :create_slug
+  before_validation :set_slug
   before_save :set_lat_lng
 
   CAMPUSES = {
@@ -63,8 +63,8 @@ class Community < ActiveRecord::Base
   end
 
   # Not super secret or anything, but we don't care
-  def create_slug
-    self.update_attributes(slug: KeyGenerator.generate("", 8))
+  def set_slug
+    self.slug = KeyGenerator.generate("", 8) if self.slug.blank?
   end
 
   def set_lat_lng

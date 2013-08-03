@@ -7,16 +7,16 @@ ActiveAdmin.register Community do
   index do
     selectable_column
     default_actions
-    column :leader
-    column "Co-leader", :coleader
-    column :campus_name
+    column :leader, sortable: :leader_last_name
+    column "Co-leader", :coleader, sortable: :coleader_last_name
+    column :campus_name, sortable: :campus
     column "Day", :sortable => :host_day do |c|
       c.host_day.titleize
     end
-    column "Kind", :sortable => :kind do |c|
+    column "Kind", sortable: :host_kind do |c|
       c.kind
     end
-    column "E-mail", :sortable => :email do |c|
+    column "E-mail", sortable: :email do |c|
       link_to(c.email, "mailto:#{c.email}")
     end
     column "Address" do |c|
