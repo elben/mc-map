@@ -8,6 +8,7 @@ gem "jquery-ui-rails"
 gem "awesome_print"
 gem "sentry-raven"
 gem "httparty"
+gem "leaflet-rails"
 
 # Gems used only for assets and not required
 # in production environments by default.
