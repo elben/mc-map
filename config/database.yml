@@ -18,8 +18,12 @@ test:
   pool: 5
   timeout: 5000
 
-# production:
-#   adapter: sqlite3
-#   database: db/production.sqlite3
-#   pool: 5
-#   timeout: 5000
+production:
+  adapter: pg
+  database: ec2-107-20-165-44.compute-1.amazonaws.com
+  pool: 5
+  timeout: 5000
+  user: yjfhlzpyzjuqkw
+  port: 5432
+  password: _SyHv3ZQq5dEFKpsrj7h96_h5T
+
