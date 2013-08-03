@@ -45,7 +45,7 @@ ActiveAdmin.register Community do
     f.actions
   end
 
-  filter :campus, as: :check_boxes, collection: Community::CAMPUSES.keys
+  filter :campus, as: :check_boxes, collection: Community::CAMPUSES.map { |k, v| [v, k] }
   filter :host_day, as: :check_boxes, collection: Community::DAYS, label: "Day"
 
   # Use meta_search's OR syntax
