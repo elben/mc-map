@@ -17,10 +17,10 @@ ActiveAdmin.register Community do
       c.kind
     end
     column "E-mail", sortable: :email do |c|
-      link_to(c.email, "mailto:#{c.email}")
+      link_to(c.email, "mailto:#{c.email}", target: "_blank")
     end
     column "Address" do |c|
-      link_to(c.address, "https://www.google.com/maps?q=#{c.address}")
+      link_to(c.address, "https://www.google.com/maps?q=#{c.address}", target: "_blank")
     end
   end
 
