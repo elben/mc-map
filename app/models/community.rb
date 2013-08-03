@@ -11,6 +11,10 @@ class Community < ActiveRecord::Base
     self.slug
   end
 
+  def admin_title
+    self.name
+  end
+
   # Not super secret or anything, but we don't care
   def create_slug
     self.update_attributes(slug: KeyGenerator.generate(self.id, 8))
