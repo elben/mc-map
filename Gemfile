@@ -5,6 +5,7 @@ gem 'pg'
 gem 'paranoia', '~> 1.0'
 gem 'activeadmin'
 gem "jquery-ui-rails"
+gem "awesome_print"
 
 # Gems used only for assets and not required
 # in production environments by default.
