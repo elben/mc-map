@@ -40,6 +40,7 @@ ActiveAdmin.register Community do
       f.input :address_city
       f.input :address_province
       f.input :address_postal
+      f.input :description
     end
 
     f.actions
@@ -50,4 +51,18 @@ ActiveAdmin.register Community do
 
   # Use meta_search's OR syntax
   filter :leader_last_name_or_leader_first_name_or_coleader_first_name_or_coleader_last_name_or_address_line_1_or_address_line_2_or_address_city_or_address_postal_or_address_province_or_email_or_phone_number, as: :string, label: "Leader or Contact Info"
+
+  controller do
+    def create
+      create! do |format|
+        format.html { redirect_to admin_communities_url }
+      end
+    end
+
+    def update
+      update! do |format|
+        format.html { redirect_to admin_communities_url }
+      end
+    end
+  end
 end
