@@ -1,10 +1,10 @@
 class CommunitiesController < ApplicationController
   # params:
-  #   limit
-  #   offset
-  #   campus
-  #   host_day
-  #   host_kind
+  #   limit - defaults to 50
+  #   offset - defaults to 0
+  #   campus - blank, or enum in Community::CAMPUSES
+  #   host_day - blank, or enum in Community::DAYS
+  #   host_kind - blank, or enum in Community::MC_KIND
   #   q - leader name full text search
   def index
     params[:limit] ||= 50
