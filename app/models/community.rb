@@ -20,10 +20,6 @@ class Community < ActiveRecord::Base
     west: "West",
   }
 
-  def to_param
-    self.slug
-  end
-
   def leader
     if !(self.leader_first_name.blank? && self.leader_last_name.blank?)
       "#{self.leader_first_name} #{self.leader_last_name}"
@@ -56,4 +52,22 @@ class Community < ActiveRecord::Base
       self.lng = place["geometry"]["location"]["lng"]
     end
   end
+
+  def output_json
+    json = self.attributes.slice("slug", "campus", "email", "leader_first_name", "leader_last_name", "coleader_first_name", "coleader_last_name", "host_day", "host_kind", "description")
+    json["location"] = {
+      "geometry" => {
+        "lat" => self.lat,
+        "lng" => self.lng,
+      },
+      "address" => {
+        "line_1" => self.address_line_1,
+        "line_2" => self.address_line_2,
+        "city" => self.address_city,
+        "province" => self.address_province,
+        "postal" => self.address_postal,
+      }}
+    json
+  end
+
 end
