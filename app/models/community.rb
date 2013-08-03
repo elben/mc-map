@@ -11,6 +11,13 @@ class Community < ActiveRecord::Base
   before_validation :set_slug
   before_save :set_lat_lng
 
+  scope :with_leader_like, lambda { |leader|
+    unless leader.blank?
+      q = "#{leader}%"
+      where(["leader_first_name LIKE (?) OR leader_last_name LIKE (?) OR coleader_first_name LIKE (?) or coleader_last_name LIKE (?)", q, q, q, q])
+    end
+  }
+
   CAMPUSES = {
     stjam: "St John AM",
     stjpm: "St John PM",
