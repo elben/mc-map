@@ -7,6 +7,7 @@ gem 'activeadmin'
 gem "jquery-ui-rails"
 gem "awesome_print"
 gem "sentry-raven"
+gem "geocoder"
 
 # Gems used only for assets and not required
 # in production environments by default.

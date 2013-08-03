@@ -69,6 +69,7 @@ GEM
     fastercsv (1.5.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
+    geocoder (1.1.8)
     has_scope (0.6.0.rc)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
@@ -169,6 +170,7 @@ DEPENDENCIES
   activeadmin
   awesome_print
   coffee-rails (~> 3.2.1)
+  geocoder
   jquery-rails
   jquery-ui-rails
   paranoia (~> 1.0)
