@@ -6,7 +6,7 @@ class Community < ActiveRecord::Base
   attr_accessible :host_day, :host_kind, :description, :campus, :lat, :lng
   attr_accessible :slug, :deleted_at
 
-  validate :slug, :presence => true
+  validates :slug, :leader_first_name, presence: true
 
   after_create :create_slug
   before_save :set_lat_lng
@@ -20,6 +20,17 @@ class Community < ActiveRecord::Base
     west: "West",
   }
 
+  MC_KIND = {
+    open: "Open to everyone (highly recommended)",
+    over40: "Over 40 years old",
+    family: "Families with children",
+    men: "Men only",
+    singles: "Singles & young professionals",
+    newly_married: "Nearly & newly married couples",
+  }
+
+  DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
   def leader
     if !(self.leader_first_name.blank? && self.leader_last_name.blank?)
       "#{self.leader_first_name} #{self.leader_last_name}"
@@ -28,12 +39,26 @@ class Community < ActiveRecord::Base
     end
   end
 
+  def coleader
+    if !(self.coleader_first_name.blank? && self.coleader_last_name.blank?)
+      "#{self.coleader_first_name} #{self.coleader_last_name}"
+    end
+  end
+
+  def address
+    "#{self.address_line_1} #{self.address_line_2} #{self.address_city}, #{self.address_province} #{self.address_postal}"
+  end
+
   def campus_name
     CAMPUSES[self.campus.to_sym]
   end
 
-  def admin_title
+  def title
     "#{self.leader} - #{self.campus_name}"
+  end
+
+  def kind
+    MC_KIND[self.host_kind.to_sym]
   end
 
   # Not super secret or anything, but we don't care

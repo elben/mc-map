@@ -3,8 +3,10 @@ class CommunitiesController < ApplicationController
   #   limit
   #   offset
   def index
-    @r = {data: []}
-    communities = Community.limit(params[:limit] || 50).offset(params[:offset] || 0).all
+    params[:limit] ||= 50
+    params[:offset] ||= 0
+    @r = {data: [], params: params.slice(:limit, :offset)}
+    communities = Community.limit(params[:limit]).offset(params[:offset]).all
     communities.each do |c|
       @r[:data] << c.output_json
     end
