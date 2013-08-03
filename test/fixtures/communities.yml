@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  slug: MyString
+  lat: MyString
+  lng: MyString
+  campus: MyString
+  leader: MyString
+
+two:
+  slug: MyString
+  lat: MyString
+  lng: MyString
+  campus: MyString
+  leader: MyString
