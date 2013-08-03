@@ -1,1 +1,36 @@
 <section id="map"></section>
+
+<div id="search">
+  <div class="filters">
+    <input type="text" placeholder="Search" />
+
+    <%# checkboxes for the various filters we're allowing %>
+    <h2>Day</h2>
+    <% Community::DAYS.each do |day| %>
+      <div class="checkbox-filter">
+        <input type="checkbox" id="checkbox-day-<%= day %>" value="<%= day %>" />
+        <label for="checkbox-day-<%= day %>"><%= day.titleize %></label>
+      </div>
+    <% end %>
+
+    <%# checkboxes for the various filters we're allowing %>
+    <h2>Campus</h2>
+    <% Community::CAMPUSES.each do |id, display_name| %>
+      <div class="campus-filter">
+        <input type="checkbox" id="checkbox-campus-<%= id %>" value="<%= id %>" />
+        <label for="checkbox-campus-<%= id %>"><%= display_name %></label>
+      </div>
+    <% end %>
+
+    <%# checkboxes for the various filters we're allowing %>
+    <h2>Kind</h2>
+    <% Community::MC_KIND.each do |id, display_name| %>
+      <div class="campus-filter">
+        <input type="checkbox" id="checkbox-kind-<%= id %>" value="<%= id %>" />
+        <label for="checkbox-kind-<%= id %>"><%= display_name %></label>
+      </div>
+    <% end %>
+  </div>
+
+  <ul></ul>
+</div>

@@ -14,10 +14,19 @@ h1, h2, h3, h4, h5, h6 {
   font-family: $font-fancy;
 }
 
+// map takes up the entire screen, everything else overlays on top of it
 #map {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
+}
+
+#search {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  width: 20%;
 }
