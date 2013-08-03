@@ -10,7 +10,13 @@ class CommunitiesController < ApplicationController
     params[:limit] ||= 50
     params[:offset] ||= 0
 
+    params[:limit] = params[:limit].to_i
+    params[:offset] = params[:offset].to_i
+
     filters = params.slice(:campus, :host_day, :host_kind)
+    filters.each do |k, v|
+      filters[k] = v.downcase
+    end
 
     @r = {data: []}
     communities = Community.with_leader_like(params[:q]).where(filters).limit(params[:limit]).offset(params[:offset]).all
@@ -18,7 +24,13 @@ class CommunitiesController < ApplicationController
       @r[:data] << c.output_json
     end
 
-    @r[:paginate] = {offset: params[:offset] + [params[:limit], @r[:data].count].min}
+    @r[:paginate] = {}
+    count = Community.with_leader_like(params[:q]).where(filters).count
+    if count > @r[:data].count + params[:offset]
+      # There's more data to get
+      @r[:paginate][:offset] = params[:offset] + [params[:limit], @r[:data].count].min
+    end
+
     respond_to do |format|
       format.json { render :json => @r }
     end
