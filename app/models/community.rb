@@ -19,8 +19,8 @@ class Community < ActiveRecord::Base
   }
 
   CAMPUSES = {
-    stjam: "St John AM",
-    stjpm: "St John PM",
+    stjam: "St. John AM",
+    stjpm: "St. John PM",
     dtam: "Downtown AM",
     dtpm: "Downtown PM",
     south: "South",
@@ -28,13 +28,13 @@ class Community < ActiveRecord::Base
   }
 
   MC_KIND = {
-    open: "Open to everyone (highly recommended)",
-    over40: "Over 40 years old",
-    family: "Families with children",
-    men: "Men only",
-    women: "Women only",
-    singles: "Singles & young professionals",
-    newly_married: "Nearly & newly married couples",
+    open: "Open to Everyone",
+    over40: "Over 40 Years Old",
+    family: "Families with Children",
+    men: "Men",
+    women: "Women",
+    singles: "Singles/Young Professionals",
+    newly_married: "Nearly/Newly Married Couples",
   }
 
   DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
