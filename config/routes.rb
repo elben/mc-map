@@ -5,4 +5,6 @@ McMap::Application.routes.draw do
   ActiveAdmin.routes(self)
 
   match "/map" => "map#index"
+
+  resource :communities
 end
