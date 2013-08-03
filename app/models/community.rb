@@ -25,6 +25,7 @@ class Community < ActiveRecord::Base
     over40: "Over 40 years old",
     family: "Families with children",
     men: "Men only",
+    women: "Women only",
     singles: "Singles & young professionals",
     newly_married: "Nearly & newly married couples",
   }
