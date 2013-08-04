@@ -7,6 +7,37 @@
   // set the image path manually so it works on Heroku
   L.Icon.Default.imagePath = 'assets/';
 
+  // custom icons for the campuses
+  var CampusIcon = L.Icon.extend({
+    options: {
+      popupAnchor: [1, -32],
+      campus: ''
+    },
+
+    initialize: function (options) {
+      options = L.setOptions(this, options);
+    },
+
+    createIcon: function () {
+      // build the icon as a div so we can style it via CSS
+      var $marker = $('<div></div>');
+
+      $marker.addClass('campus-marker');
+      if (this.options.campus) {
+        $marker.addClass('campus-marker-' + this.options.campus);
+      }
+
+      return $marker[0];
+    },
+
+    // we create and manage the shadow via CSS
+    createShadow: function () {
+      var $shadow = $('<div></div>');
+      $shadow.addClass('campus-marker-shadow');
+      return $shadow[0];
+    }
+  });
+
   var map = L.map('map', {
     // center on Austin until points are loaded
     center: austinCoords,
@@ -23,11 +54,15 @@
       $.each(response.community_points || [], function (index, point) {
         // only add the coord if it has geodata available
         if (!point.coords) { return; }
+        var campus = point.campus ? point.campus.toLowerCase() : '';
 
         var coord = new L.LatLng(point.coords.lat, point.coords.lng);
 
         // add a marker to the map and add its point to the bounds
-        L.marker(coord).addTo(map);
+        L.marker(coord, {
+          icon: new CampusIcon({ campus: campus }),
+          riseOnHover: true
+        }).addTo(map);
         bounds.extend(coord);
       });
 

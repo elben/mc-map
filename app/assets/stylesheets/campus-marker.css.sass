@@ -1,0 +1,76 @@
+@import 'css3-mixins'
+
+$num-markers: 10
+$size-marker-margin: 1px
+$size-marker-width: 35px
+$size-marker-height: 46px
+$size-shadow-width: 36px
+$size-shadow-height: 16px
+
+// calculate the x background-position of a marker icon given its index
+@function marker-icon-offset($index)
+  @return -($index * ($size-marker-width + $size-marker-margin))
+
+.campus-marker
+  display: block
+  position: absolute
+  left: 0
+  top: 0
+
+  width: $size-marker-width
+  height: $size-marker-height
+
+  margin-top: -($size-marker-height)
+  margin-left: -($size-marker-width / 2)
+
+  background: image-url('markers.png') no-repeat 0 0
+  background-size: (($size-marker-width + $size-marker-margin) * $num-markers) $size-marker-height
+
+  @include transition(all, 150ms)
+
+  @include opacity(0.85)
+
+  &:hover
+    background-image: image-url('markers-hover.png')
+    margin-top: -($size-marker-height + ($size-marker-height / 8))
+    @include opacity(1.0)
+
+  // calculate offsets for the icons
+  &.campus-marker-dtam
+    background-position: marker-icon-offset(0) 0
+  &.campus-marker-dtpm
+    background-position: marker-icon-offset(5) 0
+  &.campus-marker-stjam
+    background-position: marker-icon-offset(6) 0
+  &.campus-marker-stjpm
+    background-position: marker-icon-offset(9) 0
+  &.campus-marker-south
+    background-position: marker-icon-offset(1) 0
+  &.campus-marker-west
+    background-position: marker-icon-offset(7) 0
+
+.campus-marker-shadow
+  display: block
+  position: absolute
+  left: 0
+  top: 0
+
+  width: $size-shadow-width
+  height: $size-shadow-height
+
+  margin-top: -($size-shadow-height) + 2px
+  margin-left: -($size-marker-width / 4)
+
+  background: image-url('markers-shadow.png') no-repeat 0 0
+  background-size: ($size-shadow-width - 1) $size-shadow-height
+
+// use high-resolution icons for retina displays
+@media (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5), (min-resolution: 1.5dppx)
+  .campus-marker
+    background-image: image-url('markers@2x.png')
+
+    &:hover
+      background-image: image-url('markers-hover@2x.png')
+
+  .campus-marker-shadow
+    background-image: image-url('markers-shadow@2x.png')
