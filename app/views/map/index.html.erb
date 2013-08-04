@@ -1,8 +1,7 @@
 <section id="map"></section>
 
-<div id="search">
-  <div class="filters">
-    <%# checkboxes for the various filters we're allowing %>
+<div id="filters">
+  <div class="checkboxes">
     <h2>Day</h2>
     <% Community::DAYS.each do |day| %>
       <%= render partial: 'checkbox_filter', locals: {
@@ -13,7 +12,6 @@
       } %>
     <% end %>
 
-    <%# checkboxes for the various filters we're allowing %>
     <h2>Campus</h2>
     <% Community::CAMPUSES.each do |campus, display_text| %>
       <%= render partial: 'checkbox_filter', locals: {
@@ -24,7 +22,6 @@
       } %>
     <% end %>
 
-    <%# checkboxes for the various filters we're allowing %>
     <h2>Kind</h2>
     <% Community::MC_KINDS.each do |mc_kind, display_text| %>
       <%= render partial: 'checkbox_filter', locals: {
