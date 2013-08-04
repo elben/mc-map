@@ -1,17 +1,30 @@
 //= require leaflet
-//= require leaflet.ie
 
-@import "fonts.css";
+@import "css3-mixins";
 
 $font-normal: 'rooney-web', 'Georgia', 'Times', serif;
 $font-fancy: 'franklin-gothic-urw-cond', 'Arial Narrow', Arial, Helvetica, Verdana, sans-serif;
 
+$color-highlight: #ffdd00;
+$color-background: #ffdd00;
+$color-background-light: white;
+$color-text: #424242;
+$color-text-header: #365871;
+$color-text-header: black;
+
+* {
+  @include box-sizing(border-box);
+}
+
 body {
   font-family: $font-normal;
+  color: $color-text;
+  background-color: $color-background;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-fancy;
+  color: $color-text-header;
 }
 
 // map takes up the entire screen, everything else overlays on top of it
@@ -29,4 +42,7 @@ h1, h2, h3, h4, h5, h6 {
   top: 10px;
   bottom: 10px;
   width: 20%;
+
+  background-color: white;
+  background-color: rgba(white, 0.8);
 }
