@@ -32,7 +32,7 @@ ActiveAdmin.register Community do
       f.input :coleader_last_name
       f.input :campus, as: :select, collection: Community::CAMPUSES.map { |k, v| [v, k] }
       f.input :host_day, label: "Day", as: :select, collection: Community::DAYS.map { |d| [d.titleize, d] }
-      f.input :host_kind, label: "Kind", as: :select, collection: Community::MC_KIND.map { |k, v| [v, k] }
+      f.input :host_kind, label: "Kind", as: :select, collection: Community::MC_KINDS.map { |k, v| [v, k] }
       f.input :email, label: "E-mail"
       f.input :phone_number
       f.input :address_line_1

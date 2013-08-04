@@ -24,7 +24,7 @@
 
     <%# checkboxes for the various filters we're allowing %>
     <h2>Kind</h2>
-    <% Community::MC_KIND.each do |id, display_name| %>
+    <% Community::MC_KINDS.each do |id, display_name| %>
       <%# only show values for the non-"all" filters %>
       <% if id != :open %>
         <div class="checkbox-filter checkbox-filter-kind">

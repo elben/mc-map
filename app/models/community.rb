@@ -27,19 +27,30 @@ class Community < ActiveRecord::Base
     west: "West",
   }
 
-  MC_KIND = {
+  # these MUST be in the same order as the values in the Wufoo-exported CSV
+  # (hashes are guaranteed to be insertion-ordered in Ruby 1.9+).
+  MC_KINDS = {
     open: "Open to Everyone",
+    goer: "Interested in the Nations (Goer MC)",
     over40: "Over 40 Years Old",
     family: "Families with Children",
-    men: "Men",
     women: "Women",
+    college: "College",
+    men: "Men",
     singles: "Singles/Young Professionals",
     newly_married: "Nearly/Newly Married Couples",
-    goer: "Interested in the Nations (Goer MC)",
-    college: "College",
   }
 
-  DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+  # these MUST be in the same order as the values in the Wufoo-exported CSV
+  DAYS = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ]
 
   def leader
     if !(self.leader_first_name.blank? && self.leader_last_name.blank?)
@@ -68,7 +79,7 @@ class Community < ActiveRecord::Base
   end
 
   def kind
-    MC_KIND[self.host_kind.to_sym]
+    MC_KINDS[self.host_kind.to_sym]
   end
 
   # Not super secret or anything, but we don't care
