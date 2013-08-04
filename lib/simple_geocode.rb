@@ -18,8 +18,6 @@ class SimpleGeocode
     url = URI.escape(SimpleGeocode::BASE_URL + '?' + params.to_param)
     response = HTTParty.get(url)
 
-    ap response['results'].try(:first)
-
     # if we got a result, return it
     if response.code == 200
       location = response["results"].try(:first).try(:[], "geometry").try(:[], "location")
