@@ -47,7 +47,7 @@ ActiveAdmin.register Community do
   end
 
   filter :campus, as: :check_boxes, collection: Community::CAMPUSES.keys
-  # filter :host_day, as: :check_boxes, collection: Community::DAYS, label: "Day"
+  filter :host_day, as: :check_boxes, collection: Community::DAYS
 
   # Use meta_search's OR syntax
   filter :leader_last_name_or_leader_first_name_or_coleader_first_name_or_coleader_last_name_or_address_line_1_or_address_line_2_or_address_city_or_address_postal_or_address_province_or_email_or_phone_number, as: :string, label: "Leader or Contact Info"
