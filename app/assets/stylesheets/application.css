@@ -9,8 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
+ *= require normalize
+ *= require fonts
+ *= require map
  */
-
-@import "normalize.css";
-@import "fonts.css";
-@import "map.css";
