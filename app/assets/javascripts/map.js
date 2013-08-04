@@ -3,7 +3,7 @@
 (function () {
   var map = L.map('map', {
     center: new L.LatLng(30.2669, -97.7428),
-    zoom: 12
+    zoom: 13
   });
 
   L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {

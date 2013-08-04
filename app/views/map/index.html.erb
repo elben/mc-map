@@ -8,7 +8,7 @@
     <h2>Day</h2>
     <% Community::DAYS.each do |day| %>
       <div class="checkbox-filter">
-        <input type="checkbox" id="checkbox-day-<%= day %>" value="<%= day %>" />
+        <input type="checkbox" id="checkbox-day-<%= day %>" value="<%= day %>" checked />
         <label for="checkbox-day-<%= day %>"><%= day.titleize %></label>
       </div>
     <% end %>
@@ -17,7 +17,7 @@
     <h2>Campus</h2>
     <% Community::CAMPUSES.each do |id, display_name| %>
       <div class="campus-filter">
-        <input type="checkbox" id="checkbox-campus-<%= id %>" value="<%= id %>" />
+        <input type="checkbox" id="checkbox-campus-<%= id %>" value="<%= id %>" checked />
         <label for="checkbox-campus-<%= id %>"><%= display_name %></label>
       </div>
     <% end %>
@@ -25,10 +25,13 @@
     <%# checkboxes for the various filters we're allowing %>
     <h2>Kind</h2>
     <% Community::MC_KIND.each do |id, display_name| %>
-      <div class="campus-filter">
-        <input type="checkbox" id="checkbox-kind-<%= id %>" value="<%= id %>" />
-        <label for="checkbox-kind-<%= id %>"><%= display_name %></label>
-      </div>
+      <%# only show values for the non-"all" filters %>
+      <% if id != :open %>
+        <div class="campus-filter">
+          <input type="checkbox" id="checkbox-kind-<%= id %>" value="<%= id %>" />
+          <label for="checkbox-kind-<%= id %>"><%= display_name %></label>
+        </div>
+      <% end %>
     <% end %>
   </div>
 
