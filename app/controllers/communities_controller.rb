@@ -4,44 +4,49 @@ class CommunitiesController < ApplicationController
   #   offset - defaults to 0
   #   campus - blank, or enum in Community::CAMPUSES
   #   host_day - blank, or enum in Community::DAYS
-  #   host_kind - blank, or enum in Community::MC_KIND
+  #   host_kind - blank, or enum in Community::MC_KINDS
   #   q - leader name full text search
   def index
-    params[:limit] ||= 50
-    params[:offset] ||= 0
+    # pull params from the params hash
+    limit = (params[:limit] || 50).to_i
+    offset = (params[:offset] || 0).to_i
+    query = params[:q]
 
-    params[:limit] = params[:limit].to_i
-    params[:offset] = params[:offset].to_i
-
+    # normalize all filter values to lowercase
     filters = params.slice(:campus, :host_day, :host_kind)
     filters.each do |k, v|
       filters[k] = v.downcase
     end
 
-    @r = {data: []}
-    communities = Community.with_leader_like(params[:q]).where(filters).limit(params[:limit]).offset(params[:offset]).all
-    communities.each do |c|
-      @r[:data] << c.output_json
-    end
+    # get all the communities
+    communities = Community
+        .with_leader_like(query)
+        .where(filters)
+        .limit(limit)
+        .offset(offset)
+        .all
 
-    @r[:paginate] = {}
-    count = Community.with_leader_like(params[:q]).where(filters).count
-    if count > @r[:data].count + params[:offset]
-      # There's more data to get
-      @r[:paginate][:offset] = params[:offset] + [params[:limit], @r[:data].count].min
+    @response = {}
+    @response[:communites] = communities.map { |c|  c.output_json }
+
+    @response[:paginate] = {}
+    count = Community.with_leader_like(query).where(filters).count
+    if count > communities.count + offset
+      # there's more data to get
+      @response[:paginate][:offset] = offset + [limit, communities.count].min
     end
 
     respond_to do |format|
-      format.json { render :json => @r }
+      format.json { render :json => @response }
     end
   end
 
-  # return all the points for all campuses in a minimal formal
+  # return all the points for all campuses in a minimal format
   def points
-    @response = {data: []}
+    @response = {community_points: []}
     Community.find_each do |community|
-      @response[:data] << {
-        # to look up the full data later
+      @response[:community_points] << {
+        # so the user can look up the full data later
         slug: community.slug,
 
         # for the point location/color
