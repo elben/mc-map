@@ -79,12 +79,11 @@ class Community < ActiveRecord::Base
   def set_lat_lng
     return if self.address_line_1.blank? && self.address_line_2.blank?
 
-    result = SimpleGeocode.geocode("#{self.address_line_1} #{self.address_line_2} #{self.address_city} #{self.address_province} #{self.address_postal}")
+    location = SimpleGeocode.geocode("#{self.address_line_1} #{self.address_line_2} #{self.address_city} #{self.address_province} #{self.address_postal}")
 
-    if result && result["status"] == "OK"
-      place = result["results"].first
-      self.lat = place["geometry"]["location"]["lat"]
-      self.lng = place["geometry"]["location"]["lng"]
+    if location
+      self.lat = location["lat"]
+      self.lng = location["lng"]
     end
   end
 

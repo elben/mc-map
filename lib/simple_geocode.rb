@@ -1,10 +1,12 @@
 class SimpleGeocode
   def self.geocode(address)
-    url = "http://maps.google.com/maps/api/geocode/json?address=#{address}&components=administrative_area:TX|administrative_area:austin|country:US&sensor=false"
-    url = URI.escape url
+    url = URI.escape("http://maps.google.com/maps/api/geocode/json?address=#{address}&bounds=30.628249,-97.369248|30.0244991,-98.1729768&sensor=false")
     response = HTTParty.get(url)
     if response.code == 200
-      return response
+      location = response["results"].try(:first).try(:[], "geometry").try(:[], "location")
+      if location
+        return location
+      end
     else
     end
   end
