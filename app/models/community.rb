@@ -35,6 +35,8 @@ class Community < ActiveRecord::Base
     women: "Women",
     singles: "Singles/Young Professionals",
     newly_married: "Nearly/Newly Married Couples",
+    goer: "Interested in the Nations (Goer MC)",
+    college: "College",
   }
 
   DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
