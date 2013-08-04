@@ -4,6 +4,9 @@
 (function () {
   var austinCoords = new L.LatLng(30.2669, -97.7428);
 
+  // the width of the sidebar, so we can pad the map to ignore that area
+  var sidebarWidth = $('#filters').outerWidth();
+
   // custom icons for the campuses
   var CampusIcon = L.Icon.extend({
     options: {
@@ -63,8 +66,10 @@
         bounds.extend(coord);
       });
 
-      // zoom the map to include all the markers
-      map.fitBounds(bounds);
+      // zoom the map to include all the markers, leaving room for the controls
+      map.fitBounds(bounds, {
+        paddingBottomRight: [sidebarWidth, 0]
+      });
     }
   });
 
