@@ -25,6 +25,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-fancy;
   color: $color-text-header;
+  margin: 0;
 }
 
 // map takes up the entire screen, everything else overlays on top of it
@@ -38,11 +39,17 @@ h1, h2, h3, h4, h5, h6 {
 
 #search {
   position: fixed;
-  right: 10px;
-  top: 10px;
-  bottom: 10px;
+  right: 0;
+  top: 0;
+  bottom: 0;
   width: 20%;
+
+  padding: 15px;
 
   background-color: white;
   background-color: rgba(white, 0.8);
+}
+
+#input-search {
+  width: 100%;
 }
