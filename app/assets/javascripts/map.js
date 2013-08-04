@@ -4,9 +4,6 @@
 (function () {
   var austinCoords = new L.LatLng(30.2669, -97.7428);
 
-  // set the image path manually so it works on Heroku
-  L.Icon.Default.imagePath = 'assets/';
-
   // custom icons for the campuses
   var CampusIcon = L.Icon.extend({
     options: {
