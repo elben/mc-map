@@ -72,7 +72,7 @@ class CommunitiesImport
 
     # if it's a plain, just return the data from the specified column
     if row_index.is_a? Integer
-      return row[row_index]
+      return (row[row_index] || '').strip
     end
 
     # otherwise, treat it as a Range and get its compressed value
