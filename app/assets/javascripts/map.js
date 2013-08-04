@@ -4,7 +4,10 @@
 (function () {
   var map = L.map('map', {
     center: new L.LatLng(30.2669, -97.7428),
-    zoom: 13
+    zoom: 13,
+
+    // TODO: put the Esri attribution SOMEWHERE
+    attributionControl: false
   });
 
   // add all the initial points to the map
