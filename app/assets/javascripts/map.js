@@ -2,21 +2,36 @@
 //= require leaflet
 
 (function () {
+  var austinCoords = new L.LatLng(30.2669, -97.7428);
+
   var map = L.map('map', {
-    center: new L.LatLng(30.2669, -97.7428),
+    // center on Austin until points are loaded
+    center: austinCoords,
     zoom: 13,
 
     // TODO: put the Esri attribution SOMEWHERE
     attributionControl: false
   });
 
-  // add all the initial points to the map
+  // add all the initial points to the map and zoom the map to include them
   $.getJSON('communities/points', function (response) {
     if (response) {
-      $.each(response.community_points || [], function (index, pointData) {
-        console.log(pointData);
-        L.marker([pointData.lat, pointData.lng]).addTo(map);
+      var bounds = new L.LatLngBounds();
+      $.each(response.community_points || [], function (index, point) {
+        // only add the coord if it has valid lat/lng values
+        if (point.lat && point.lng) {
+          var coord = new L.LatLng(point.lat, point.lng);
+
+          // add a marker to the map and add its point to the bounds
+          L.marker(coord, {
+            title: point.slug
+          }).addTo(map);
+          bounds.extend(coord);
+        }
       });
+
+      // zoom the map to include all the markers
+      map.fitBounds(bounds);
     }
   });
 
