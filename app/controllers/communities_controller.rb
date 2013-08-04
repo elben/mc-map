@@ -35,4 +35,24 @@ class CommunitiesController < ApplicationController
       format.json { render :json => @r }
     end
   end
+
+  # return all the points for all campuses in a minimal formal
+  def points
+    @response = {data: []}
+    Community.find_each do |community|
+      @response[:data] << {
+        # to look up the full data later
+        slug: community.slug,
+
+        # for the point location/color
+        lat: community.lat.to_f,
+        lng: community.lng.to_f,
+        campus: community.campus
+      }
+    end
+
+    respond_to do |format|
+      format.json { render :json => @response }
+    end
+  end
 end

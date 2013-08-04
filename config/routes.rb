@@ -6,5 +6,9 @@ McMap::Application.routes.draw do
 
   match "/map" => "map#index"
 
-  resources :communities
+  resources :communities do
+    collection do
+      get "points"
+    end
+  end
 end
