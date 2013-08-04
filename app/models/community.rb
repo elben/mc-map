@@ -84,7 +84,10 @@ class Community < ActiveRecord::Base
   end
 
   def address
-    "#{self.address_line_1} #{self.address_line_2}, #{self.address_city}, #{self.address_province} #{self.address_postal}"
+    addy = self.address_line_1
+    addy += " " + self.address_line_2 if !self.address_line_2.blank?
+
+    "#{addy}, #{self.address_city}, #{self.address_province} #{self.address_postal}"
   end
 
   def campus_name
