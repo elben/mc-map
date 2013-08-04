@@ -1,8 +1,13 @@
 require 'csv'
 
 class CommunitiesImport
-  def self.import!(filename, opts={})
-    CSV.foreach(filename) do |row|
+  def self.import!(filename, opts)
+    f = File.open(filename)
+    self.import_string!(f.read)
+  end
+
+  def self.import_string!(string, opts={})
+    CSV.parse(string) do |row|
       # Using the St John AM host signup sheet
       # 0 Entry ID
       # 1 First name
