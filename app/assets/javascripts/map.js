@@ -18,16 +18,14 @@
     if (response) {
       var bounds = new L.LatLngBounds();
       $.each(response.community_points || [], function (index, point) {
-        // only add the coord if it has valid lat/lng values
-        if (point.lat && point.lng) {
-          var coord = new L.LatLng(point.lat, point.lng);
+        // only add the coord if it has geodata available
+        if (!point.coords) { return; }
 
-          // add a marker to the map and add its point to the bounds
-          L.marker(coord, {
-            title: point.slug
-          }).addTo(map);
-          bounds.extend(coord);
-        }
+        var coord = new L.LatLng(point.coords.lat, point.coords.lng);
+
+        // add a marker to the map and add its point to the bounds
+        L.marker(coord).addTo(map);
+        bounds.extend(coord);
       });
 
       // zoom the map to include all the markers

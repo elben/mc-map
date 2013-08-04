@@ -45,15 +45,21 @@ class CommunitiesController < ApplicationController
   def points
     @response = {community_points: []}
     Community.find_each do |community|
-      @response[:community_points] << {
+      point = {
         # so the user can look up the full data later
         slug: community.slug,
-
-        # for the point location/color
-        lat: community.lat.to_f,
-        lng: community.lng.to_f,
-        campus: community.campus
+        campus: community.campus,
       }
+
+      # add the coordinates if they're available
+      if (community.lat && community.lng)
+        point[:coords] = {
+          lat: community.lat.to_f,
+          lng: community.lng.to_f,
+        }
+      end
+
+      @response[:community_points] << point
     end
 
     respond_to do |format|
