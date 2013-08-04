@@ -1,9 +1,9 @@
 require 'csv'
 
 class CommunitiesImport
-  def self.import!(filename, opts)
+  def self.import!(filename, opts={})
     f = File.open(filename)
-    self.import_string!(f.read)
+    self.import_string!(f.read, opts)
   end
 
   def self.import_string!(string, opts={})
