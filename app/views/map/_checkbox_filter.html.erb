@@ -1,0 +1,5 @@
+<div class="checkbox-filter checkbox-filter-<%= name %>">
+  <% checkbox_id = "checkbox-#{name}-#{value}" %>
+  <input type="checkbox" id="<%= checkbox_id %>" value="<%= value %>"<% if checked %> checked<% end %> />
+  <label for="<%= checkbox_id %>"><%= display_text %></label>
+</div>
