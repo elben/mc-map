@@ -60,6 +60,8 @@
 
         // add a marker to the map and add its point to the bounds
         L.marker(coord, {
+          // the campus values here and in the stylesheets correspond to the
+          // keys in Community::CAMPUSES enum.
           icon: new CampusIcon({ campus: campus }),
           riseOnHover: true
         }).addTo(map);
