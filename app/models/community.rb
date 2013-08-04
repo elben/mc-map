@@ -101,7 +101,7 @@ class Community < ActiveRecord::Base
 
   # Not super secret or anything, but we don't care
   def set_slug
-    self.slug = KeyGenerator.generate("", 8) if self.slug.blank?
+    self.slug = KeyGenerator.generate(8) if self.slug.blank?
   end
 
   # update the latitude/longitude for this community
