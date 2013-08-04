@@ -1,15 +1,32 @@
 class Community < ActiveRecord::Base
   acts_as_paranoid
 
-  attr_accessible :email, :phone_number, :leader_first_name, :leader_last_name, :coleader_first_name, :coleader_last_name
-  attr_accessible :address_line_1, :address_line_2, :address_city, :address_province, :address_postal
-  attr_accessible :host_day, :host_kind, :description, :campus, :lat, :lng
-  attr_accessible :slug, :deleted_at
+  attr_accessible(*[
+    :email,
+    :phone_number,
+    :leader_first_name,
+    :leader_last_name,
+    :coleader_first_name,
+    :coleader_last_name,
+    :address_line_1,
+    :address_line_2,
+    :address_city,
+    :address_province,
+    :address_postal,
+    :host_day,
+    :host_kind,
+    :description,
+    :campus,
+    :lat,
+    :lng,
+    :slug,
+    :deleted_at,
+  ])
 
   validates :slug, :leader_first_name, :leader_last_name, presence: true
 
   before_validation :set_slug
-  before_save :set_lat_lng
+  before_save :update_geo
 
   scope :with_leader_like, lambda { |leader|
     unless leader.blank?
@@ -67,7 +84,7 @@ class Community < ActiveRecord::Base
   end
 
   def address
-    "#{self.address_line_1} #{self.address_line_2} #{self.address_city}, #{self.address_province} #{self.address_postal}"
+    "#{self.address_line_1} #{self.address_line_2}, #{self.address_city}, #{self.address_province} #{self.address_postal}"
   end
 
   def campus_name
@@ -87,31 +104,45 @@ class Community < ActiveRecord::Base
     self.slug = KeyGenerator.generate("", 8) if self.slug.blank?
   end
 
-  def set_lat_lng
+  # update the latitude/longitude for this community
+  def update_geo
     return if self.address_line_1.blank? && self.address_line_2.blank?
 
-    location = SimpleGeocode.geocode("#{self.address_line_1} #{self.address_line_2} #{self.address_city} #{self.address_province} #{self.address_postal}")
+    coords = SimpleGeocode.geocode(self.address)
 
-    if location
-      self.lat = location["lat"]
-      self.lng = location["lng"]
+    if coords
+      self.lat = coords.latitude
+      self.lng = coords.longitude
     end
   end
 
   def output_json
-    json = self.attributes.slice("slug", "campus", "email", "leader_first_name", "leader_last_name", "coleader_first_name", "coleader_last_name", "host_day", "host_kind", "description")
-    json["location"] = {
-      "geometry" => {
-        "lat" => self.lat,
-        "lng" => self.lng,
+    json = self.attributes.slice(
+      'slug',
+      'campus',
+      'email',
+      'leader_first_name',
+      'leader_last_name',
+      'coleader_first_name',
+      'coleader_last_name',
+      'host_day',
+      'host_kind',
+      'description'
+    )
+
+    json['location'] = {
+      'coords' => {
+        'lat' => self.lat,
+        'lng' => self.lng,
       },
-      "address" => {
-        "line_1" => self.address_line_1,
-        "line_2" => self.address_line_2,
-        "city" => self.address_city,
-        "province" => self.address_province,
-        "postal" => self.address_postal,
+      'address' => {
+        'line_1' => self.address_line_1,
+        'line_2' => self.address_line_2,
+        'city' => self.address_city,
+        'province' => self.address_province,
+        'postal' => self.address_postal,
       }}
+
     json
   end
 
