@@ -54,8 +54,8 @@
       $.each(response.community_points || [], function (index, point) {
         // only add the coord if it has geodata available
         if (!point.coords) { return; }
-        var campus = point.campus ? point.campus.toLowerCase() : '';
 
+        var campus = point.campus ? point.campus.toLowerCase() : '';
         var coord = new L.LatLng(point.coords.lat, point.coords.lng);
 
         // add a marker to the map and add its point to the bounds
