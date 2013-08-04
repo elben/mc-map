@@ -21,6 +21,16 @@ $color-campus-stjpm: #436978
 $color-campus-south: #f69730
 $color-campus-west: #728224
 
+@mixin clearfix()
+  *zoom: 1
+
+  &:before, &:after
+    content: ' '
+    display: table
+
+  &:after
+    clear: both
+
 *
   @include box-sizing(border-box)
 
@@ -28,12 +38,17 @@ body
   font-family: $font-normal
   color: $color-text
   background-color: $color-background
-
+  font-size: 14px
 
 h1, h2, h3, h4, h5, h6
   font-family: $font-fancy
   color: $color-text-header
   margin: 0
+  font-weight: normal
+  text-transform: uppercase
+
+h2
+  font-size: 18px
 
 // map takes up the entire screen, everything else overlays on top of it
 #map
@@ -57,3 +72,45 @@ h1, h2, h3, h4, h5, h6
   $color: $color-background-light
   background-color: $color
   background-color: rgba($color, 0.8)
+
+.checkbox-container
+  @include clearfix()
+
+  margin-bottom: 1em
+
+// customize day checkbox filters
+.checkbox-filter-day
+  $size: 1.8em
+  width: $size
+  height: $size
+  float: left
+
+  // make the label take up the entire interior, so only it can be clicked
+  label
+    display: inline-block
+    width: 100%
+    line-height: $size
+    text-align: center
+
+    cursor: pointer
+    font-weight: bold
+
+    &:hover
+      background-color: $color-background
+      color: $color-text
+
+  // hide the checkbox, since we use the label as the display
+  input
+    display: none
+
+    // change the style of checked labels
+    &:checked + label
+      background-color: $color-text
+      color: white
+
+      &:hover
+        background-color: lighten($color-text, 20%)
+
+  // space the elements out
+  &~ .checkbox-filter-day
+    margin-left: ($size / 6)

@@ -1,36 +1,43 @@
 <section id="map"></section>
 
 <div id="filters">
-  <div class="checkboxes">
-    <h2>Day</h2>
-    <% Community::DAYS.each do |day| %>
-      <%= render partial: 'checkbox_filter', locals: {
-        value: day,
-        name: 'day',
-        display_text: day.titleize,
-        checked: true
-      } %>
-    <% end %>
+  <div class="checkbox-containers">
+    <div id="checkbox-container-day" class="checkbox-container">
+      <h2>Day</h2>
+      <% Community::DAYS.each do |day| %>
+        <%= render partial: 'checkbox_filter', locals: {
+          value: day,
+          name: 'day',
+          display_text: day.upcase[0],
+          tooltip: day.titleize,
+          checked: true,
+        } %>
+      <% end %>
+    </div>
 
-    <h2>Campus</h2>
-    <% Community::CAMPUSES.each do |campus, display_text| %>
-      <%= render partial: 'checkbox_filter', locals: {
-        value: campus,
-        name: 'campus',
-        display_text: display_text,
-        checked: true
-      } %>
-    <% end %>
+    <div id="checkbox-container-campus" class="checkbox-container">
+      <h2>Campus</h2>
+      <% Community::CAMPUSES.each do |campus, display_text| %>
+        <%= render partial: 'checkbox_filter', locals: {
+          value: campus,
+          name: 'campus',
+          display_text: display_text,
+          checked: true,
+        } %>
+      <% end %>
+    </div>
 
-    <h2>Kind</h2>
-    <% Community::MC_KINDS.each do |mc_kind, display_text| %>
-      <%= render partial: 'checkbox_filter', locals: {
-        value: mc_kind,
-        name: 'kind',
-        display_text: display_text,
-        checked: true
-      } %>
-    <% end %>
+    <div id="checkbox-container-kind" class="checkbox-container">
+      <h2>Kind</h2>
+      <% Community::MC_KINDS.each do |mc_kind, display_text| %>
+        <%= render partial: 'checkbox_filter', locals: {
+          value: mc_kind,
+          name: 'kind',
+          display_text: display_text,
+          checked: true,
+        } %>
+      <% end %>
+    </div>
   </div>
 
   <ul></ul>
