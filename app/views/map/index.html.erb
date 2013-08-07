@@ -10,39 +10,44 @@
     </nav>
 
     <div id="filter-tab-campus" class="filter-tab">
-      <% Community::CAMPUSES.each do |campus, display_text| %>
-        <%= render partial: 'checkbox_filter', locals: {
-          value: campus,
-          name: 'campus',
-          display_text: display_text,
-          checked: true,
-        } %>
-      <% end %>
+      <div class="filter-tab-content">
+        <% Community::CAMPUSES.each do |campus, display_text| %>
+          <%= render partial: 'checkbox_filter', locals: {
+            value: campus,
+            name: 'campus',
+            display_text: display_text,
+            checked: true,
+          } %>
+        <% end %>
+      </div>
     </div>
 
     <div id="filter-tab-day" class="filter-tab">
-      <% Community::DAYS.each do |day| %>
-        <%= render partial: 'checkbox_filter', locals: {
-          value: day,
-          name: 'day',
-          display_text: day.titleize,
-          checked: true
-        } %>
-      <% end %>
+      <div class="filter-tab-content">
+        <% Community::DAYS.each do |day| %>
+          <%= render partial: 'checkbox_filter', locals: {
+            value: day,
+            name: 'day',
+            display_text: day.titleize,
+            checked: true
+          } %>
+        <% end %>
+      </div>
     </div>
 
     <div id="filter-tab-kind" class="filter-tab">
-      <% Community::MC_KINDS.each do |mc_kind, display_text| %>
-        <%= render partial: 'checkbox_filter', locals: {
-          value: mc_kind,
-          name: 'kind',
-          display_text: display_text,
-          checked: true,
-        } %>
-      <% end %>
+      <div class="filter-tab-content">
+        <% Community::MC_KINDS.each do |mc_kind, display_text| %>
+          <%= render partial: 'checkbox_filter', locals: {
+            value: mc_kind,
+            name: 'kind',
+            display_text: display_text,
+            checked: true,
+          } %>
+        <% end %>
+      </div>
     </div>
   </div>
 
+  <ul id="search-results"></ul>
 </div>
-
-<ul id="search-results"></ul>
