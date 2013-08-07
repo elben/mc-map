@@ -1,4 +1,4 @@
-<div<% if local_assigns.has_key? :tooltip %> title="<%= tooltip %>"<% end %> class="checkbox-filter checkbox-filter-<%= name %>">
+<div class="checkbox-filter checkbox-filter-<%= name %>">
   <% checkbox_id = "checkbox-#{name}-#{value}" %>
   <input type="checkbox" id="<%= checkbox_id %>"
       value="<%= value %>"<% if local_assigns.fetch :checked, false %> checked<% end %> />

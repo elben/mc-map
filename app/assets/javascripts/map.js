@@ -7,6 +7,11 @@
   // the width of the sidebar, so we can pad the map to ignore that area
   var sidebarWidth = $('#filters').outerWidth();
 
+  // elements
+  var $filters = $('#filters');
+  var $filterNav = $filters.find('nav');
+  var $filterTabs = $filters.find('.filter-tab');
+
   // custom icons for the campuses
   var CampusIcon = L.Icon.extend({
     options: {
@@ -79,4 +84,27 @@
   L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
   }).addTo(map);
+
+  // set up all the accordian sections
+  var accordians = [];
+  $('.accordian-section').each(function () {
+    var accordian = new Accordian($(this));
+    accordians.push(accordian);
+  });
+
+  // handle selecting filter tabs
+  $filterNav.delegate('a', 'click', function (e) {
+    e.preventDefault();
+    var selectedClass = 'selected';
+    var $navButton = $(this);
+
+    // deselect other tabs, select this one
+    $navButton.addClass(selectedClass).siblings().removeClass(selectedClass);
+    $filterTabs.removeClass('selected');
+    $('#' + $(this).attr('data-tab-id')).addClass('selected');
+  });
+
+  // select the first tab
+  $filterNav.children().first().click();
+
 }());
