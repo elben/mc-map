@@ -1,32 +1,14 @@
 class Community < ActiveRecord::Base
   acts_as_paranoid
 
-  attr_accessible(*[
-    :email,
-    :phone_number,
-    :leader_first_name,
-    :leader_last_name,
-    :coleader_first_name,
-    :coleader_last_name,
-    :address_line_1,
-    :address_line_2,
-    :address_city,
-    :address_province,
-    :address_postal,
-    :host_day,
-    :host_kind,
-    :description,
-    :campus,
-    :lat,
-    :lng,
-    :slug,
-    :deleted_at,
-  ])
+  attr_accessible :email, :phone_number, :leader_first_name, :leader_last_name, :coleader_first_name, :coleader_last_name, :address_line_1, :address_line_2, :address_city, :address_province, :address_postal, :host_day, :host_kind, :description, :campus, :lat, :lng, :slug, :deleted_at
 
   validates :slug, :leader_first_name, :leader_last_name, presence: true
 
   before_validation :set_slug
   before_save :update_geo
+
+  has_and_belongs_to_many :members
 
   scope :with_leader_like, lambda { |leader|
     unless leader.blank?
