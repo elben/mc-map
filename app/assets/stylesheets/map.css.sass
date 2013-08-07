@@ -98,6 +98,14 @@ h2
     padding-bottom: 0.2em
 
 #filters
+  position: absolute
+
+  $padding: 15px
+  top: $padding
+  right: $padding
+  left: $padding
+  height: 215px
+
   // filter tab headers
   nav
     @include clearfix()
@@ -108,7 +116,7 @@ h2
 
       text-align: center
 
-      width: 33%
+      width: 33.3333%
       padding: 0.3em
 
       font-family: $font-fancy
@@ -125,17 +133,24 @@ h2
         background-color: $color
         background-color: rgba($color, 0.8)
 
+.filter-tab-content
+  border-top: 1px solid $color-text-header
+
+  height: 100%
+  padding-top: 0.3em
+
+  overflow: auto
+  overflow-x: hidden
+
 .filter-tab
   // hidden until selected
   display: none
 
+  height: 100%
+
   $color: $color-background-light
   background-color: $color
   background-color: rgba($color, 0.8)
-
-  height: 210px
-  overflow: auto
-  overflow-x: hidden
 
   padding: 1em
 
