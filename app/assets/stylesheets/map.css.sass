@@ -6,6 +6,9 @@
 $font-normal: 'rooney-web', 'Georgia', 'Times', serif
 $font-fancy: 'franklin-gothic-urw-cond', 'Arial Narrow', Arial, Helvetica, Verdana, sans-serif
 
+$size-filters: 255px
+$size-padding: 15px
+
 $color-highlight: #ffdd00
 $color-background: #dfded2
 $color-background-light: white
@@ -67,7 +70,7 @@ h2
   // nominal width of a mobile device in portrait
   width: 320px
 
-  padding: 15px
+  padding: $size-padding
 
   $color: $color-background-light
   background-color: $color
@@ -100,11 +103,10 @@ h2
 #filters
   position: absolute
 
-  $padding: 15px
-  top: $padding
-  right: $padding
-  left: $padding
-  height: 255px
+  top: $size-padding
+  right: $size-padding
+  left: $size-padding
+  height: $size-filters
 
   // filter tab headers
   nav
@@ -160,3 +162,17 @@ h2
 
   &.selected
     display: block
+
+#search-results
+  margin: 0
+  padding: 0
+
+  position: absolute
+  top: $size-filters + 2 * $size-padding
+  bottom: $size-padding
+  left: $size-padding
+  right: $size-padding
+
+  $color: $color-background-light
+  background-color: $color
+  background-color: rgba($color, 0.8)
