@@ -8,7 +8,7 @@ class Community < ActiveRecord::Base
   before_validation :set_slug
   before_save :update_geo
 
-  has_and_belongs_to_many :members
+  has_and_belongs_to_many :members, :before_add => :no_duplicates
 
   scope :with_leader_like, lambda { |leader|
     unless leader.blank?
@@ -131,4 +131,11 @@ class Community < ActiveRecord::Base
     json
   end
 
+  private
+
+  def no_duplicates(member)
+    # ActiveRecord::Rollback is internally captured but not reraised. HABTM
+    # doesn't create join if before_add throws exception.
+    raise ActiveRecord::Rollback if self.members.include?(member)
+  end
 end
