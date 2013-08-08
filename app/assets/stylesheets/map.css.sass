@@ -166,6 +166,8 @@ h2
 #search-results
   display: block
   list-style-type: none
+  overflow: auto
+  overflow-x: hidden
 
   margin: 0
   padding: 0
@@ -179,3 +181,14 @@ h2
   $color: $color-background-light
   background-color: $color
   background-color: rgba($color, 0.8)
+
+.community-search-result
+  header
+    font-family: $font-fancy
+    font-size: 18px
+    color: $color-text-header
+
+  .community-search-result-short-info
+    font-family: $font-fancy
+    font-size: 14px
+    color: $color-text

@@ -1,12 +1,13 @@
 <script type="text/x-mustache" id="template-community-search-result">
   <li data-slug="{{slug}}" data-campus="{{campus}}" class="community-search-result">
     <header>
-      <span class="leader-name">{{leader_name}}</span>
-      <span class="coleader-name">{{coleader_name}}</span>
+      <span class="leader-name">{{leader_name}}</span>{{#coleader_name}},
+      <span class="coleader-name">{{coleader_name}}</span>{{/coleader_name}}
     </header>
 
-    <p>Meets on {{day}}</p>
-    <p>Meets on {{day}}</p>
+    <div class="community-search-result-short-info">
+      {{kind}}, meets {{day}}s
+    </div>
 
     <div class="community-long-info">
     </div>
