@@ -12,8 +12,8 @@ ActiveAdmin.register Community do
     column "Day", :sortable => :host_day do |c|
       c.host_day.titleize
     end
-    column "Kind", sortable: :host_kind do |c|
-      c.kind
+    column "Kinds", sortable: :host_kind do |c|
+      c.kinds.join(", ")
     end
     column "E-mail", sortable: :email do |c|
       link_to(c.email, "mailto:#{c.email}", target: "_blank")
@@ -28,7 +28,8 @@ ActiveAdmin.register Community do
       f.input :coleader_last_name
       f.input :campus, as: :select, collection: Community::CAMPUSES.map { |k, v| [v, k] }
       f.input :host_day, label: "Day", as: :select, collection: Community::DAYS.map { |d| [d.titleize, d] }
-      f.input :host_kind, label: "Kind", as: :select, collection: Community::MC_KINDS.map { |k, v| [v, k] }
+      f.input :kinds, as: :check_boxes, collection: Community.kind_tags
+
       f.input :email, label: "E-mail"
       f.input :phone_number
       f.input :address_line_1
@@ -58,7 +59,9 @@ ActiveAdmin.register Community do
         link_to(c.address, "https://www.google.com/maps?q=#{c.address}", target: "_blank")
       end
       row :host_day
-      row :kind
+      row :kinds do |community|
+        community.kind_list.map { |kind| Community::MC_KINDS[kind.to_sym] }.join(", ")
+      end
       table_for c.members do
         column "Name" do |member|
           link_to(member.name, admin_member_path(member))
@@ -78,7 +81,14 @@ ActiveAdmin.register Community do
     end
 
     def update
-      update! do |format|
+      # Deal with the madness of ActiveAdmin's insistence on setting kind_ids.
+      @community = Community.find(params[:id])
+      kind_ids = params["community"].delete("kind_ids")
+      kind_ids.reject! { |kid| kid.blank? }
+      tags = ActsAsTaggableOn::Tag.find(kind_ids)
+      @community.kind_list = tags.map(&:name)
+      @community.update_attributes(params["community"])
+      respond_to do |format|
         format.html { redirect_to admin_communities_url }
       end
     end

@@ -1,7 +1,9 @@
 class Community < ActiveRecord::Base
   acts_as_paranoid
+  acts_as_taggable
+  acts_as_taggable_on :kinds
 
-  attr_accessible :email, :phone_number, :leader_first_name, :leader_last_name, :coleader_first_name, :coleader_last_name, :address_line_1, :address_line_2, :address_city, :address_province, :address_postal, :host_day, :host_kind, :description, :campus, :lat, :lng, :slug, :deleted_at
+  attr_accessible :email, :phone_number, :leader_first_name, :leader_last_name, :coleader_first_name, :coleader_last_name, :address_line_1, :address_line_2, :address_city, :address_province, :address_postal, :host_day, :host_kind, :description, :campus, :lat, :lng, :slug, :deleted_at, :kind_list
 
   validates :slug, :leader_first_name, :leader_last_name, presence: true
 
@@ -90,6 +92,7 @@ class Community < ActiveRecord::Base
   end
 
   # update the latitude/longitude for this community
+  # TODO only do this if address changed
   def update_geo
     return if self.address_line_1.blank? && self.address_line_2.blank?
 
@@ -129,6 +132,14 @@ class Community < ActiveRecord::Base
       }}
 
     json
+  end
+
+  def self.kind_tags
+    tags = []
+    Community::MC_KINDS.each do |k, v|
+      tags << ActsAsTaggableOn::Tag.where(name: k).first
+    end
+    tags.compact
   end
 
   private
