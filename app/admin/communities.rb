@@ -52,6 +52,28 @@ ActiveAdmin.register Community do
   # Use meta_search's OR syntax
   filter :leader_last_name_or_leader_first_name_or_coleader_first_name_or_coleader_last_name_or_address_line_1_or_address_line_2_or_address_city_or_address_postal_or_address_province_or_email_or_phone_number, as: :string, label: "Leader or Contact Info"
 
+  show do |c|
+    attributes_table do
+      row :leader
+      row :campus_name
+      row :email
+      row :phone_number
+      row :address do
+        link_to(c.address, "https://www.google.com/maps?q=#{c.address}", target: "_blank")
+      end
+      row :host_day
+      row :kind
+      table_for c.members do
+        column "Name" do |member|
+          link_to(member.name, admin_member_path(member))
+        end
+        column :email
+        column :phone_number
+      end
+    end
+    active_admin_comments
+  end
+
   controller do
     def create
       create! do |format|

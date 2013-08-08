@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130807035656) do
+ActiveRecord::Schema.define(:version => 20130808045003) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -70,10 +70,20 @@ ActiveRecord::Schema.define(:version => 20130807035656) do
     t.text     "description"
   end
 
+  add_index "communities", ["campus"], :name => "index_communities_on_campus"
+  add_index "communities", ["coleader_first_name"], :name => "index_communities_on_coleader_first_name"
+  add_index "communities", ["coleader_last_name"], :name => "index_communities_on_coleader_last_name"
+  add_index "communities", ["host_day"], :name => "index_communities_on_host_day"
+  add_index "communities", ["host_kind"], :name => "index_communities_on_host_kind"
+  add_index "communities", ["leader_first_name"], :name => "index_communities_on_leader_first_name"
+  add_index "communities", ["leader_last_name"], :name => "index_communities_on_leader_last_name"
+
   create_table "communities_members", :force => true do |t|
     t.integer "community_id"
     t.integer "member_id"
   end
+
+  add_index "communities_members", ["community_id", "member_id"], :name => "index_communities_members_on_community_id_and_member_id", :unique => true
 
   create_table "members", :force => true do |t|
     t.string   "name"
@@ -82,5 +92,8 @@ ActiveRecord::Schema.define(:version => 20130807035656) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "members", ["email"], :name => "index_members_on_email"
+  add_index "members", ["name"], :name => "index_members_on_name"
 
 end
