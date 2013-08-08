@@ -8,7 +8,6 @@ ActiveAdmin.register Community do
     selectable_column
     default_actions
     column :leader, sortable: :leader_last_name
-    column "Co-leader", :coleader, sortable: :coleader_last_name
     column :campus_name, sortable: :campus
     column "Day", :sortable => :host_day do |c|
       c.host_day.titleize
@@ -18,9 +17,6 @@ ActiveAdmin.register Community do
     end
     column "E-mail", sortable: :email do |c|
       link_to(c.email, "mailto:#{c.email}", target: "_blank")
-    end
-    column "Address" do |c|
-      link_to(c.address, "https://www.google.com/maps?q=#{c.address}", target: "_blank")
     end
   end
 
