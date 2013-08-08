@@ -11,6 +11,7 @@ gem "awesome_print"
 gem "sentry-raven"
 gem "httparty"
 gem "leaflet-rails"
+gem 'acts-as-taggable-on'
 
 # Gems used only for assets and not required
 # in production environments by default.
