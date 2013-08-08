@@ -1,11 +1,20 @@
 //= require jquery
 //= require leaflet
+//= require mustache
 
 (function () {
+
+  // compile the templates we'll be using
+  var tmplCommunitySearchResult = Mustache.compile(
+    $('#template-community-search-result').html());
+
   var austinCoords = new L.LatLng(30.2669, -97.7428);
 
   // the width of the sidebar, so we can pad the map to ignore that area
   var sidebarWidth = $('#filters').outerWidth();
+
+  // storage for all the short-form points, keyed to their slug
+  var POINTS = {};
 
   // elements
   var $filters = $('#filters');
@@ -57,7 +66,10 @@
     if (response) {
       var bounds = new L.LatLngBounds();
       $.each(response.community_points || [], function (index, point) {
-        // only add the coord if it has geodata available
+        // store the point by its slug in our map
+        POINTS[point.slug] = point;
+
+        // only add the point to the map if it has geodata available
         if (!point.coords) { return; }
 
         var campus = point.campus ? point.campus.toLowerCase() : '';
