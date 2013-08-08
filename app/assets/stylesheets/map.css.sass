@@ -178,11 +178,16 @@ h2
   left: $size-padding
   right: $size-padding
 
+.community-search-result
+  padding: $size-padding
+
   $color: $color-background-light
   background-color: $color
   background-color: rgba($color, 0.8)
 
-.community-search-result
+  &~ .community-search-result
+    margin-top: $size-padding
+
   header
     font-family: $font-fancy
     font-size: 18px
@@ -192,3 +197,6 @@ h2
     font-family: $font-fancy
     font-size: 14px
     color: $color-text
+
+  .community-search-result-long-info
+    // TODO

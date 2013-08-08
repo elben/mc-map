@@ -122,13 +122,21 @@
   // select the first tab
   $filterNav.children().first().click();
 
+  // TODO: for testing only
   for (var i = 0; i < 10; i++) {
     $searchResults.append(tmplCommunitySearchResult({
       slug: 'abcd1234',
       leader_name: 'Leader Name',
       coleader_name: Math.random() > 0.5 ? 'Co-leader Name' : undefined,
       kind: 'Open to Everyone',
-      day: 'Monday'
+      day: 'Monday',
+      address: {
+        line_1: '321 Address Lane',
+        line_2: Math.random() > 0.5 ? '#1234' : undefined,
+        city: 'Austin',
+        province: 'TX',
+        postal: '78723'
+      }
     }));
   }
 
