@@ -18,6 +18,9 @@ ActiveAdmin.register Community do
     column "E-mail", sortable: :email do |c|
       link_to(c.email, "mailto:#{c.email}", target: "_blank")
     end
+    column "Members" do |c|
+      c.members.count
+    end
   end
 
   form do |f|
