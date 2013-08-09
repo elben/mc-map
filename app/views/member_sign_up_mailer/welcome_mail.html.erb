@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Hi <%= @member.name %>,</h1>
+    <p>
+      Thanks for signing up. Your missional community's contact information is below.
+    </p>
+    <div>Host: <%= @community.leader %></div>
+    <div>Campus: <%= @community.campus_name %></div>
+
+    <p>You signed up with the following information:</p>
+    <div>Name: <%= @member.name %></div>
+    <div>E-mail: <%= @member.email %></div>
+    <div>Phone number: <%= @member.phone_number %></div>
+
+    <p>Your missional community leader will contact you soon!</p>
+  </body>
+</html>
