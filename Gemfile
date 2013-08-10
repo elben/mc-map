@@ -29,6 +29,7 @@ gem 'jquery-rails'
 
 group :development do
   gem 'sqlite3'
+  gem "mailcatcher"
 end
 
 # To use ActiveModel has_secure_password
