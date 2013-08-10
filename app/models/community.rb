@@ -91,9 +91,18 @@ class Community < ActiveRecord::Base
     self.slug = KeyGenerator.generate(8) if self.slug.blank?
   end
 
-  # update the latitude/longitude for this community
-  # TODO only do this if address changed
+  def address_changed?
+    changed_attrs = self.changed_attributes.keys
+    return false if changed_attrs.blank?
+
+    [:address_line_1, :address_line_2, :address_city, :address_province, :address_postal].each do |attr|
+      return true if changed_attrs.include?(attr.to_s)
+    end
+    false
+  end
+
   def update_geo
+    return unless address_changed?
     return if self.address_line_1.blank? && self.address_line_2.blank?
 
     coords = SimpleGeocode.geocode(self.address)
