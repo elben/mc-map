@@ -1,0 +1,20 @@
+<script type="text/x-mustache" id="template-community-search-result">
+  <li data-slug="{{slug}}" data-campus="{{campus}}" class="community-search-result">
+    <header>
+    <span>{{leader_name}}</span>{{#coleader_name}}, <span>{{coleader_name}}</span>{{/coleader_name}}
+    </header>
+
+    <div class="community-search-result-short-info">
+      {{kind}}, meets {{day}}s
+    </div>
+
+    <div class="community-search-result-long-info">
+      {{#address}}
+      <address>
+        {{line_1}} {{line_2}}<br />
+        {{city}}, {{province}} {{postal}}
+      </address>
+      {{/address}}
+    </div>
+  </li>
+</script>

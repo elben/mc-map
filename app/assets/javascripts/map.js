@@ -1,16 +1,26 @@
 //= require jquery
 //= require leaflet
+//= require mustache
 
 (function () {
+
+  // compile the templates we'll be using
+  var tmplCommunitySearchResult = Mustache.compile(
+    $('#template-community-search-result').html());
+
   var austinCoords = new L.LatLng(30.2669, -97.7428);
 
   // the width of the sidebar, so we can pad the map to ignore that area
   var sidebarWidth = $('#filters').outerWidth();
 
+  // storage for all the short-form points, keyed to their slug
+  var POINTS = {};
+
   // elements
   var $filters = $('#filters');
   var $filterNav = $filters.find('nav');
   var $filterTabs = $filters.find('.filter-tab');
+  var $searchResults = $('#search-results');
 
   // custom icons for the campuses
   var CampusIcon = L.Icon.extend({
@@ -57,7 +67,10 @@
     if (response) {
       var bounds = new L.LatLngBounds();
       $.each(response.community_points || [], function (index, point) {
-        // only add the coord if it has geodata available
+        // store the point by its slug in our map
+        POINTS[point.slug] = point;
+
+        // only add the point to the map if it has geodata available
         if (!point.coords) { return; }
 
         var campus = point.campus ? point.campus.toLowerCase() : '';
@@ -82,7 +95,9 @@
 
   // add the Esri map tiles layer (free!)
   L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+    detectRetina: true,
+    reuseTiles: true
   }).addTo(map);
 
   // set up all the accordian sections
@@ -106,5 +121,23 @@
 
   // select the first tab
   $filterNav.children().first().click();
+
+  // TODO: for testing only
+  for (var i = 0; i < 10; i++) {
+    $searchResults.append(tmplCommunitySearchResult({
+      slug: 'abcd1234',
+      leader_name: 'Leader Name',
+      coleader_name: Math.random() > 0.5 ? 'Co-leader Name' : undefined,
+      kind: 'Open to Everyone',
+      day: 'Monday',
+      address: {
+        line_1: '321 Address Lane',
+        line_2: Math.random() > 0.5 ? '#1234' : undefined,
+        city: 'Austin',
+        province: 'TX',
+        postal: '78723'
+      }
+    }));
+  }
 
 }());

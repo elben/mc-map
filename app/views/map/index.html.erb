@@ -1,7 +1,13 @@
+<%# mustache templates %>
+<%= render 'template_community_search_result' %>
+
+<%# where the leaflet map will go %>
 <section id="map"></section>
 
+<%# sidebar visible over the map, including filters and search results %>
 <div id="sidebar">
 
+  <%# a tabbed pane of filters to narrow the search results with %>
   <div id="filters">
     <nav>
       <a href="#" data-tab-id="filter-tab-campus">Campus</a>
@@ -49,5 +55,7 @@
     </div>
   </div>
 
-  <ul id="search-results"></ul>
+  <%# all search results for the displayed items %>
+  <ul id="search-results">
+  </ul>
 </div>
