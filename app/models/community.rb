@@ -26,11 +26,11 @@ class Community < ActiveRecord::Base
   ])
 
 
-
   before_validation :set_slug
   before_save :update_geo
 
-  has_and_belongs_to_many :members, :before_add => :no_duplicates
+  has_and_belongs_to_many :members, before_add: :no_duplicates
+  has_and_belongs_to_many :coaches, class_name: "AdminUser", join_table: :coaches_join
 
   scope :with_leader_like, lambda { |leader|
     return if leader.blank?

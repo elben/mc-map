@@ -4,6 +4,25 @@ ActiveAdmin.register_page "Dashboard" do
 
   content :title => proc{ I18n.t("active_admin.dashboard") } do
 
+    columns do
+      column do
+        panel "My communities" do
+          table_for current_admin_user.communities do
+            column "Name" do |c|
+              link_to(c.title, admin_community_path(c))
+            end
+            column :campus_name, sortable: :campus
+            column "Day", :sortable => :host_day do |c|
+              c.host_day.titleize
+            end
+            column "E-mail", sortable: :email do |c|
+              link_to(c.email, "mailto:#{c.email}", target: "_blank")
+            end
+          end
+        end
+      end
+    end
+
     # Here is an example of a simple dashboard with columns and panels.
     #
     # columns do

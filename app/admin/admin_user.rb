@@ -1,5 +1,7 @@
-ActiveAdmin.register AdminUser do     
-  index do                            
+ActiveAdmin.register AdminUser do
+  menu false # Hide link to /admin/admin_users
+
+  index do
     column :email                     
     column :current_sign_in_at        
     column :last_sign_in_at           
