@@ -2,16 +2,16 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-gem 'rails', '3.2.14'
-gem 'pg'
-gem 'paranoia', '~> 1.0'
-gem 'activeadmin'
-gem "jquery-ui-rails"
 gem "awesome_print"
-gem "sentry-raven"
 gem "httparty"
+gem "jquery-ui-rails"
 gem "leaflet-rails"
+gem "sentry-raven"
+gem 'activeadmin'
 gem 'acts-as-taggable-on'
+gem 'paranoia', '~> 1.0'
+gem 'pg'
+gem 'rails', '3.2.14'
 
 # Gems used only for assets and not required
 # in production environments by default.
