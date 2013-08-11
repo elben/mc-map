@@ -12,7 +12,7 @@ ActiveAdmin.register Community do
     column "Day", :sortable => :host_day do |c|
       c.host_day.titleize
     end
-    column "Kinds", sortable: :host_kind do |c|
+    column "Kinds" do |c|
       c.kinds.join(", ")
     end
     column "E-mail", sortable: :email do |c|
