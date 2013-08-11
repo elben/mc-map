@@ -66,24 +66,26 @@
   $.getJSON('communities/points', function (response) {
     if (response) {
       var bounds = new L.LatLngBounds();
-      $.each(response.community_points || [], function (index, point) {
+      $.each(response || [], function (index, point) {
         // store the point by its slug in our map
-        POINTS[point.slug] = point;
+        POINTS[point.properties.slug] = point;
 
         // only add the point to the map if it has geodata available
-        if (!point.coords) { return; }
+        if (!point.geometry) { return; }
 
-        var campus = point.campus ? point.campus.toLowerCase() : '';
-        var coord = new L.LatLng(point.coords.lat, point.coords.lng);
+        var latlng = new L.LatLng(point.geometry.coordinates[1],
+            point.geometry.coordinates[0]);
 
         // add a marker to the map and add its point to the bounds
-        L.marker(coord, {
+        L.marker(latlng, {
           // the campus values here and in the stylesheets correspond to the
           // keys in Community::CAMPUSES enum.
-          icon: new CampusIcon({ campus: campus }),
+          icon: new CampusIcon({
+            campus: point.properties.campus.toLowerCase()
+          }),
           riseOnHover: true
         }).addTo(map);
-        bounds.extend(coord);
+        bounds.extend(latlng);
       });
 
       // zoom the map to include all the markers, leaving room for the controls

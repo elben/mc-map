@@ -206,6 +206,7 @@ DEPENDENCIES
   httparty
   jquery-rails
   jquery-ui-rails
+  kaminari
   leaflet-rails
   mailcatcher
   paranoia (~> 1.0)

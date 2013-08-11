@@ -5,6 +5,7 @@ ruby '2.0.0'
 gem "awesome_print"
 gem "httparty"
 gem "jquery-ui-rails"
+gem "kaminari"
 gem "leaflet-rails"
 gem "sentry-raven"
 gem 'activeadmin'

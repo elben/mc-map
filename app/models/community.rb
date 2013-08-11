@@ -124,21 +124,31 @@ class Community < ActiveRecord::Base
       'coleader_last_name',
       'host_day',
       'host_kind',
-      'description'
+      'description',
     )
 
-    json['location'] = {
-      'coords' => {
-        'lat' => self.lat,
-        'lng' => self.lng,
-      },
-      'address' => {
-        'line_1' => self.address_line_1,
-        'line_2' => self.address_line_2,
-        'city' => self.address_city,
-        'province' => self.address_province,
-        'postal' => self.address_postal,
-      }}
+    # GeoJSON data
+    json[:location] = {
+      type: 'Feature',
+      geometry: nil,
+      properties: {
+        address: {
+          line_1: self.address_line_1,
+          line_2: self.address_line_2,
+          city: self.address_city,
+          province: self.address_province,
+          postal: self.address_postal,
+        }
+      }
+    }
+
+    # add geometry information if possible
+    if self.lat && self.lng
+      json[:location][:geometry] = {
+        type: 'Point',
+        coordinates: [self.lng.to_f, self.lat.to_f],
+      }
+    end
 
     json
   end
