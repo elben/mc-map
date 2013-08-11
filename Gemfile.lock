@@ -68,6 +68,8 @@ GEM
     eventmachine (1.0.3)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    faker (1.2.0)
+      i18n (~> 0.5)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
     fastercsv (1.5.5)
@@ -203,6 +205,7 @@ DEPENDENCIES
   acts-as-taggable-on
   awesome_print
   coffee-rails (~> 3.2.1)
+  faker
   httparty
   jquery-rails
   jquery-ui-rails

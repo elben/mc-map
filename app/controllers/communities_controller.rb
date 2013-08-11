@@ -17,6 +17,7 @@ class CommunitiesController < ApplicationController
     end
 
     # get the specified communities
+    communities = []
     communities = Community.where(filters).page(page).per(limit)
 
     @response = communities.map { |c|  c.output_json }

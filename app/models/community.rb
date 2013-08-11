@@ -3,7 +3,28 @@ class Community < ActiveRecord::Base
   acts_as_taggable
   acts_as_taggable_on :kinds
 
-  attr_accessible :email, :phone_number, :leader_first_name, :leader_last_name, :coleader_first_name, :coleader_last_name, :address_line_1, :address_line_2, :address_city, :address_province, :address_postal, :host_day, :host_kind, :description, :campus, :lat, :lng, :slug, :deleted_at, :kind_list
+  attr_accessible(*[
+    :email,
+    :phone_number,
+    :leader_first_name,
+    :leader_last_name,
+    :coleader_first_name,
+    :coleader_last_name,
+    :address_line_1,
+    :address_line_2,
+    :address_city,
+    :address_province,
+    :address_postal,
+    :host_day,
+    :host_kind,
+    :description,
+    :campus,
+    :lat,
+    :lng,
+    :slug,
+    :deleted_at,
+    :kind_list,
+  ])
 
   validates :slug, :leader_first_name, :leader_last_name, presence: true
 
@@ -52,6 +73,58 @@ class Community < ActiveRecord::Base
     'saturday',
     'sunday',
   ]
+
+  # generate a random community and return it, without creating it
+  def self.fake
+
+    # generate a latitude/longitude around Austin, TX
+    latlng_sw = { lat: 29.99, lng: -98.14 }
+    latlng_ne = { lat: 30.59, lng: -97.33 }
+    lat_delta = latlng_ne[:lat] - latlng_sw[:lat]
+    lng_delta = latlng_ne[:lng] - latlng_sw[:lng]
+
+    # sometimes, we don't get geolocation data
+    lat = nil
+    lng = nil
+    if rand > 0.1
+      lat = (rand * lat_delta + latlng_sw[:lat]).round 6
+      lng = (rand * lng_delta + latlng_sw[:lng]).round 6
+    end
+
+    community = Community.new(
+      slug: rand(16 ** 8).to_s(16).rjust(8, '0'),
+
+      lat: lat,
+      lng: lng,
+
+      description: rand > 0.7 ? Faker::Lorem.sentences(rand(4) + 1).join(' ') : nil,
+
+      leader_first_name: Faker::Name.first_name,
+      leader_last_name: Faker::Name.last_name,
+      email: Faker::Internet.safe_email,
+      phone_number: Faker::PhoneNumber.phone_number,
+      address_line_1: Faker::Address.street_address,
+      address_line_2: rand > 0.5 ? Faker::Address.secondary_address : nil,
+      address_city: ['Austin', 'Roundrock', 'Georgetown', 'San Marcos'].sample,
+      address_province: rand > 0.3 ? 'TX' : 'Texas',
+      address_postal: Faker::Address.postcode,
+      host_day: Community::DAYS.sample,
+      host_kind: Community::MC_KINDS.keys.sample.to_s,
+      campus: Community::CAMPUSES.keys.sample.to_s,
+    )
+
+    # maybe add a coleader name
+    if rand > 0.5
+      community.coleader_first_name = Faker::Name.first_name
+      community.coleader_last_name = Faker::Name.last_name
+    end
+
+    now = Time.now
+    community.created_at = now
+    community.updated_at = now
+
+    community
+  end
 
   def leader
     if !(self.leader_first_name.blank? && self.leader_last_name.blank?)
