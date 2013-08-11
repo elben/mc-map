@@ -4,7 +4,8 @@ class CommunitiesController < ApplicationController
   #   page - page of results to get, defaults to 1 (NOT zero-based)
   #   campus - blank, or enum value from Community::CAMPUSES
   #   host_day - blank, or enum value from Community::DAYS
-  #   host_kind - blank, or enum value from Community::MC_KINDS
+  #   kinds - blank, or comma-seperated list of enum value from
+  #           Community::MC_KINDS
   def index
     # pull params from the params hash
     limit = (params[:limit] || 50).to_i
@@ -16,10 +17,7 @@ class CommunitiesController < ApplicationController
       filters[k] = v.downcase
     end
 
-    # get the specified communities
-    communities = []
-    communities = Community.where(filters).page(page).per(limit)
-
+    communities = Community.where(filters).with_kinds(params[:kinds]).page(page).per(limit)
     @response = communities.map { |c|  c.output_json }
 
     respond_to do |format|

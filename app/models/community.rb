@@ -16,7 +16,6 @@ class Community < ActiveRecord::Base
     :address_province,
     :address_postal,
     :host_day,
-    :host_kind,
     :description,
     :campus,
     :lat,
@@ -26,7 +25,7 @@ class Community < ActiveRecord::Base
     :kind_list,
   ])
 
-  validates :slug, :leader_first_name, :leader_last_name, presence: true
+
 
   before_validation :set_slug
   before_save :update_geo
@@ -37,6 +36,14 @@ class Community < ActiveRecord::Base
     unless leader.blank?
       q = "#{leader}%"
       where(["leader_first_name LIKE (?) OR leader_last_name LIKE (?) OR coleader_first_name LIKE (?) or coleader_last_name LIKE (?)", q, q, q, q])
+    end
+  }
+
+  # kinds is comma-seperated list
+  scope :with_kinds, lambda { |kinds|
+    unless kinds.blank?
+      # filter by kinds tags; OR match
+      tagged_with(kinds, on: :kinds, any: true)
     end
   }
 
@@ -109,7 +116,6 @@ class Community < ActiveRecord::Base
       address_province: rand > 0.3 ? 'TX' : 'Texas',
       address_postal: Faker::Address.postcode,
       host_day: Community::DAYS.sample,
-      host_kind: Community::MC_KINDS.keys.sample.to_s,
       campus: Community::CAMPUSES.keys.sample.to_s,
     )
 
@@ -118,6 +124,9 @@ class Community < ActiveRecord::Base
       community.coleader_first_name = Faker::Name.first_name
       community.coleader_last_name = Faker::Name.last_name
     end
+
+    # Tag with 1 to 3 kinds
+    community.kind_list = Community::MC_KINDS.keys.sample(1 + rand(3)).join(",")
 
     now = Time.now
     community.created_at = now
