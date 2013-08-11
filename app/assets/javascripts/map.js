@@ -130,7 +130,7 @@
       slug: 'abcd1234',
       leader_name: 'Leader Name',
       coleader_name: Math.random() > 0.5 ? 'Co-leader Name' : undefined,
-      kind: 'Open to Everyone',
+      kinds: ['Open to Everyone'],
       day: 'Monday',
       address: {
         line_1: '321 Address Lane',
