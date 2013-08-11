@@ -12,7 +12,7 @@ class CommunitiesController < ApplicationController
     page = (params[:page] || 1).to_i
 
     # normalize all filter values to lowercase
-    filters = params.slice(:campus, :host_day, :host_kind)
+    filters = params.slice(:campus, :host_day)
     filters.each do |k, v|
       filters[k] = v.downcase
     end

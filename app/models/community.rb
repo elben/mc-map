@@ -164,10 +164,6 @@ class Community < ActiveRecord::Base
     "#{self.leader} - #{self.campus_name}"
   end
 
-  def kind
-    MC_KINDS[self.host_kind.to_sym]
-  end
-
   # Not super secret or anything, but we don't care
   def set_slug
     self.slug = KeyGenerator.generate(8) if self.slug.blank?
