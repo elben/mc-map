@@ -26,6 +26,7 @@ class MembersController < ApplicationController
     if @member.save
       flash[:notice] = "Successfully created member."
       MemberSignUpMailer.welcome_email(@member, @community).deliver
+      MemberSignUpMailer.leaders_email(@member, @community).deliver
       redirect_to @member
     else
       render :action => 'new'
