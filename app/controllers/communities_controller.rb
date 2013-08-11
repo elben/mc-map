@@ -14,7 +14,9 @@ class CommunitiesController < ApplicationController
     # normalize all filter values to lowercase
     filters = params.slice(:campus, :host_day)
     filters.each do |k, v|
-      filters[k] = v.downcase
+      # Turn into array, split by comma, to do IN query.
+      # e.g. where host_day IN ('monday', ...)
+      filters[k] = v.downcase.split(",")
     end
 
     communities = Community.where(filters).with_kinds(params[:kinds]).page(page).per(limit)

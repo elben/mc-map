@@ -33,18 +33,16 @@ class Community < ActiveRecord::Base
   has_and_belongs_to_many :members, :before_add => :no_duplicates
 
   scope :with_leader_like, lambda { |leader|
-    unless leader.blank?
-      q = "#{leader}%"
-      where(["leader_first_name LIKE (?) OR leader_last_name LIKE (?) OR coleader_first_name LIKE (?) or coleader_last_name LIKE (?)", q, q, q, q])
-    end
+    return if leader.blank?
+    q = "#{leader}%"
+    where(["leader_first_name LIKE (?) OR leader_last_name LIKE (?) OR coleader_first_name LIKE (?) or coleader_last_name LIKE (?)", q, q, q, q])
   }
 
   # kinds is comma-seperated list
   scope :with_kinds, lambda { |kinds|
-    unless kinds.blank?
-      # filter by kinds tags; OR match
-      tagged_with(kinds, on: :kinds, any: true)
-    end
+    return if kinds.blank?
+    # filter by kinds tags; OR match
+    tagged_with(kinds, on: :kinds, any: true)
   }
 
   CAMPUSES = {
