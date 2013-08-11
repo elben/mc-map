@@ -196,9 +196,10 @@ class Community < ActiveRecord::Base
       'coleader_first_name',
       'coleader_last_name',
       'host_day',
-      'host_kind',
       'description',
     )
+
+    json['kinds'] = self.kind_list
 
     # GeoJSON data
     json[:location] = {

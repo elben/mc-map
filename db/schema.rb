@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130808050657) do
+ActiveRecord::Schema.define(:version => 20130811213029) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(:version => 20130808050657) do
     t.string   "address_province"
     t.string   "address_postal"
     t.string   "host_day"
-    t.string   "host_kind"
     t.text     "description"
   end
 
@@ -74,7 +73,6 @@ ActiveRecord::Schema.define(:version => 20130808050657) do
   add_index "communities", ["coleader_first_name"], :name => "index_communities_on_coleader_first_name"
   add_index "communities", ["coleader_last_name"], :name => "index_communities_on_coleader_last_name"
   add_index "communities", ["host_day"], :name => "index_communities_on_host_day"
-  add_index "communities", ["host_kind"], :name => "index_communities_on_host_kind"
   add_index "communities", ["leader_first_name"], :name => "index_communities_on_leader_first_name"
   add_index "communities", ["leader_last_name"], :name => "index_communities_on_leader_last_name"
 
