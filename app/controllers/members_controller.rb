@@ -12,8 +12,6 @@ class MembersController < ApplicationController
   end
 
   def create
-    ap params[:community_id]
-    ap Community.where(id: params[:community_id]).first
     @community = Community.where(id: params[:community_id]).first
 
     if @community.blank?
@@ -22,13 +20,25 @@ class MembersController < ApplicationController
       return
     end
 
-    @member = Member.new(params[:member])
-    if @member.save
-      flash[:notice] = "Successfully created member."
+    email = params[:member].try(:[], :email)
+    @member = Member.where(email: email).first
+
+    if @member.blank?
+      @member = Member.new(params[:member])
+      if @member.save
+        flash[:notice] = "Successfully created member."
+      end
+    end
+
+    members = @community.members << @member
+    if !members.blank?
+      # Sign up worked
+      flash[:notice] = (flash[:notice] || "") + " Successfully added to community."
       MemberSignUpMailer.welcome_email(@member, @community).deliver
       MemberSignUpMailer.leaders_email(@member, @community).deliver
       redirect_to @member
     else
+      flash[:notice] = (flash[:notice] || "") + " Could not add to community."
       render :action => 'new'
     end
   end

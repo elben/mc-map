@@ -244,9 +244,9 @@ class Community < ActiveRecord::Base
 
   private
 
-  def no_duplicates
+  def no_duplicates(member)
     # ActiveRecord::Rollback is internally captured but not reraised. HABTM
     # doesn't create join if before_add throws exception.
-    raise ActiveRecord::Rollback if self.members.include?(self)
+    raise ActiveRecord::Rollback if member.communities.include?(self)
   end
 end
