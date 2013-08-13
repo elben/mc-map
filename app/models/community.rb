@@ -230,6 +230,10 @@ class Community < ActiveRecord::Base
     json
   end
 
+  def kinds_display
+    self.kind_list.map { |k| MC_KINDS[k.to_sym] }.join(", ")
+  end
+
   def self.kind_tags
     tags = []
     Community::MC_KINDS.each do |k, v|

@@ -1,5 +1,5 @@
 class MemberSignUpMailer < ActionMailer::Base
-  default from: "noreply@austinstone.org"
+  default from: "connections@ministries.austinstone.org"
 
   # Sent to new members
   def welcome_email(member, community)

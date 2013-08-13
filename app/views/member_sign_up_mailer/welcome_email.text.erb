@@ -1,14 +1,21 @@
 Hi <%= @member.name %>,
+Thank you for signing up for a missional community for our 2013 Vision Series at The Austin Stone!
 
-Thanks for signing up. Your missional community's contact information is below.
-
-Host: <%= @community.leader %>
-Campus: <%= @community.campus_name %>
-
-You signed up with the following information:
-
+Here is the information you submitted:
 Name: <%= @member.name %>
-E-mail: <%= @member.email %>
-Phone number: <%= @member.phone_number %>
+Email: <%= @member.email %>
+Phone: <%= @member.phone_number %>
 
-Your missional community leader will contact you soon!
+Here is the information about the missional community you signed up for:
+Missional community host name: <%= @community.leader %>
+Email: <%= @community.email %>
+Phone: <%= @community.phone_number %>
+Address: <%= @community.address %>
+Day of MC Meeting: <%= @community.host_day %>
+Type of MC: <%= @community.kinds_display %>
+
+The missional community host has been notified of your signup and should be in touch in the next 48 hours, welcoming you to their MC. If you don't hear from them, feel free to reach out to the host using their contact info, above.
+
+Best,
+The Austin Stone Connections Directors
+www.austinstone.org
