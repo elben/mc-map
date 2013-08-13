@@ -26,7 +26,7 @@ McMap::Application.configure do
     address:              'smtp.gmail.com',
     port:                 587,
     domain:               'austinstone.org',
-    user_name:            'connections@austinstone.org',
+    user_name:            'connections@ministries.austinstone.org',
     password:             'ooth9tu4eiNo',
     authentication:       'plain',
     enable_starttls_auto: true
