@@ -242,6 +242,19 @@ class Community < ActiveRecord::Base
     tags.compact
   end
 
+  def signup!(member)
+    members = self.members << member
+    unless members.blank?
+      # First time adding member to community. Email leader.
+      MemberSignUpMailer.leaders_email(member, self).deliver
+    end
+
+    # Always email member, even if they sign up with same community multiple
+    # times
+    MemberSignUpMailer.welcome_email(member, self).deliver
+    return members
+  end
+
   private
 
   def no_duplicates(member)

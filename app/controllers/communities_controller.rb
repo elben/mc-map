@@ -57,4 +57,40 @@ class CommunitiesController < ApplicationController
       format.json { render :json => @response }
     end
   end
+
+  def signup_form
+    @member = Member.new
+  end
+
+  def signup
+     @community = Community.where(id: params[:community_id]).first
+
+     if @community.blank?
+       respond_to do |format|
+         format.json { render :json => ApiResponse.fail(community_id: "Must be specified.") }
+       end
+       return
+     end
+
+     email = params[:member].try(:[], :email)
+     @member = Member.where(email: email).first
+
+     if @member.blank?
+       # Member does not previously exist; create.
+       @member = Member.new(params[:member])
+       unless @member.save
+         respond_to do |format|
+           format.json { render :json => ApiResponse.fail(member: @member.errors.as_json) }
+         end
+         return
+       end
+     end
+
+     @community.signup!(@member)
+     respond_to do |format|
+       format.json do
+         render :json => ApiResponse.success(member: @member.id, community: @community.id)
+       end
+     end
+  end
 end
