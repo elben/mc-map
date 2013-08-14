@@ -295,7 +295,9 @@
     },
 
     parse: function (responseJSON) {
-      // parse the server response into a flat model
+      console.log(responseJSON);
+
+      // parse the server response into a simpler model
       var attributes = {
         id: responseJSON.slug,
         campus: responseJSON.campus,
@@ -306,31 +308,84 @@
         coleader_last_name: responseJSON.coleader_last_name,
         host_day: responseJSON.host_day,
         description: responseJSON.description,
-        kinds: responseJSON.kinds,
-        address: responseJSON.address,
+        kinds: responseJSON.kinds.sort(),
 
         // these need special treatment
+        address: null,
         lat: null,
-        lng: null,
+        lng: null
       };
 
       // add the geolocation info if available
-      if (responseJSON.location && responseJSON.location.geometry) {
-        attributes.lat = responseJSON.location.geometry.coordinates[1];
-        attributes.lng = responseJSON.location.geometry.coordinates[0];
+      if (responseJSON.location) {
+        if (responseJSON.location.geometry) {
+          attributes.lat = responseJSON.location.geometry.coordinates[1];
+          attributes.lng = responseJSON.location.geometry.coordinates[0];
+        }
+
+        attributes.address = responseJSON.location.properties.address;
       }
 
       return attributes;
     }
   });
 
-  var Communities = Backbone.Collection.extend({ model: Community });
+  var Communities = Backbone.Collection.extend({
+    baseURL: '/communities',
+    filtersQueryString: '',
+
+    model: Community,
+
+    // dynamically build the URL from the base plus the filters
+    url: function () {
+      return this.baseURL + '?' + this.filtersQueryString;
+    },
+
+    // update our URL to reflect the given filters model
+    updateFilters: function (filters) {
+      this.filtersQueryString = filters.toQueryString();
+    }
+  });
+
+  var CommunitiesView = Backbone.View.extend({
+    // the filters that we watch for changes to pull new communities
+    model: null,
+
+    // the collection of communities to manage
+    collection: null,
+
+    initialize: function () {
+      // update our URL whenever the filters change
+      this.listenTo(this.model, 'change', this.updateCollectionFilters);
+
+      // re-render whenever the collection changes
+      this.listenTo(this.collection, 'change', this.render);
+      this.listenTo(this.collection, 'reset', this.render);
+      this.listenTo(this.collection, 'sync', this.render);
+    },
+
+    // update our communities' URL to match the filters, then update the collection
+    updateCollectionFilters: function () {
+      this.collection.updateFilters(this.model);
+      this.collection.fetch();
+    },
+
+    // set the search results to reflect the searched communities
+    render: function () {
+      // clear out the old communities and add the new ones
+      this.$el.empty();
+      this.collection.each(function (community) {
+        this.$el.append(tmplCommunitySearchResult(community.toJSON()));
+      }, this);
+    }
+
+  });
 
   var AppView = Backbone.View.extend({
 
     filters: new Filters(),
     map: new Map(),
-    communities: new Communities(),
+    communities: null,
 
     mapView: null,
     filtersView: null,
@@ -348,6 +403,16 @@
         el: $('#map'),
         model: this.map
       });
+
+      this.communities = new Communities();
+      this.communitiesView = new CommunitiesView({
+        el: $('#search-results'),
+        model: this.filters,
+        collection: this.communities
+      });
+
+      // load the initial list of communities from the server, forcing a render
+      this.communities.fetch();
     },
 
     render: function () {
