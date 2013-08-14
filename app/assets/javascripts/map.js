@@ -143,11 +143,7 @@
       id: '',
       campus: '',
       lat: null,
-      lng: null,
-      marker: null,
-
-      // whether the point is visible on the map or not
-      visible: false
+      lng: null
     },
 
     // a leaflet LatLng object for our coordinates
@@ -181,8 +177,22 @@
   });
 
   var Points = Backbone.Collection.extend({
-    url: '/communities/points',
-    model: Point
+    // get every feasible point
+    baseURL: '/communities?points_only=true&limit=9999',
+    filtersQueryString: '',
+
+    model: Point,
+
+    // dynamically build the URL from the base plus the filters
+    url: function () {
+      return this.baseURL + '&' + this.filtersQueryString;
+    },
+
+    // update our URL to reflect the given filters model
+    updateFilters: function (filters) {
+      this.filtersQueryString = filters.toQueryString();
+      return this;
+    }
   });
 
   // render community points on the map
@@ -190,57 +200,62 @@
     // the leaflet map points are displayed on
     map: null,
 
+    // all the markers currently displayed on the map
+    markers: [],
+
     initialize: function (options) {
       this.map = options.map;
       this.sidebarPadding = options.sidebar_padding;
 
-      this.listenTo(this.collection, 'change:visible',
-          this.updatePointVisibility);
+      // re-render all the points when changes happen
+      this.listenTo(this.collection, 'change', this.render);
+      this.listenTo(this.collection, 'reset', this.render);
       this.listenTo(this.collection, 'sync', this.render);
+
+      // zoom the map to fit all the points on the first update only
+      this.listenToOnce(this.collection, 'sync', this.zoomMapToFit);
     },
 
-    // make a point visible or hidden on the map, depending on its state
-    updatePointVisibility: function (point) {
-      if (point.get('visible')) {
-        point.get('marker').addTo(this.map);
-      } else {
-        this.map.removeLayer(point.get('marker'));
-      }
-    },
-
-    // get all the initial points and add them to the map, zooming it to fit
-    render: function (zoomMapToFit) {
+    zoomMapToFit: function () {
       // the bounds we'll zoom the map to
-      var bounds = new L.LatLngBounds();
-
-      this.collection.each(function (point) {
-        // only add the point to the map if it has geodata available
-        if (point.hasGeodata()) {
-          // make sure the marker isn't on the map
-          point.set('visible', false);
-
-          // cache a marker on the point if it hasn't been created yet
-          if (!point.get('marker')) {
-            point.set('marker', L.marker(point.get('latlng'), {
-              // the campus values here and in the stylesheets correspond to the
-              // keys in Community::CAMPUSES enum.
-              icon: new CampusIcon({ campus: point.get('campus') }),
-              riseOnHover: true
-            }));
-          }
-
-          // add the marker to the map and the bounds
-          point.set('visible', true);
-          bounds.extend(point.get('latlng'));
-        }
-      }, this);
+      var bounds = L.latLngBounds(_.compact(this.collection.map(function (point) {
+        return point.get('latlng');
+      })));
 
       // zoom the map to include all the markers, leaving room for the sidebar
-      if (zoomMapToFit && bounds.isValid()) {
+      if (bounds.isValid()) {
         this.map.fitBounds(bounds, {
           paddingBottomRight: [this.sidebarPadding, 0]
         });
       }
+
+    },
+
+    // get all the initial points and add them to the map, zooming it to fit
+    render: function (zoomMapToFit) {
+
+      // remove all existing points from the map and empty the list
+      _.each(this.markers, function (marker) {
+        this.map.removeLayer(marker);
+      }, this);
+      this.markers = [];
+
+      this.collection.each(function (point) {
+        // only add the point to the map if it has geodata available
+        if (point.hasGeodata()) {
+          // create a marker and add it to the map
+          var marker = L.marker(point.get('latlng'), {
+            // the campus values here and in the stylesheets correspond to the
+            // keys in Community::CAMPUSES enum.
+            icon: new CampusIcon({ campus: point.get('campus') }),
+            riseOnHover: true
+          });
+          marker.addTo(this.map);
+
+          // store it so we can remove it later
+          this.markers.push(marker);
+        }
+      }, this);
 
       return this;
     }
@@ -387,14 +402,20 @@
 
   var CommunitiesView = Backbone.View.extend({
     // the filters that we watch for changes to pull new communities
-    model: null,
+    filters: null,
+
+    // the collection of points to update with the search results
+    points: null,
 
     // the collection of communities to manage
     collection: null,
 
-    initialize: function () {
+    initialize: function (options) {
+      this.filters = options.filters;
+      this.points = options.points;
+
       // update our URL whenever the filters change
-      this.listenTo(this.model, 'change', this.updateCollectionFilters);
+      this.listenTo(this.filters, 'change', this.updateCollectionFilters);
 
       // re-render whenever the collection changes
       this.listenTo(this.collection, 'change', this.render);
@@ -404,8 +425,10 @@
 
     // update our communities' URL to match the filters, then update the collection
     updateCollectionFilters: function () {
-      this.collection.updateFilters(this.model);
+      this.collection.updateFilters(this.filters);
+      this.points.updateFilters(this.filters);
       this.collection.fetch();
+      this.points.fetch();
       return this;
     },
 
@@ -444,21 +467,22 @@
         model: this.map
       }).render();
 
-      this.communitiesView = new CommunitiesView({
-        el: $('#search-results'),
-        model: this.filters,
-        collection: this.communities
-      });
-
       this.pointsView = new PointsView({
         map: this.mapView.map,
         sidebar_padding: 320,
         collection: this.points
       });
 
-      // load initial data from the server
-      this.communities.fetch();
+      this.communitiesView = new CommunitiesView({
+        el: $('#search-results'),
+        points: this.points,
+        filters: this.filters,
+        collection: this.communities
+      });
+
+      // load initial community data from the server
       this.points.fetch();
+      this.communities.fetch();
     },
 
   });
