@@ -75,6 +75,7 @@
     handleFilterChange: function (e) {
       // update all the filters from the current checkbox states
       this.updateAllFilters();
+      return this;
     },
 
     // update the visible tab when one is clicked
@@ -122,6 +123,8 @@
           this.model.set(filterName, newFilterList);
         }
       }, this);
+
+      return this;
     },
 
     render: function () {
@@ -129,6 +132,8 @@
       if (this.$filterTabs.filter(this.selectedTabClass).length === 0) {
         this.$el.find('.filter-nav-button').first().trigger('click');
       }
+
+      return this;
     }
   });
 
@@ -139,15 +144,107 @@
       campus: '',
       lat: null,
       lng: null,
-      marker: null
+      marker: null,
+
+      // whether the point is visible on the map or not
+      visible: false
+    },
+
+    // a leaflet LatLng object for our coordinates
+    latlng: null,
+
+    initialize: function () {
+      // store our LatLng for use with leaflet, if possible
+      if (this.hasGeodata()) {
+        this.set('latlng', new L.LatLng(this.get('lat'), this.get('lng')));
+      }
+    },
+
+    // simplify the server's response
+    parse: function (responseJSON) {
+      var attributes = {
+        id: responseJSON.properties.slug,
+        campus: responseJSON.properties.campus
+      };
+
+      if (responseJSON.geometry) {
+        attributes.lat = responseJSON.geometry.coordinates[1];
+        attributes.lng = responseJSON.geometry.coordinates[0];
+      }
+
+      return attributes;
     },
 
     hasGeodata: function () {
-      return (this.get('lat') !== null && this.get('lng') !== null);
+      return !!(this.get('lat') && this.get('lng'));
     }
   });
 
-  var Points = Backbone.Collection.extend({ model: Point });
+  var Points = Backbone.Collection.extend({
+    url: '/communities/points',
+    model: Point
+  });
+
+  // render community points on the map
+  var PointsView = Backbone.View.extend({
+    // the leaflet map points are displayed on
+    map: null,
+
+    initialize: function (options) {
+      this.map = options.map;
+      this.sidebarPadding = options.sidebar_padding;
+
+      this.listenTo(this.collection, 'change:visible',
+          this.updatePointVisibility);
+      this.listenTo(this.collection, 'sync', this.render);
+    },
+
+    // make a point visible or hidden on the map, depending on its state
+    updatePointVisibility: function (point) {
+      if (point.get('visible')) {
+        point.get('marker').addTo(this.map);
+      } else {
+        this.map.removeLayer(point.get('marker'));
+      }
+    },
+
+    // get all the initial points and add them to the map, zooming it to fit
+    render: function (zoomMapToFit) {
+      // the bounds we'll zoom the map to
+      var bounds = new L.LatLngBounds();
+
+      this.collection.each(function (point) {
+        // only add the point to the map if it has geodata available
+        if (point.hasGeodata()) {
+          // make sure the marker isn't on the map
+          point.set('visible', false);
+
+          // cache a marker on the point if it hasn't been created yet
+          if (!point.get('marker')) {
+            point.set('marker', L.marker(point.get('latlng'), {
+              // the campus values here and in the stylesheets correspond to the
+              // keys in Community::CAMPUSES enum.
+              icon: new CampusIcon({ campus: point.get('campus') }),
+              riseOnHover: true
+            }));
+          }
+
+          // add the marker to the map and the bounds
+          point.set('visible', true);
+          bounds.extend(point.get('latlng'));
+        }
+      }, this);
+
+      // zoom the map to include all the markers, leaving room for the sidebar
+      if (zoomMapToFit && bounds.isValid()) {
+        this.map.fitBounds(bounds, {
+          paddingBottomRight: [this.sidebarPadding, 0]
+        });
+      }
+
+      return this;
+    }
+  });
 
   var Map = Backbone.Model.extend({
     defaults: {
@@ -159,85 +256,26 @@
 
   var MapView = Backbone.View.extend({
     // the leaflet map created on render
-    leafletMap: null,
-
-    // all points currently on the map, keyed to their slug
-    points: new Points(),
+    map: null,
 
     initialize: function (options) {
       this.listenTo(this.model, 'change', this.updateView);
     },
 
-    // get all the initial points and add them to the map, zooming it to fit
-    renderInitialPoints: function () {
-      // do nothing if we don't have a map to work with
-      if (!this.leafletMap) { return this; }
-
-      // reset the points collection first
-      this.points.reset();
-
-      // pull down the point data
-      $.getJSON('communities/points', _.bind(function (points) {
-        // the bounds we'll zoom the map to
-        var bounds = new L.LatLngBounds();
-
-        _.each(points, function (pointData) {
-          // store the point by its slug in our map
-          var point = new Point({
-            id: pointData.properties.slug,
-            campus: pointData.properties.campus
-          });
-
-          // set the geo data on the point model if possible
-          if (pointData.geometry) {
-            point.set({
-              lng: pointData.geometry.coordinates[0],
-              lat: pointData.geometry.coordinates[1]
-            });
-          }
-
-          // store the point away
-          this.points.add(point);
-
-          // only add the point to the map if it has geodata available
-          if (point.hasGeodata()) {
-            // add a marker to the map and add its point to the bounds
-            var latlng = new L.LatLng(point.get('lat'), point.get('lng'));
-
-            var marker = L.marker(latlng, {
-              // the campus values here and in the stylesheets correspond to the
-              // keys in Community::CAMPUSES enum.
-              icon: new CampusIcon({ campus: point.get('campus') }),
-              riseOnHover: true
-            });
-
-            // store the marker reference on the point
-            point.set('marker', marker);
-
-            // add the marker to the map and the bounds
-            marker.addTo(this.leafletMap);
-            bounds.extend(latlng);
-          }
-        }, this);
-
-        // zoom the map to include all the markers, leaving room for the controls
-        this.leafletMap.fitBounds(bounds, {
-          paddingBottomRight: [320, 0]
-        });
-      }, this));
-    },
-
     render: function () {
       // only render once, since we don't want to re-create the map every time
-      if (!this.leafletMap) {
+      if (!this.map) {
         var center = this.model.get('center');
         var latlng = new L.LatLng(center[1], center[0]);
 
         // create the map, rendering it into the DOM
-        this.leafletMap = L.map(this.el, {
+        this.map = L.map(this.el, {
           // center on Austin until points are loaded
           center: latlng,
           zoom: this.model.get('zoom'),
+
+          // the Esri map tiles don't go down further than this
+          maxZoom: 17,
 
           // TODO: put the Esri attribution SOMEWHERE
           attributionControl: false
@@ -248,23 +286,24 @@
           attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
           detectRetina: true,
           reuseTiles: true
-        }).addTo(this.leafletMap);
-
-        // add all the initial points to the map and cache them locally
-        this.renderInitialPoints();
+        }).addTo(this.map);
       }
+
+      return this;
     },
 
     updateView: function () {
-      if (this.leafletMap) {
+      if (this.map) {
         // animate a pan to the new position
         var center = this.model.get('center');
         var latlng = new L.LatLng(center[1], center[1]);
 
-        this.leafletMap.setView(latlng, this.model.get('zoom'), {
+        this.map.setView(latlng, this.model.get('zoom'), {
           animate: true
         });
       }
+
+      return this;
     }
   });
 
@@ -295,8 +334,6 @@
     },
 
     parse: function (responseJSON) {
-      console.log(responseJSON);
-
       // parse the server response into a simpler model
       var attributes = {
         id: responseJSON.slug,
@@ -344,6 +381,7 @@
     // update our URL to reflect the given filters model
     updateFilters: function (filters) {
       this.filtersQueryString = filters.toQueryString();
+      return this;
     }
   });
 
@@ -368,6 +406,7 @@
     updateCollectionFilters: function () {
       this.collection.updateFilters(this.model);
       this.collection.fetch();
+      return this;
     },
 
     // set the search results to reflect the searched communities
@@ -377,6 +416,8 @@
       this.collection.each(function (community) {
         this.$el.append(tmplCommunitySearchResult(community.toJSON()));
       }, this);
+
+      return this;
     }
 
   });
@@ -385,7 +426,8 @@
 
     filters: new Filters(),
     map: new Map(),
-    communities: null,
+    points: new Points(),
+    communities: new Communities(),
 
     mapView: null,
     filtersView: null,
@@ -394,37 +436,34 @@
       this.filtersView = new FiltersView({
         el: $('#filters'),
         model: this.filters
-      });
+      }).updateAllFilters().render();
 
-      // ensure the model has its filters updated to match the DOM
-      this.filtersView.updateAllFilters();
-
+      // create the map so we can give it to our points view
       this.mapView = new MapView({
         el: $('#map'),
         model: this.map
-      });
+      }).render();
 
-      this.communities = new Communities();
       this.communitiesView = new CommunitiesView({
         el: $('#search-results'),
         model: this.filters,
         collection: this.communities
       });
 
-      // load the initial list of communities from the server, forcing a render
+      this.pointsView = new PointsView({
+        map: this.mapView.map,
+        sidebar_padding: 320,
+        collection: this.points
+      });
+
+      // load initial data from the server
       this.communities.fetch();
+      this.points.fetch();
     },
-
-    render: function () {
-      this.filtersView.render();
-      this.mapView.render();
-
-      return this;
-    }
 
   });
 
   // start the app!
-  var app = new AppView().render();
+  var app = new AppView();
 
 }());
