@@ -1,11 +1,11 @@
 <script type="text/x-mustache" id="template-community-search-result">
-  <li data-slug="{{slug}}" data-campus="{{campus}}" class="community-search-result">
+  <li data-slug="{{id}}" data-campus="{{campus}}" class="community-search-result">
     <header>
-    <span>{{leader_name}}</span>{{#coleader_name}}, <span>{{coleader_name}}</span>{{/coleader_name}}
+      <span>{{leader_first_name}} {{leader_last_name}}</span>{{#coleader_first_name}}, <span>{{coleader_first_name}} {{coleader_last_name}}</span>{{/coleader_first_name}}
     </header>
 
     <div class="community-search-result-short-info">
-      {{#kinds}}{{.}},{{/kinds}} meets {{day}}s
+      {{#kinds}}{{.}}, {{/kinds}}meets <span class="community-host-day">{{host_day}}</span>s
     </div>
 
     <div class="community-search-result-long-info">

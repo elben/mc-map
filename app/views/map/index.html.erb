@@ -10,9 +10,9 @@
   <%# a tabbed pane of filters to narrow the search results with %>
   <div id="filters">
     <nav>
-      <a href="#" data-tab-id="filter-tab-campus">Campus</a>
-      <a href="#" data-tab-id="filter-tab-day">Day</a>
-      <a href="#" data-tab-id="filter-tab-kind">Kind</a>
+      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-campus">Campus</a>
+      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-day">Day</a>
+      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-kind">Kind</a>
     </nav>
 
     <div id="filter-tab-campus" class="filter-tab">
@@ -21,6 +21,7 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: campus,
             name: 'campus',
+            filter_name: 'campus',
             display_text: display_text,
             checked: true,
           } %>
@@ -34,6 +35,7 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: day,
             name: 'day',
+            filter_name: 'host_day',
             display_text: day.titleize,
             checked: true
           } %>
@@ -47,6 +49,7 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: mc_kind,
             name: 'kind',
+            filter_name: 'kinds',
             display_text: display_text,
             checked: true,
           } %>
