@@ -48,20 +48,6 @@
       kind: [],
       day: [],
       campus: []
-    },
-
-    // return whether the given community matches the current filters
-    communitySatisfies: function (community) {
-      var day = community.get('host_day');
-      var kinds = community.get('kinds');
-      var campus = community.get('campus');
-
-      var hasAtLeastOneKind = _.some(kinds,
-        _.partial(_.contains, this.get('kind')));
-      var matchesDay = _.indexOf(this.get('day'), day, true) >= 0;
-      var matchesCampus = _.indexOf(this.get('campus'), campus, true) >= 0;
-
-      return hasAtLeastOneKind && matchesDay && matchesCampus;
     }
   });
 
@@ -229,9 +215,9 @@
 
         // add the Esri map tiles layer (free!)
         L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
-          detectRetina: true,
-          reuseTiles: true
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+          // detectRetina: true,
+          // reuseTiles: true
         }).addTo(this.map);
       }
 
@@ -367,7 +353,77 @@
   var Communities = Backbone.Collection.extend({
     // load all the communities!
     url: '/communities?limit=99999',
-    model: Community
+    model: Community,
+
+    index: {},
+
+    initialize: function () {
+      this.on('sync', this.buildIndex);
+      this.on('change', this.buildIndex);
+      this.on('reset', this.buildIndex);
+    },
+
+    // build a search index for all the communities
+    buildIndex: function () {
+      this.index = {};
+
+      // index all the communtiy values to their id, for lookup by value
+      this.each(function (community) {
+        var id = community.get('id');
+        var kinds = community.get('kinds');
+        var day = community.get('host_day');
+        var campus = community.get('campus');
+
+        this.index[day] = this.index[day] || {};
+        this.index[day][id] = community;
+
+        this.index[campus] = this.index[campus] || {};
+        this.index[campus][id] = community;
+
+        _.each(kinds, function (kind) {
+          this.index[kind] = this.index[kind] || {};
+          this.index[kind][id] = community;
+        }, this);
+
+      }, this);
+
+      return this;
+    },
+
+    // query the index and return a list of community ids that satisfy the query
+    query: function (campuses, days, kinds) {
+      var campusIds = {};
+      var dayIds = {};
+      var kindIds = {};
+
+      _.each(campuses, function (campus) {
+        _.extend(campusIds, this.index[campus]);
+      }, this);
+
+      _.each(days, function (day) {
+        _.extend(dayIds, this.index[day]);
+      }, this);
+
+      _.each(kinds, function (kind) {
+        _.extend(kindIds, this.index[kind]);
+      }, this);
+
+      var keyMap = {};
+      _.extend(keyMap, campusIds);
+      _.extend(keyMap, dayIds);
+      _.extend(keyMap, kindIds);
+
+      var ids = {};
+      _.each(keyMap, function (v, id) {
+        if (campusIds[id] && dayIds[id] && kindIds[id]) {
+          // get community from a map, they're all the same
+          ids[id] = campusIds[id];
+        }
+      });
+
+      // return the matching ids as a set
+      return _.values(ids);
+    }
   });
 
   var CommunitiesView = Backbone.View.extend({
@@ -398,11 +454,17 @@
       // clear out the old communities and add the new ones
       this.$el.empty();
 
-      var filteredResults = this.collection
-          .filter(_.bind(this.filters.communitySatisfies, this.filters));
+      var filteredResults = this.collection.query(
+        this.filters.get('campus'),
+        this.filters.get('day'),
+        this.filters.get('kind')
+      );
+
+      // TODO: DOM modification is slow -- OPTIMIZE!!!
 
       _.each(filteredResults, function (community) {
-        this.$el.append(tmplCommunitySearchResult(community.toJSON()));
+        var $result = $(tmplCommunitySearchResult(community.toJSON()));
+        this.$el.append($result);
       }, this);
 
       this.mapView.renderMarkers(_(filteredResults));
