@@ -63,34 +63,43 @@ class CommunitiesController < ApplicationController
   end
 
   def signup
-     @community = Community.where(id: params[:community_id]).first
+    if session.blank?
+      # Either did not request with CSRF token or used an invalid CSRF token.
+      # In these cases, Rails server resets (blanks out) session.
+      respond_to do |format|
+        format.json { render :json => ApiResponse.error("Bad request.") }
+      end
+      return
+    end
 
-     if @community.blank?
-       respond_to do |format|
-         format.json { render :json => ApiResponse.fail(community_id: "Must be specified.") }
-       end
-       return
-     end
+    @community = Community.where(id: params[:community_id]).first
 
-     email = params[:member].try(:[], :email)
-     @member = Member.where(email: email).first
+    if @community.blank?
+      respond_to do |format|
+        format.json { render :json => ApiResponse.fail(community_id: "Must be specified.") }
+      end
+      return
+    end
 
-     if @member.blank?
-       # Member does not previously exist; create.
-       @member = Member.new(params[:member])
-       unless @member.save
-         respond_to do |format|
-           format.json { render :json => ApiResponse.fail(member: @member.errors.as_json) }
-         end
-         return
-       end
-     end
+    email = params[:member].try(:[], :email)
+    @member = Member.where(email: email).first
 
-     @community.signup!(@member)
-     respond_to do |format|
-       format.json do
-         render :json => ApiResponse.success(member: @member.id, community: @community.id)
-       end
-     end
+    if @member.blank?
+      # Member does not previously exist; create.
+      @member = Member.new(params[:member])
+      unless @member.save
+        respond_to do |format|
+          format.json { render :json => ApiResponse.fail(member: @member.errors.as_json) }
+        end
+        return
+      end
+    end
+
+    @community.signup!(@member)
+    respond_to do |format|
+      format.json do
+        render :json => ApiResponse.success(member: @member.id, community: @community.id)
+      end
+    end
   end
 end
