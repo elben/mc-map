@@ -1,5 +1,5 @@
 McMap::Application.routes.draw do
-  root :to => 'home#show'
+  root :to => 'map#show'
 
   resources :members do
   end
