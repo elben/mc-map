@@ -1,5 +1,6 @@
 //= require jquery
 //= require leaflet
+//= require Control.Loading
 //= require mustache
 //= require underscore
 //= require backbone
@@ -44,17 +45,23 @@
   // checkbox filters
   var Filters = Backbone.Model.extend({
     defaults: {
-      kinds: [],
-      host_day: [],
+      kind: [],
+      day: [],
       campus: []
     },
 
-    // build the query string for the current filter selections
-    toQueryString: function () {
-      var enc = encodeURIComponent;
-      return _.map(this.attributes, function (filterList, filterName) {
-        return enc(filterName) + '=' + _.map(filterList, enc).join(',');
-      }).join('&');
+    // return whether the given community matches the current filters
+    communitySatisfies: function (community) {
+      var day = community.get('host_day');
+      var kinds = community.get('kinds');
+      var campus = community.get('campus');
+
+      var hasAtLeastOneKind = _.some(kinds,
+        _.partial(_.contains, this.get('kind')));
+      var matchesDay = _.indexOf(this.get('day'), day, true) >= 0;
+      var matchesCampus = _.indexOf(this.get('campus'), campus, true) >= 0;
+
+      return hasAtLeastOneKind && matchesDay && matchesCampus;
     }
   });
 
@@ -137,130 +144,6 @@
     }
   });
 
-  // a single point on the map
-  var Point = Backbone.Model.extend({
-    defaults: {
-      id: '',
-      campus: '',
-      lat: null,
-      lng: null
-    },
-
-    // a leaflet LatLng object for our coordinates
-    latlng: null,
-
-    initialize: function () {
-      // store our LatLng for use with leaflet, if possible
-      if (this.hasGeodata()) {
-        this.set('latlng', new L.LatLng(this.get('lat'), this.get('lng')));
-      }
-    },
-
-    // simplify the server's response
-    parse: function (responseJSON) {
-      var attributes = {
-        id: responseJSON.properties.slug,
-        campus: responseJSON.properties.campus
-      };
-
-      if (responseJSON.geometry) {
-        attributes.lat = responseJSON.geometry.coordinates[1];
-        attributes.lng = responseJSON.geometry.coordinates[0];
-      }
-
-      return attributes;
-    },
-
-    hasGeodata: function () {
-      return !!(this.get('lat') && this.get('lng'));
-    }
-  });
-
-  var Points = Backbone.Collection.extend({
-    // get every feasible point
-    baseURL: '/communities?points_only=true&limit=9999',
-    filtersQueryString: '',
-
-    model: Point,
-
-    // dynamically build the URL from the base plus the filters
-    url: function () {
-      return this.baseURL + '&' + this.filtersQueryString;
-    },
-
-    // update our URL to reflect the given filters model
-    updateFilters: function (filters) {
-      this.filtersQueryString = filters.toQueryString();
-      return this;
-    }
-  });
-
-  // render community points on the map
-  var PointsView = Backbone.View.extend({
-    // the leaflet map points are displayed on
-    map: null,
-
-    // all the markers currently displayed on the map
-    markers: [],
-
-    initialize: function (options) {
-      this.map = options.map;
-      this.sidebarPadding = options.sidebar_padding;
-
-      // re-render all the points when changes happen
-      this.listenTo(this.collection, 'change', this.render);
-      this.listenTo(this.collection, 'reset', this.render);
-      this.listenTo(this.collection, 'sync', this.render);
-
-      // zoom the map to fit all the points on the first update only
-      this.listenToOnce(this.collection, 'sync', this.zoomMapToFit);
-    },
-
-    zoomMapToFit: function () {
-      // the bounds we'll zoom the map to
-      var bounds = L.latLngBounds(_.compact(this.collection.map(function (point) {
-        return point.get('latlng');
-      })));
-
-      // zoom the map to include all the markers, leaving room for the sidebar
-      if (bounds.isValid()) {
-        this.map.fitBounds(bounds, {
-          paddingBottomRight: [this.sidebarPadding, 0]
-        });
-      }
-
-    },
-
-    // get all the initial points and add them to the map, zooming it to fit
-    render: function (zoomMapToFit) {
-
-      // remove all existing points from the map and empty the list
-      _.each(this.markers, function (marker) {
-        this.map.removeLayer(marker);
-      }, this);
-      this.markers = [];
-
-      this.collection.each(function (point) {
-        // only add the point to the map if it has geodata available
-        if (point.hasGeodata()) {
-          // create a marker and add it to the map
-          var marker = L.marker(point.get('latlng'), {
-            // the campus values here and in the stylesheets correspond to the
-            // keys in Community::CAMPUSES enum.
-            icon: new CampusIcon({ campus: point.get('campus') }),
-            riseOnHover: true
-          });
-          marker.addTo(this.map);
-
-          // store it so we can remove it later
-          this.markers.push(marker);
-        }
-      }, this);
-
-      return this;
-    }
-  });
-
   var Map = Backbone.Model.extend({
     defaults: {
       // the center of the map, longitude/latitude (defaults to Austin, TX)
@@ -273,8 +156,54 @@
     // the leaflet map created on render
     map: null,
 
+    communities: null,
+
+    // a list of all markers currently on the map
+    markers: [],
+
     initialize: function (options) {
+      this.communities = options.communities;
+      this.sidebarPadding = options.sidebar_padding;
+
       this.listenTo(this.model, 'change', this.updateView);
+
+      this.listenTo(this.communities, 'change',
+          _.partial(this.renderMarkers, this.communities));
+      this.listenTo(this.communities, 'reset',
+          _.partial(this.renderMarkers, this.communities));
+      this.listenTo(this.communities, 'sync',
+          _.partial(this.renderMarkers, this.communities));
+
+      // toggle a loading control while the communities list is syncing
+      this.listenTo(this.communities, 'request', this.showLoadingControl);
+      this.listenTo(this.communities, 'sync', this.hideLoadingControl);
+
+      // zoom the map to fit all the communities on the first update only
+      this.listenToOnce(this.communities, 'sync', this.zoomToFitCommunities);
+    },
+
+    showLoadingControl: function () {
+      this.map.fireEvent('dataloading');
+    },
+
+    hideLoadingControl: function () {
+      this.map.fireEvent('dataload');
+    },
+
+    zoomToFitCommunities: function () {
+      // the bounds we'll zoom the map to
+      var bounds = L.latLngBounds(_.compact(this.communities.map(function (c) {
+        return c.get('latlng');
+      })));
+
+      // zoom the map to include all the markers, leaving room for the sidebar
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, {
+          paddingBottomRight: [this.sidebarPadding, 0]
+        });
+      }
+
+      return this;
     },
 
     render: function () {
@@ -285,9 +214,11 @@
 
         // create the map, rendering it into the DOM
         this.map = L.map(this.el, {
-          // center on Austin until points are loaded
+          // center on Austin until communities are loaded
           center: latlng,
           zoom: this.model.get('zoom'),
+
+          loadingControl: true,
 
           // the Esri map tiles don't go down further than this
           maxZoom: 17,
@@ -307,11 +238,39 @@
       return this;
     },
 
+    // render all the markers from the communities list
+    renderMarkers: function (communities) {
+      // remove all existing markers from the map and empty the list
+      _.each(this.markers, function (marker) {
+        this.map.removeLayer(marker);
+      }, this);
+      this.markers = [];
+
+      communities.each(function (community) {
+        // only add the community to the map if it has geodata available
+        if (community.hasGeodata()) {
+          // create a marker and add it to the map
+          var marker = L.marker(community.get('latlng'), {
+            // the campus values here and in the stylesheets correspond to the
+            // keys in Community::CAMPUSES enum.
+            icon: new CampusIcon({ campus: community.get('campus') }),
+            riseOnHover: true
+          });
+          marker.addTo(this.map);
+
+          // store it so we can remove it later
+          this.markers.push(marker);
+        }
+      }, this);
+
+      return this;
+    },
+
     updateView: function () {
       if (this.map) {
         // animate a pan to the new position
         var center = this.model.get('center');
-        var latlng = new L.LatLng(center[1], center[1]);
+        var latlng = new L.LatLng(center[1], center[0]);
 
         this.map.setView(latlng, this.model.get('zoom'), {
           animate: true
@@ -348,6 +307,24 @@
       }
     },
 
+    initialize: function () {
+      // store our LatLng for use with leaflet, if possible
+      if (this.hasGeodata()) {
+        this.set('latlng', new L.LatLng(this.get('lat'), this.get('lng')));
+      } else {
+        this.set('latlng', null);
+      }
+
+      // cache a textual field that contains all our filterable information, so
+      // we can search it via regex (faster than using functions).
+      var parts = this.get('kinds').concat([
+        this.get('campus'),
+        this.get('host_day')
+      ]);
+
+      this.set('filterString', parts.join(' '));
+    },
+
     parse: function (responseJSON) {
       // parse the server response into a simpler model
       var attributes = {
@@ -379,43 +356,36 @@
       }
 
       return attributes;
+    },
+
+    hasGeodata: function () {
+      return (this.get('lat') !== null && this.get('lng') !== null );
     }
+
   });
 
   var Communities = Backbone.Collection.extend({
-    baseURL: '/communities',
-    filtersQueryString: '',
-
-    model: Community,
-
-    // dynamically build the URL from the base plus the filters
-    url: function () {
-      return this.baseURL + '?' + this.filtersQueryString;
-    },
-
-    // update our URL to reflect the given filters model
-    updateFilters: function (filters) {
-      this.filtersQueryString = filters.toQueryString();
-      return this;
-    }
+    // load all the communities!
+    url: '/communities?limit=99999',
+    model: Community
   });
 
   var CommunitiesView = Backbone.View.extend({
     // the filters that we watch for changes to pull new communities
     filters: null,
 
-    // the collection of points to update with the search results
-    points: null,
+    // a reference to the map view, so we can tell it to re-render markers
+    mapView: null,
 
     // the collection of communities to manage
     collection: null,
 
     initialize: function (options) {
       this.filters = options.filters;
-      this.points = options.points;
+      this.mapView = options.mapView;
 
       // update our URL whenever the filters change
-      this.listenTo(this.filters, 'change', this.updateCollectionFilters);
+      this.listenTo(this.filters, 'change', this.render);
 
       // re-render whenever the collection changes
       this.listenTo(this.collection, 'change', this.render);
@@ -423,22 +393,19 @@
       this.listenTo(this.collection, 'sync', this.render);
     },
 
-    // update our communities' URL to match the filters, then update the collection
-    updateCollectionFilters: function () {
-      this.collection.updateFilters(this.filters);
-      this.points.updateFilters(this.filters);
-      this.collection.fetch();
-      this.points.fetch();
-      return this;
-    },
-
     // set the search results to reflect the searched communities
     render: function () {
       // clear out the old communities and add the new ones
       this.$el.empty();
-      this.collection.each(function (community) {
+
+      var filteredResults = this.collection
+          .filter(_.bind(this.filters.communitySatisfies, this.filters));
+
+      _.each(filteredResults, function (community) {
         this.$el.append(tmplCommunitySearchResult(community.toJSON()));
       }, this);
+
+      this.mapView.renderMarkers(_(filteredResults));
 
       return this;
     }
@@ -449,7 +416,6 @@
 
     filters: new Filters(),
     map: new Map(),
-    points: new Points(),
     communities: new Communities(),
 
     mapView: null,
@@ -461,29 +427,24 @@
         model: this.filters
       }).updateAllFilters().render();
 
-      // create the map so we can give it to our points view
       this.mapView = new MapView({
         el: $('#map'),
-        model: this.map
+        model: this.map,
+        communities: this.communities,
+        sidebar_padding: 320
       }).render();
-
-      this.pointsView = new PointsView({
-        map: this.mapView.map,
-        sidebar_padding: 320,
-        collection: this.points
-      });
 
       this.communitiesView = new CommunitiesView({
         el: $('#search-results'),
-        points: this.points,
+        mapView: this.mapView,
         filters: this.filters,
         collection: this.communities
       });
 
-      // load initial community data from the server
-      this.points.fetch();
+      // load initial community data from the server, which updates the map
+      // search results.
       this.communities.fetch();
-    },
+    }
 
   });
 

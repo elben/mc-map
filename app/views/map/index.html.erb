@@ -21,7 +21,6 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: campus,
             name: 'campus',
-            filter_name: 'campus',
             display_text: display_text,
             checked: true,
           } %>
@@ -35,7 +34,6 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: day,
             name: 'day',
-            filter_name: 'host_day',
             display_text: day.titleize,
             checked: true
           } %>
@@ -49,7 +47,6 @@
           <%= render partial: 'checkbox_filter', locals: {
             value: mc_kind,
             name: 'kind',
-            filter_name: 'kinds',
             display_text: display_text,
             checked: true,
           } %>
@@ -59,6 +56,5 @@
   </div>
 
   <%# all search results for the displayed items %>
-  <ul id="search-results">
-  </ul>
+  <ul id="search-results"></ul>
 </div>
