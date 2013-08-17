@@ -143,8 +143,8 @@
 
     communities: null,
 
-    // a list of all markers currently on the map
-    markers: [],
+    // a cache of all markers currently on the map
+    markers: {},
 
     initialize: function (options) {
       this.communities = options.communities;
@@ -152,6 +152,7 @@
 
       this.listenTo(this.model, 'change', this.updateView);
 
+      // re-render markers whenever the communities change
       this.listenTo(this.communities, 'change',
           _.partial(this.renderMarkers, this.communities));
       this.listenTo(this.communities, 'reset',
@@ -225,6 +226,9 @@
 
     // render all the markers from the communities list
     renderMarkers: function (communities) {
+      // show a loading control while we do all this work
+      this.showLoadingControl();
+
       var presentMarkers = {};
       communities.each(function (community) {
         // only add the community to the map if it has geodata available
@@ -258,6 +262,8 @@
 
       // update the cache to include only the present markers
       this.markers = presentMarkers;
+
+      this.hideLoadingControl();
 
       return this;
     },
