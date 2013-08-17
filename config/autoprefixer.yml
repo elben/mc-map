@@ -1,0 +1,6 @@
+browsers:
+  - "last 2 versions"
+  - "ie >= 8"
+  - "ios >= 4"
+  - "android >= 2"
+  - "bb >= 10"

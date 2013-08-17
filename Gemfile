@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '1.9.3'
 
 gem "awesome_print"
+gem "autoprefixer-rails"
 gem "faker"
 gem "httparty"
 gem "jquery-ui-rails"

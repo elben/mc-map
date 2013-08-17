@@ -2,8 +2,6 @@
 //= require Control.Loading
 //= require campus-marker
 
-@import 'css3-mixins'
-
 $font-normal: 'rooney-web', 'Georgia', 'Times', serif
 $font-fancy: 'franklin-gothic-urw-cond', 'Arial Narrow', Arial, Helvetica, Verdana, sans-serif
 
@@ -36,7 +34,7 @@ $color-campus-west: #728224
     clear: both
 
 *
-  @include box-sizing(border-box)
+  box-sizing: border-box
 
 body
   font-family: $font-normal
@@ -102,7 +100,7 @@ h2
     padding-top: 0.2em
     padding-bottom: 0.2em
 
-
+// give campus filter checkboxes colors to match their markers
 $size-campus-label-border: 10px
 .checkbox-filter-campus-dtam label
   border-left: $size-campus-label-border solid $color-campus-dtam

@@ -1,5 +1,3 @@
-@import 'css3-mixins'
-
 $num-markers: 10
 $size-marker-margin: 1px
 $size-marker-width: 35px
@@ -26,14 +24,15 @@ $size-shadow-height: 16px
   background: image-url('markers.png') no-repeat 0 0
   background-size: (($size-marker-width + $size-marker-margin) * $num-markers) $size-marker-height
 
-  @include transition(all, 150ms)
+  transition-property: opacity, margin-top
+  transition-duration: 150ms
 
-  @include opacity(0.85)
+  opacity: 0.85
 
   &:hover
     background-image: image-url('markers-hover.png')
     margin-top: -($size-marker-height + ($size-marker-height / 8))
-    @include opacity(1.0)
+    opacity: 1.0
 
   // calculate offsets for the icons
   &.campus-marker-dtam
