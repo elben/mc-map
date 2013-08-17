@@ -92,6 +92,7 @@ h2
 
   label
     margin-left: 0.1em
+    padding-left: 0.3em
     cursor: pointer
 
   &:hover
@@ -100,6 +101,20 @@ h2
   &~ .checkbox-filter
     padding-top: 0.2em
     padding-bottom: 0.2em
+
+$size-campus-label-border: 10px
+.checkbox-filter-campus-dtam label
+  border-left: $size-campus-label-border solid $color-campus-dtam
+.checkbox-filter-campus-dtpm label
+  border-left: $size-campus-label-border solid $color-campus-dtpm
+.checkbox-filter-campus-stjam label
+  border-left: $size-campus-label-border solid $color-campus-stjam
+.checkbox-filter-campus-stjpm label
+  border-left: $size-campus-label-border solid $color-campus-stjpm
+.checkbox-filter-campus-south label
+  border-left: $size-campus-label-border solid $color-campus-south
+.checkbox-filter-campus-west label
+  border-left: $size-campus-label-border solid $color-campus-west
 
 #filters
   position: absolute

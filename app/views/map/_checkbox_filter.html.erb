@@ -1,4 +1,4 @@
-<div class="checkbox-filter checkbox-filter-<%= name %>">
+<div class="checkbox-filter checkbox-filter-<%= name %> checkbox-filter-<%= name %>-<%= value %>">
   <% checkbox_id = "checkbox-#{name}-#{value}" %>
   <input type="checkbox" id="<%= checkbox_id %>" data-filter-name="<%= name %>"
       value="<%= value %>"<% if local_assigns.fetch :checked, false %> checked<% end %> />
