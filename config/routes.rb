@@ -6,7 +6,7 @@ McMap::Application.routes.draw do
 
   resources :communities do
     collection do
-      get "points"
+      get "kinds"
     end
   end
 

@@ -290,7 +290,7 @@
       coleader_last_name: null,
       host_day: '',
       description: null,
-      kinds: [],
+      kinds: {},
 
       lat: null,
       lng: null,
@@ -325,7 +325,7 @@
         coleader_last_name: responseJSON.coleader_last_name,
         host_day: responseJSON.host_day,
         description: responseJSON.description,
-        kinds: responseJSON.kinds.sort(),
+        kinds: responseJSON.kinds,
 
         // these need special treatment
         address: null,
@@ -372,7 +372,7 @@
       // index all the communtiy values to their id, for lookup by value
       this.each(function (community) {
         var id = community.get('id');
-        var kinds = community.get('kinds');
+        var kinds = _.keys(community.get('kinds'));
         var day = community.get('host_day');
         var campus = community.get('campus');
 
@@ -462,17 +462,18 @@
 
     // render a community and return the rendered jQuery object
     renderCommunity: function (community) {
-      return $(this.template(community.toJSON()));
+      var kinds = _.values(community.get('kinds'));
+      var json = community.toJSON();
+      json.kinds = kinds;
+      return $(this.template(json));
     },
 
     // score a community by the number of filters it matches
     scoreCommunity: function (community) {
       var kinds = community.get('kinds');
-      var matchedKinds = _.filter(this.filters.get('kind'), function (k) {
-        return _.contains(kinds, k);
-      });
-
-      return matchedKinds.length;
+      return _.filter(this.filters.get('kind'), function (k) {
+        return _.has(kinds, k);
+      }).length;
     },
 
     // set the search results to reflect the searched communities

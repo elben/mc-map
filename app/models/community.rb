@@ -123,7 +123,7 @@ class Community < ActiveRecord::Base
       community.coleader_last_name = Faker::Name.last_name
     end
 
-    # Tag with 1 to 3 kinds
+    # tag with 1 to 3 kinds
     community.kind_list = Community::MC_KINDS.keys.sample(1 + rand(3)).join(",")
 
     now = Time.now
@@ -202,7 +202,12 @@ class Community < ActiveRecord::Base
       'description',
     )
 
-    json['kinds'] = self.kind_list
+    # build a map of our kinds instead of just a list
+    kinds = {}
+    self.kind_list.each do |kind|
+      kinds[kind] = Community::MC_KINDS[kind.to_sym]
+    end
+    json['kinds'] = kinds
 
     # GeoJSON data
     json[:location] = {
