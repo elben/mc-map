@@ -445,7 +445,7 @@
     },
 
     // the most recent filtered results
-    lastFilteredResults: [],
+    filteredResults: [],
 
     initialize: function (options) {
       this.filters = options.filters;
@@ -465,23 +465,35 @@
       return $(this.template(community.toJSON()));
     },
 
+    // score a community by the number of filters it matches
+    scoreCommunity: function (community) {
+      var kinds = community.get('kinds');
+      var matchedKinds = _.filter(this.filters.get('kind'), function (k) {
+        return _.contains(kinds, k);
+      });
+
+      return matchedKinds.length;
+    },
+
     // set the search results to reflect the searched communities
     render: function () {
       // clear out the old communities and add the new ones
       this.$el.empty();
 
-      var filteredResults = this.collection.query(
+      // get and store the filtered results
+      this.filteredResults = this.collection.query(
         this.filters.get('campus'),
         this.filters.get('day'),
         this.filters.get('kind')
       );
 
-      // store these results for later rendering
-      this.lastFilteredResults = filteredResults;
+      // sort by results that match the largest number of filters first
+      this.filteredResults = _.sortBy(this.filteredResults,
+          _.bind(this.scoreCommunity, this)).reverse();
 
       // render an amount of communities necessary to fill out the view, and
       // then a few more.
-      _.every(filteredResults, function (community) {
+      _.every(this.filteredResults, function (community) {
         var $community = this.renderCommunity(community);
         this.$el.append($community);
 
@@ -491,7 +503,7 @@
       }, this);
 
       // render markers for all the results
-      this.mapView.renderMarkers(_(filteredResults));
+      this.mapView.renderMarkers(_(this.filteredResults));
 
       return this;
     },
@@ -505,11 +517,11 @@
       if (scrollBottom >= scrollHeight * 0.8) {
         var index = this.$el.children().length;
         var endIndex = Math.min(index + 10,
-            this.lastFilteredResults.length - 1);
+            this.filteredResults.length - 1);
 
         // render some more community results
         for (index; index < endIndex; index++) {
-          var community = this.lastFilteredResults[index];
+          var community = this.filteredResults[index];
           var $community = this.renderCommunity(community);
           this.$el.append($community);
         }
