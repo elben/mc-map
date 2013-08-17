@@ -491,14 +491,12 @@
       this.filteredResults = _.sortBy(this.filteredResults,
           _.bind(this.scoreCommunity, this)).reverse();
 
-      // render an amount of communities necessary to fill out the view, and
-      // then a few more.
+      // render an amount of communities necessary to force the list to scroll
       _.every(this.filteredResults, function (community) {
         var $community = this.renderCommunity(community);
         this.$el.append($community);
 
-        // continue while we haven't caused the container to scroll, plus some
-        // margin.
+        // return false if we're done, canceling iteration
         return this.$el[0].scrollHeight <= $(window).height();
       }, this);
 
