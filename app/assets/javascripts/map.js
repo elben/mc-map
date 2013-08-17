@@ -311,15 +311,6 @@
       } else {
         this.set('latlng', null);
       }
-
-      // cache a textual field that contains all our filterable information, so
-      // we can search it via regex (faster than using functions).
-      var parts = this.get('kinds').concat([
-        this.get('campus'),
-        this.get('host_day')
-      ]);
-
-      this.set('filterString', parts.join(' '));
     },
 
     parse: function (responseJSON) {
