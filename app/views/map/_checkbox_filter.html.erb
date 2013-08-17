@@ -3,4 +3,8 @@
   <input type="checkbox" id="<%= checkbox_id %>" data-filter-name="<%= name %>"
       value="<%= value %>"<% if local_assigns.fetch :checked, false %> checked<% end %> />
   <label for="<%= checkbox_id %>"><%= display_text %></label>
+
+  <% if local_assigns.fetch :only, true %>
+  <a href="#" class="checkbox-only">Only</a>
+  <% end %>
 </div>

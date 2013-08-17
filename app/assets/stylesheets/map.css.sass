@@ -76,12 +76,12 @@ h2
   background-color: rgba($color, 0.8)
 
 .checkbox-filter
+  position: relative
+
   font-family: $font-fancy
   font-size: 16px
 
   padding: 0.3em
-  padding-left: 0.6em
-  padding-right: 0.6em
 
   cursor: pointer
 
@@ -99,6 +99,15 @@ h2
   &~ .checkbox-filter
     padding-top: 0.2em
     padding-bottom: 0.2em
+
+.checkbox-only
+  position: absolute
+  right: 0.3em
+  top: 0.3em
+
+  font-size: 0.8em
+
+  color: #999999
 
 // give campus filter checkboxes colors to match their markers
 $size-campus-label-border: 10px

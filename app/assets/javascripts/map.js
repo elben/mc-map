@@ -57,8 +57,9 @@
     selectedTabClass: 'selected',
 
     events: {
-      'click input[type="checkbox"]': 'handleFilterChange',
-      'click nav a': 'handleTabClick'
+      'change input[type="checkbox"]': 'handleFilterChange',
+      'click nav a': 'handleTabClick',
+      'click .checkbox-only': 'handleOnlyClick'
     },
 
     initialize: function () {
@@ -87,6 +88,24 @@
       this.$filterTabs.removeClass(this.selectedTabClass);
       var tabSelector = '#' + $(e.currentTarget).attr('data-tab-id');
       $(tabSelector).addClass(this.selectedTabClass);
+    },
+
+    // select only the clicked checkbox, deselecting all others
+    handleOnlyClick: function (e) {
+      e.preventDefault();
+      var $filter = $(e.currentTarget).parents('.checkbox-filter');
+      var $checkbox = $filter.find('input[type="checkbox"]');
+
+      // check the current checkbox
+      $checkbox.prop('checked', true);
+
+      // uncheck all sibling checkboxes
+      $filter.siblings().find('input[type="checkbox"]').prop('checked', false);
+
+      // update filters, since no event gets triggered by 'prop'
+      this.handleFilterChange();
+
+      return this;
     },
 
     // sync the current filter state to the model, causing change events for all
@@ -261,7 +280,7 @@
 
       // remove non-present markers and enable present ones
       _.each(this.markers, function (marker, id) {
-        var fun;
+        var fun = _.bind(function () { this.map.addLayer(marker); }, this);
 
         if (!presentMarkers[id]) {
           // remove the marker after the delay fires
@@ -282,10 +301,6 @@
               this.map.removeLayer(marker);
             }
           }, this);
-
-        } else {
-          // add the marker after the delay fires
-          fun = _.bind(function () { this.map.addLayer(marker); }, this);
         }
 
         // add or remove the marker as specified
@@ -601,8 +616,7 @@
         collection: this.communities
       });
 
-      // load initial community data from the server, which updates the map
-      // search results.
+      // load initial community data from the server, updating the view
       this.communities.fetch();
     }
 
