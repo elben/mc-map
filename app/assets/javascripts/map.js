@@ -7,6 +7,8 @@
 
 (function () {
 
+  var SUPPORTS_CSS_ANIMATION = $('html').hasClass('cssanimations');
+
   // use custom marker icons for the campuses
   var CampusIcon = L.Icon.extend({
     options: {
@@ -147,6 +149,12 @@
     markers: {},
 
     initialize: function (options) {
+      var defaults = {
+        marker_toggle_duration_ms: 250,
+        marker_remove_class: 'campus-marker-remove'
+      };
+      this.options = $.extend(defaults, options);
+
       this.communities = options.communities;
       this.sidebarPadding = options.sidebar_padding;
 
@@ -253,11 +261,36 @@
 
       // remove non-present markers and enable present ones
       _.each(this.markers, function (marker, id) {
+        var fun;
+        console.log(marker);
+
         if (!presentMarkers[id]) {
-          this.map.removeLayer(marker);
-        } else if (!this.map.hasLayer(marker)) {
-          marker.addTo(this.map);
+          // remove the marker after the delay fires
+          fun = _.bind(function () {
+            // tell the marker DOM to style itself for fade-out
+            var $marker = $([marker._icon, marker._shadow]);
+            $marker.addClass(this.options.marker_remove_class);
+
+            // remove the marker once its animation is done
+            if (SUPPORTS_CSS_ANIMATION) {
+              _.delay(_.bind(function () {
+                // reset the marker style
+                $marker.removeClass(this.options.marker_remove_class);
+                this.map.removeLayer(marker);
+              }, this), 250);
+            } else {
+              $marker.removeClass(this.options.marker_remove_class);
+              this.map.removeLayer(marker);
+            }
+          }, this);
+
+        } else {
+          // add the marker after the delay fires
+          fun = _.bind(function () { this.map.addLayer(marker); }, this);
         }
+
+        // add or remove the marker as specified
+        _.delay(fun, Math.random() * this.options.marker_toggle_duration_ms);
       }, this);
 
       return this;
