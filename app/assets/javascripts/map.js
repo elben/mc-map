@@ -262,7 +262,6 @@
       // remove non-present markers and enable present ones
       _.each(this.markers, function (marker, id) {
         var fun;
-        console.log(marker);
 
         if (!presentMarkers[id]) {
           // remove the marker after the delay fires
