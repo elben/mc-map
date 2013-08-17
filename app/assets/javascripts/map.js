@@ -233,6 +233,7 @@
       communities.each(function (community) {
         // only add the community to the map if it has geodata available
         if (community.hasGeodata()) {
+          // try to retrieve the marker from the cache
           var marker = this.markers[community.id];
 
           // create a new marker and add it to the map if it's not already on it
@@ -244,24 +245,23 @@
               riseOnHover: true
             });
 
-            // add the marker to the map and store it for later reference
-            marker.addTo(this.map);
+            // cache the marker for later use
+            this.markers[community.id] = marker;
           }
 
-          // label the marker as 'present'
-          presentMarkers[community.id] = marker;
+          // label the marker as 'present' for this update
+          presentMarkers[community.id] = true;
         }
       }, this);
 
-      // remove non-present markers from the map
-      _.each(this.markers, function (value, id) {
+      // remove non-present markers and enable present ones
+      _.each(this.markers, function (marker, id) {
         if (!presentMarkers[id]) {
-          this.map.removeLayer(this.markers[id]);
+          this.map.removeLayer(marker);
+        } else if (!this.map.hasLayer(marker)) {
+          marker.addTo(this.map);
         }
       }, this);
-
-      // update the cache to include only the present markers
-      this.markers = presentMarkers;
 
       this.hideLoadingControl();
 
