@@ -6,6 +6,7 @@ gem "awesome_print"
 gem "autoprefixer-rails"
 gem "faker"
 gem "httparty"
+gem 'jquery-rails'
 gem "jquery-ui-rails"
 gem "kaminari"
 gem "leaflet-rails"
@@ -28,8 +29,6 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
 end
-
-gem 'jquery-rails'
 
 group :development do
   gem 'sqlite3'
