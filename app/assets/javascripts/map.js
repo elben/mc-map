@@ -447,6 +447,15 @@
     // the collection of communities to manage
     collection: null,
 
+    template: tmplCommunitySearchResult,
+
+    events: {
+      'scroll': 'handleScroll'
+    },
+
+    // the most recent filtered results
+    lastFilteredResults: [],
+
     initialize: function (options) {
       this.filters = options.filters;
       this.mapView = options.mapView;
@@ -460,6 +469,11 @@
       this.listenTo(this.collection, 'sync', this.render);
     },
 
+    // render a community and return the rendered jQuery object
+    renderCommunity: function (community) {
+      return $(this.template(community.toJSON()));
+    },
+
     // set the search results to reflect the searched communities
     render: function () {
       // clear out the old communities and add the new ones
@@ -471,16 +485,44 @@
         this.filters.get('kind')
       );
 
-      // TODO: DOM modification is slow -- OPTIMIZE!!!
+      // store these results for later rendering
+      this.lastFilteredResults = filteredResults;
 
-      _.each(filteredResults, function (community) {
-        var $result = $(tmplCommunitySearchResult(community.toJSON()));
-        this.$el.append($result);
+      // render an amount of communities necessary to fill out the view, and
+      // then a few more.
+      _.every(filteredResults, function (community) {
+        var $community = this.renderCommunity(community);
+        this.$el.append($community);
+
+        // continue while we haven't caused the container to scroll, plus some
+        // margin.
+        return this.$el[0].scrollHeight <= $(window).height();
       }, this);
 
+      // render markers for all the results
       this.mapView.renderMarkers(_(filteredResults));
 
       return this;
+    },
+
+    handleScroll: function (e) {
+      // see if we're near the bottom
+      var scrollHeight = this.$el[0].scrollHeight;
+      var scrollBottom = this.$el.scrollTop() + this.$el.height();
+
+      // if we're withing some margin of the bottom, render more communities
+      if (scrollBottom >= scrollHeight * 0.8) {
+        var index = this.$el.children().length;
+        var endIndex = Math.min(index + 10,
+            this.lastFilteredResults.length - 1);
+
+        // render some more community results
+        for (index; index < endIndex; index++) {
+          var community = this.lastFilteredResults[index];
+          var $community = this.renderCommunity(community);
+          this.$el.append($community);
+        }
+      }
     }
 
   });
