@@ -58,7 +58,7 @@
 
     events: {
       'change input[type="checkbox"]': 'handleFilterChange',
-      'click nav a': 'handleTabClick',
+      'click nav a': 'handleTabSelect',
       'click .checkbox-only': 'handleOnlyClick'
     },
 
@@ -73,8 +73,8 @@
       return this;
     },
 
-    // update the visible tab when one is clicked
-    handleTabClick: function (e) {
+    // update the visible tab when one is selected
+    handleTabSelect: function (e) {
       e.preventDefault();
 
       // select the nav button
