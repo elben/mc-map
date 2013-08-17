@@ -226,9 +226,6 @@
 
     // render all the markers from the communities list
     renderMarkers: function (communities) {
-      // show a loading control while we do all this work
-      this.showLoadingControl();
-
       var presentMarkers = {};
       communities.each(function (community) {
         // only add the community to the map if it has geodata available
@@ -262,8 +259,6 @@
           marker.addTo(this.map);
         }
       }, this);
-
-      this.hideLoadingControl();
 
       return this;
     },
