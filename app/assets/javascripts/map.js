@@ -246,6 +246,9 @@
           // detectRetina: true,
           // reuseTiles: true
         }).addTo(this.map);
+
+        // when the map view changes, send an event with its new bounds
+        this.map.on('moveend', _.bind(this.handleViewChange, this));
       }
 
       return this;
@@ -322,7 +325,21 @@
       }
 
       return this;
+    },
+
+    // trigger a custom event when the map view changes
+    handleViewChange: function () {
+      var viewBounds = this.map.getBounds();
+
+      // get a list of visible markers
+      var visibleCommunityIds = _.chain(this.markers).map(function (m, id) {
+          if (viewBounds.contains(m.getLatLng())) { return id; }
+        }).compact().value();
+
+      // send listeners the new bounds and a list of visible markers
+      this.trigger('viewchange', viewBounds, visibleCommunityIds);
     }
+
   });
 
   // a single community
@@ -488,7 +505,7 @@
     template: tmplCommunitySearchResult,
 
     events: {
-      'scroll': 'handleScroll'
+      'scroll': 'handleResultsScroll'
     },
 
     // the most recent filtered results
@@ -505,6 +522,9 @@
       this.listenTo(this.collection, 'change', this.render);
       this.listenTo(this.collection, 'reset', this.render);
       this.listenTo(this.collection, 'sync', this.render);
+
+      // update the search results list when the map view changes
+      this.listenTo(this.mapView, 'viewchange', this.handleMapViewChange);
     },
 
     // render a community and return the rendered jQuery object
@@ -572,7 +592,7 @@
       return this;
     },
 
-    handleScroll: function (e) {
+    handleResultsScroll: function (e) {
       // see if we're near the bottom
       var scrollHeight = this.$el[0].scrollHeight;
       var scrollBottom = this.$el.scrollTop() + this.$el.height();
@@ -583,6 +603,11 @@
       }
 
       return this;
+    },
+
+    handleMapViewChange: function (viewBounds, visibleCommunityIds) {
+      // TODO: update search results to sort visible markers first
+      console.log(visibleCommunityIds);
     }
 
   });
