@@ -60,7 +60,6 @@
     },
 
     initialize: function () {
-      // cache references to some elements
       this.$filterTabs = this.$el.find('.filter-tab');
     },
 
@@ -226,28 +225,39 @@
 
     // render all the markers from the communities list
     renderMarkers: function (communities) {
-      // remove all existing markers from the map and empty the list
-      _.each(this.markers, function (marker) {
-        this.map.removeLayer(marker);
-      }, this);
-      this.markers = [];
-
+      var presentMarkers = {};
       communities.each(function (community) {
         // only add the community to the map if it has geodata available
         if (community.hasGeodata()) {
-          // create a marker and add it to the map
-          var marker = L.marker(community.get('latlng'), {
-            // the campus values here and in the stylesheets correspond to the
-            // keys in Community::CAMPUSES enum.
-            icon: new CampusIcon({ campus: community.get('campus') }),
-            riseOnHover: true
-          });
-          marker.addTo(this.map);
+          var marker = this.markers[community.id];
 
-          // store it so we can remove it later
-          this.markers.push(marker);
+          // create a new marker and add it to the map if it's not already on it
+          if (!marker) {
+            marker = L.marker(community.get('latlng'), {
+              // the campus values here and in the stylesheets correspond to the
+              // keys in Community::CAMPUSES enum.
+              icon: new CampusIcon({ campus: community.get('campus') }),
+              riseOnHover: true
+            });
+
+            // add the marker to the map and store it for later reference
+            marker.addTo(this.map);
+          }
+
+          // label the marker as 'present'
+          presentMarkers[community.id] = marker;
         }
       }, this);
+
+      // remove non-present markers from the map
+      _.each(this.markers, function (value, id) {
+        if (!presentMarkers[id]) {
+          this.map.removeLayer(this.markers[id]);
+        }
+      }, this);
+
+      // update the cache to include only the present markers
+      this.markers = presentMarkers;
 
       return this;
     },
