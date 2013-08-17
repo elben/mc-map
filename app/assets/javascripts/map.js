@@ -540,24 +540,35 @@
       return this;
     },
 
+    // render more community results into the results list
+    renderMoreResults: function (numberToRender) {
+      numberToRender = numberToRender || 25;
+
+      var index = this.$el.children().length;
+      var endIndex = Math.min(index + numberToRender,
+          this.filteredResults.length - 1);
+
+      // render some more community results
+      for (; index < endIndex; index++) {
+        var community = this.filteredResults[index];
+        var $community = this.renderCommunity(community);
+        this.$el.append($community);
+      }
+
+      return this;
+    },
+
     handleScroll: function (e) {
       // see if we're near the bottom
       var scrollHeight = this.$el[0].scrollHeight;
       var scrollBottom = this.$el.scrollTop() + this.$el.height();
 
       // if we're withing some margin of the bottom, render more communities
-      if (scrollBottom >= scrollHeight * 0.8) {
-        var index = this.$el.children().length;
-        var endIndex = Math.min(index + 10,
-            this.filteredResults.length - 1);
-
-        // render some more community results
-        for (index; index < endIndex; index++) {
-          var community = this.filteredResults[index];
-          var $community = this.renderCommunity(community);
-          this.$el.append($community);
-        }
+      if (scrollBottom >= scrollHeight - 200) {
+        this.renderMoreResults();
       }
+
+      return this;
     }
 
   });
