@@ -170,6 +170,7 @@
     initialize: function (options) {
       var defaults = {
         marker_toggle_duration_ms: 250,
+        marker_dimmed_class: 'campus-marker-dimmed',
         marker_remove_class: 'campus-marker-remove'
       };
       this.options = $.extend(defaults, options);
@@ -247,8 +248,9 @@
           // reuseTiles: true
         }).addTo(this.map);
 
-        // when the map view changes, send an event with its new bounds
+        // bind specific events for the map
         this.map.on('moveend', _.bind(this.handleViewChange, this));
+        this.map.on('click', _.bind(this.handleClick, this));
       }
 
       return this;
@@ -269,8 +271,15 @@
               // the campus values here and in the stylesheets correspond to the
               // keys in Community::CAMPUSES enum.
               icon: new CampusIcon({ campus: community.get('campus') }),
+
+              // store this for later reference
+              communityId: community.id,
+
               riseOnHover: true
             });
+
+            // listen to this marker's click event
+            marker.on('click', _.bind(this.handleMarkerClick, this));
 
             // cache the marker for later use
             this.markers[community.id] = marker;
@@ -289,14 +298,17 @@
           // remove the marker after the delay fires
           fun = _.bind(function () {
             // tell the marker DOM to style itself for fade-out
-            var $marker = $([marker._icon, marker._shadow]);
-            $marker.addClass(this.options.marker_remove_class);
+            var $icon = $(marker._icon);
+            var $shadow = $(marker._shadow);
+            $icon.addClass(this.options.marker_remove_class);
+            $shadow.addClass(this.options.marker_remove_class);
 
             // remove the marker once its animation is done
             if (SUPPORTS_CSS_ANIMATION) {
               _.delay(_.bind(function () {
                 // reset the marker style
-                $marker.removeClass(this.options.marker_remove_class);
+                $icon.removeClass(this.options.marker_remove_class);
+                $shadow.removeClass(this.options.marker_remove_class);
                 this.map.removeLayer(marker);
               }, this), 250);
             } else {
@@ -313,9 +325,44 @@
       return this;
     },
 
+    // remove the highlight from all markers
+    unhighlightMarkers: function () {
+      _.each(this.markers, function (marker, id) {
+        var $icon = $(marker._icon);
+        var $shadow = $(marker._shadow);
+
+        // un-dim all markers and reset their offsets
+        $icon.removeClass(this.options.marker_dimmed_class);
+        $shadow.removeClass(this.options.marker_dimmed_class);
+        marker.setZIndexOffset(0);
+      }, this);
+
+      return this;
+    },
+
+    // dim all the markers but this one
+    highlightMarker: function (visibleId) {
+      // dim all the markers except for the selected one
+      _.each(this.markers, function (marker, id) {
+        var $icon = $(marker._icon);
+        var $shadow = $(marker._shadow);
+
+        // add a 'dimmed' class to all other markers
+        if (marker.options.communityId !== visibleId) {
+          $icon.addClass(this.options.marker_dimmed_class);
+          $shadow.addClass(this.options.marker_dimmed_class);
+        } else {
+          // raise the selected marker above all others
+          marker.setZIndexOffset(1000);
+        }
+      }, this);
+
+      return this;
+    },
+
     updateView: function () {
       if (this.map) {
-        // animate a pan to the new position
+        // animate a pan to the new position, accounting for the sidebar
         var center = this.model.get('center');
         var latlng = new L.LatLng(center[1], center[0]);
 
@@ -327,17 +374,40 @@
       return this;
     },
 
-    // trigger a custom event when the map view changes
-    handleViewChange: function () {
+    // return the ids of currently in-view communities
+    getVisibleCommunityIds: function () {
       var viewBounds = this.map.getBounds();
 
-      // get a list of visible markers
       var visibleCommunityIds = _.chain(this.markers).map(function (m, id) {
           if (viewBounds.contains(m.getLatLng())) { return id; }
         }).compact().value();
 
+      // make sure the order is consistent
+      return visibleCommunityIds.sort();
+    },
+
+    // trigger an event when the map view changes
+    handleViewChange: function () {
+      var viewBounds = this.map.getBounds();
+
       // send listeners the new bounds and a list of visible markers
-      this.trigger('viewchange', viewBounds, visibleCommunityIds);
+      this.trigger('viewchange', viewBounds, this.getVisibleCommunityIds());
+
+      return this;
+    },
+
+    // trigger an event when a marker is clicked
+    handleMarkerClick: function (e) {
+      var marker = e.target;
+      this.trigger('markerclick', marker, marker.options.communityId);
+      return this;
+    },
+
+    // unhighlight all markers and send a generic click event
+    handleClick: function (e) {
+      this.unhighlightMarkers();
+      this.trigger('click', e.latlng);
+      return this;
     }
 
   });
@@ -505,13 +575,25 @@
     template: tmplCommunitySearchResult,
 
     events: {
-      'scroll': 'handleResultsScroll'
+      'scroll': 'handleResultsScroll',
+      'click .community-search-result': 'handleResultClick'
     },
 
     // the most recent filtered results
     filteredResults: [],
 
+    // a list of ids of communities that are currently in-view
+    visibleCommunityIds: [],
+
+    // the id of the most recently-selected community
+    selectedCommunityId: null,
+
     initialize: function (options) {
+      var defaults = {
+        result_selected_class: 'selected'
+      };
+      this.options = $.extend(defaults, options);
+
       this.filters = options.filters;
       this.mapView = options.mapView;
 
@@ -525,28 +607,47 @@
 
       // update the search results list when the map view changes
       this.listenTo(this.mapView, 'viewchange', this.handleMapViewChange);
+      this.listenTo(this.mapView, 'markerclick', this.handleMapMarkerClick);
+      this.listenTo(this.mapView, 'click', this.handleMapClick);
     },
 
     // render a community and return the rendered jQuery object
     renderCommunity: function (community) {
-      var kinds = _.values(community.get('kinds'));
       var json = community.toJSON();
+
+      // make 'kinds' into a list of display names, not enum values
+      var kinds = _.values(community.get('kinds'));
       json.kinds = kinds;
+
       return $(this.template(json));
     },
 
     // score a community by the number of filters it matches
     scoreCommunity: function (community) {
+      var score = 0;
+
+      // a larger number of matching type filters is better
       var kinds = community.get('kinds');
-      return _.filter(this.filters.get('kind'), function (k) {
+      score += _.filter(this.filters.get('kind'), function (k) {
         return _.has(kinds, k);
       }).length;
+
+      // presence in the visible results is even better still
+      if (_.contains(this.visibleCommunityIds, community.get('id'))) {
+        score += 10;
+      }
+
+      // being the selected community is worth even more
+      if (this.selectedCommunityId === community.get('id')) {
+        score += 100;
+      }
+
+      return score;
     },
 
     // set the search results to reflect the searched communities
     render: function () {
-      // clear out the old communities and add the new ones
-      this.$el.empty();
+      this.mapView.unhighlightMarkers();
 
       // get and store the filtered results
       this.filteredResults = this.collection.query(
@@ -555,9 +656,25 @@
         this.filters.get('kind')
       );
 
-      // sort by results that match the largest number of filters first
-      this.filteredResults = _.sortBy(this.filteredResults,
-          _.bind(this.scoreCommunity, this)).reverse();
+      // update the visible communities
+      this.visibleCommunityIds = this.mapView.getVisibleCommunityIds();
+
+      // re-sort, then render the search results
+      this.renderSearchResults();
+
+      // render markers for all the results
+      this.mapView.renderMarkers(_(this.filteredResults));
+
+      return this;
+    },
+
+    // render the list of search results
+    renderSearchResults: function () {
+      // make sure the results are sorted
+      this.sortFilteredResults();
+
+      // clear out the old communities and add the new ones
+      this.$el.empty();
 
       // render an amount of communities necessary to force the list to scroll
       _.every(this.filteredResults, function (community) {
@@ -567,9 +684,6 @@
         // return false if we're done, canceling iteration
         return this.$el[0].scrollHeight <= $(window).height();
       }, this);
-
-      // render markers for all the results
-      this.mapView.renderMarkers(_(this.filteredResults));
 
       return this;
     },
@@ -592,6 +706,15 @@
       return this;
     },
 
+    // sort the latest filtered results by relevance
+    sortFilteredResults: function () {
+      // sort most highly-scored communities first
+      this.filteredResults = _.sortBy(this.filteredResults,
+          _.bind(this.scoreCommunity, this)).reverse();
+
+      return this;
+    },
+
     handleResultsScroll: function (e) {
       // see if we're near the bottom
       var scrollHeight = this.$el[0].scrollHeight;
@@ -605,9 +728,53 @@
       return this;
     },
 
+    // highlight the marker for the clicked result
+    handleResultClick: function (e) {
+      var $result = $(e.currentTarget);
+      var communityId = $result.attr('data-id');
+
+      // select the result, deselecting all others
+      $result
+          .addClass(this.options.result_selected_class)
+          .siblings()
+          .removeClass(this.options.result_selected_class);
+
+      // select this result
+      this.selectedCommunityId = communityId;
+
+      // highlight its marker
+      this.mapView
+          .unhighlightMarkers()
+          .highlightMarker(communityId);
+
+      return this;
+    },
+
+    highlightSelectedResult: function () {
+      // highlight the selected search result once we've re-rendered
+      var id = this.selectedCommunityId;
+      this.$el.find('.community-search-result[data-id="' + id + '"]')
+          .addClass(this.options.result_selected_class);
+
+      return this;
+    },
+
     handleMapViewChange: function (viewBounds, visibleCommunityIds) {
-      // TODO: update search results to sort visible markers first
-      console.log(visibleCommunityIds);
+      // store the visible communities for sorting search results
+      this.visibleCommunityIds = visibleCommunityIds;
+      this.renderSearchResults().highlightSelectedResult();
+    },
+
+    // set the clicked marker as the selected one
+    handleMapMarkerClick: function (marker, id) {
+      this.selectedCommunityId = id;
+      this.mapView.unhighlightMarkers().highlightMarker(id);
+      this.renderSearchResults().highlightSelectedResult();
+    },
+
+    handleMapClick: function (latlng) {
+      // un-highlight the selected result
+      this.$el.children().removeClass(this.options.result_selected_class);
     }
 
   });

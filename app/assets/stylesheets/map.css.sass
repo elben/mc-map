@@ -205,12 +205,20 @@ $size-campus-label-border: 10px
 .community-search-result
   padding: $size-padding
 
+  transition: background-color, 300ms
+
   $color: $color-background-light
   background-color: $color
   background-color: rgba($color, 0.8)
 
   &~ .community-search-result
     margin-top: $size-padding
+
+  // gently highlight the selected result
+  &.selected
+    $color: lighten($color-highlight, 25%)
+    background-color: $color
+    background-color: rgba($color, 0.8)
 
   header
     font-family: $font-fancy
