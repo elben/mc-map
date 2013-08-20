@@ -774,6 +774,7 @@
 
     handleMapClick: function (latlng) {
       // un-highlight the selected result
+      this.selectedCommunityId = null;
       this.$el.children().removeClass(this.options.result_selected_class);
     }
 
