@@ -1,9 +1,6 @@
 McMap::Application.routes.draw do
   root :to => 'map#index'
 
-  resources :members do
-  end
-
   resources :communities do
     collection do
       get "kinds"

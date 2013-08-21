@@ -249,14 +249,15 @@ class Community < ActiveRecord::Base
 
   def signup!(member)
     members = self.members << member
+
     unless members.blank?
-      # First time adding member to community. Email leader.
+      # email the leader when first adding a member to their community
       MemberSignUpMailer.leaders_email(member, self).deliver
     end
 
-    # Always email member, even if they sign up with same community multiple
-    # times
+    # email the new member even if they've already signed up
     MemberSignUpMailer.welcome_email(member, self).deliver
+
     return members
   end
 

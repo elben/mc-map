@@ -1,34 +1,36 @@
-<%= form_tag "/signup.json" do |f| %>
+<%= form_tag "/signup" do |f| %>
   <% if @member.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@member.errors.count, "error") %> prohibited this member from being saved:</h2>
+  <div id="form-errors">
+    <h2><%= pluralize(@member.errors.count, "error") %> caused this signup to fail:</h2>
 
-      <ul>
-      <% @member.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
+    <ul>
+    <% @member.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
   <% end %>
 
-  <div class="field">
-    <%= label_tag 'member[name]', 'Name' %><br />
-    <%= text_field_tag 'member[name]' %>
+  <div id="form-fields">
+    <div class="form-field">
+      <%= label_tag 'member[name]', 'Name' %>
+      <%= text_field_tag 'member[name]', nil, :required => true %>
+    </div>
+    <div class="form-field">
+      <%= label_tag 'member[email]', 'Email' %>
+      <%= email_field_tag 'member[email]', nil, :required => true %>
+    </div>
+    <div class="form-field">
+      <%= label_tag 'member[phone_number]', 'Phone number' %>
+      <%= telephone_field_tag 'member[phone_number]', nil, :required => true %>
+    </div>
   </div>
-  <div class="field">
-    <%= label_tag 'member[email]', 'Email' %><br />
-    <%= text_field_tag 'member[email]' %>
-  </div>
-  <div class="field">
-    <%= label_tag 'member[phone_number]', 'Phone number' %><br />
-    <%= text_field_tag 'member[phone_number]' %>
-  </div>
-  <div class="field">
-    <%= label_tag :community_id %><br />
-    <%= text_field_tag :community_id %>
-  </div>
+
+  <%# store the community id so we can create a member later %>
+  <%= hidden_field_tag :community_id, @community.id, :required => true %>
+
   <div class="actions">
-    <%= submit_tag 'Sign up' %>
+    <%= submit_tag 'Sign Up' %>
   </div>
 <% end %>
 

@@ -60,46 +60,67 @@ class CommunitiesController < ApplicationController
 
   def signup_form
     @member = Member.new
+
+    # get the community from the database by its slug
+    @community = Community.where(slug: params[:community_id]).first
+
+    # give up if that community doesn't exist
+    if @community.blank?
+      redirect_to '/404'
+      return
+    end
+
+    # render the signup form if the community could be found
+    respond_to do |format|
+      format.html { render 'signup_form' }
+    end
   end
 
+  # render the HTML sign up form. this is shown in an iframe on the client.
   def signup
+    # ensure we have a member present
+    @member = Member.new
+
     if session.blank?
       # Either did not request with CSRF token or used an invalid CSRF token.
       # In these cases, Rails server resets (blanks out) session.
       respond_to do |format|
-        format.json { render :json => ApiResponse.error("Bad request.") }
+        format.html { render 'signup_form' }
       end
       return
     end
 
     @community = Community.where(id: params[:community_id]).first
 
+    # give up if no such community exists
     if @community.blank?
+      @member.errors.add(:community, 'does not exist')
+
       respond_to do |format|
-        format.json { render :json => ApiResponse.fail(community_id: "Must be specified.") }
+        format.html { render 'signup_form' }
       end
       return
     end
 
+    # see whether the member already exists
     email = params[:member].try(:[], :email)
     @member = Member.where(email: email).first
 
+    # create a new member if one didn't exist
     if @member.blank?
-      # Member does not previously exist; create.
       @member = Member.new(params[:member])
       unless @member.save
         respond_to do |format|
-          format.json { render :json => ApiResponse.fail(member: @member.errors.as_json) }
+          format.html { render 'signup_form' }
         end
         return
       end
     end
 
+    # sign the member up for the given community
     @community.signup!(@member)
     respond_to do |format|
-      format.json do
-        render :json => ApiResponse.success(member: @member.id, community: @community.id)
-      end
+      format.html { render 'signup_success' }
     end
   end
 end
