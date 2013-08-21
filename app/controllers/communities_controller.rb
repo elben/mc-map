@@ -90,7 +90,7 @@ class CommunitiesController < ApplicationController
       return
     end
 
-    @community = Community.where(id: params[:community_id]).first
+    @community = Community.where(slug: params[:community_id]).first
 
     # give up if no such community exists
     if @community.blank?
