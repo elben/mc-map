@@ -1,0 +1,47 @@
+@import 'theme'
+
+form
+  padding: 0.8em
+
+.form-field
+  width: 100%
+
+  &~ .form-field
+    margin-top: 0.6em
+
+  label
+    display: block
+
+    font-family: $font-fancy
+    font-size: 18px
+    color: $color-text-header
+
+  input
+    color: $color-text
+    border: 1px solid lighten($color-text, 25%)
+
+    width: 100%
+
+    padding: 0.3em
+    padding-left: 0.5em
+    padding-right: 0.5em
+
+.form-submit-button
+  // reset all its styles so we can get it down to 'blank'
+  display: block
+  background: none
+  border: none
+  border-radius: none
+  margin: 0
+  padding: 0
+
+  font-family: $font-fancy
+  text-transform: uppercase
+
+  padding: 0.4em
+  padding-left: 1.6em
+  padding-right: 1.6em
+
+  margin-top: 0.8em
+
+  background-color: $color-highlight

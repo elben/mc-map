@@ -29,8 +29,6 @@
   <%# store the community id so we can create a member later %>
   <%= hidden_field_tag :community_id, @community.slug, :required => true %>
 
-  <div class="actions">
-    <%= submit_tag 'Sign Up' %>
-  </div>
+  <%= submit_tag 'Sign Up', :class => 'form-submit-button' %>
 <% end %>
 
