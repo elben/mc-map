@@ -176,7 +176,6 @@
       this.options = $.extend(defaults, options);
 
       this.communities = options.communities;
-      this.sidebarPadding = options.sidebar_padding;
 
       this.listenTo(this.model, 'change', this.updateView);
 
@@ -210,11 +209,9 @@
         return c.get('latlng');
       })));
 
-      // zoom the map to include all the markers, leaving room for the sidebar
+      // zoom the map to include all the markers
       if (bounds.isValid()) {
-        this.map.fitBounds(bounds, {
-          paddingBottomRight: [this.sidebarPadding, 0]
-        });
+        this.map.fitBounds(bounds);
       }
 
       return this;
@@ -798,8 +795,7 @@
       this.mapView = new MapView({
         el: $('#map'),
         model: this.map,
-        communities: this.communities,
-        sidebar_padding: 320
+        communities: this.communities
       }).render();
 
       this.communitiesView = new CommunitiesView({

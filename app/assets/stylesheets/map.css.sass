@@ -7,6 +7,7 @@ $font-fancy: 'franklin-gothic-urw-cond', 'Arial Narrow', Arial, Helvetica, Verda
 
 $size-filters: 255px
 $size-padding: 15px
+$size-sidebar-width: 320px
 
 $color-highlight: #ffdd00
 $color-background: #dfded2
@@ -56,7 +57,7 @@ h2
 #map
   position: fixed
   left: 0
-  right: 0
+  right: $size-sidebar-width
   top: 0
   bottom: 0
 
@@ -67,13 +68,11 @@ h2
   bottom: 0
 
   // nominal width of a mobile device in portrait
-  width: 320px
+  width: $size-sidebar-width
 
   padding: $size-padding
 
-  $color: $color-background-light
-  background-color: $color
-  background-color: rgba($color, 0.8)
+  background-color: $color-background
 
 .checkbox-filter
   position: relative
@@ -150,14 +149,11 @@ $size-campus-label-border: 10px
       text-decoration: none
       color: $color-text-header
 
-      $color: $color-background-light
       &.selected
-        background-color: $color
-        background-color: rgba($color, 0.8)
+        background-color: $color-background-light
 
       &:hover
-        background-color: $color
-        background-color: rgba($color, 0.8)
+        background-color: $color-background-light
 
 .filter-tab-content
   border-top: 1px solid $color-text-header
@@ -173,16 +169,14 @@ $size-campus-label-border: 10px
   display: none
 
   position: absolute
-  top: 2em
+  top: 2.15em
   left: 0
   right: 0
   bottom: 0
 
   padding: 1em
 
-  $color: $color-background-light
-  background-color: $color
-  background-color: rgba($color, 0.8)
+  background-color: $color-background-light
 
   &.selected
     display: block
@@ -205,9 +199,7 @@ $size-campus-label-border: 10px
 .community-search-result
   padding: $size-padding
 
-  $color: $color-background-light
-  background-color: $color
-  background-color: rgba($color, 0.8)
+  background-color: $color-background-light
 
   &~ .community-search-result
     margin-top: $size-padding
@@ -215,8 +207,7 @@ $size-campus-label-border: 10px
   // gently highlight the selected result
   &.selected
     $color: lighten($color-highlight, 25%)
-    background-color: $color
-    background-color: rgba($color, 0.8)
+    background-color: $color-background-light
 
   header
     font-family: $font-fancy
