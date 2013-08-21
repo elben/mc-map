@@ -37,7 +37,7 @@ $duration-fade: 250ms
   transition-property: opacity, margin-top
   transition-duration: 150ms
 
-  opacity: 0.85
+  opacity: 0.9
 
   // class added when a marker is removed from the map
   &.campus-marker-remove
@@ -45,7 +45,7 @@ $duration-fade: 250ms
 
   // class added when a marker is dimmed
   &.campus-marker-dimmed
-    opacity: 0.15
+    opacity: 0.4
 
   &:hover
     margin-top: -($size-marker-height + ($size-marker-height / 8))
@@ -81,7 +81,7 @@ $duration-fade: 250ms
     animation: fade-out $duration-fade
 
   &.campus-marker-dimmed
-    opacity: 0.15
+    opacity: 0.4
 
   width: $size-shadow-width
   height: $size-shadow-height

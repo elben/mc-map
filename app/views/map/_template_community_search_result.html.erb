@@ -5,7 +5,7 @@
     </header>
 
     <div class="community-search-result-short-info">
-      {{#kinds}}<span class="community-kind">{{.}}</span>, {{/kinds}}meets <span class="community-host-day">{{host_day}}s</span>
+      {{#kinds}}<span class="community-search-result-kind">{{.}}</span>, {{/kinds}}meets <span class="community-search-result-host-day">{{host_day}}s</span>
     </div>
 
     <div class="community-search-result-long-info">
@@ -15,6 +15,8 @@
         {{city}}, {{province}} {{postal}}
       </address>
       {{/address}}
+
+      <a class="community-search-result-sign-up-button" href="#" title="Sign Up">Sign Up</a>
     </div>
   </li>
 </script>
