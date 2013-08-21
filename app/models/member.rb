@@ -4,6 +4,8 @@ class Member < ActiveRecord::Base
   has_and_belongs_to_many :communities, :before_add => :no_duplicates
 
   validates :email, presence: true, uniqueness: true
+  validates :name, presence: true
+  validates :phone_number, presence: true
 
   private
 
