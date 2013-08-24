@@ -60,8 +60,12 @@
 
     events: {
       'change input[type="checkbox"]': 'handleFilterChange',
+
       'click nav a': 'handleTabSelect',
-      'click .checkbox-only': 'handleOnlyClick'
+      'touchstart nav a': 'handleTabSelect',
+
+      'click .checkbox-only': 'handleOnlyClick',
+      'touchstart .checkbox-only': 'handleOnlyClick'
     },
 
     initialize: function () {
@@ -596,8 +600,12 @@
 
     events: {
       'scroll': 'handleResultsScroll',
+
       'click .community-search-result': 'handleResultClick',
-      'click .community-search-result-sign-up-button': 'handleSignUpClick'
+      'touchstart .community-search-result': 'handleResultClick',
+
+      'click .community-search-result-sign-up-button': 'handleSignUpClick',
+      'touchstart .community-search-result-sign-up-button': 'handleSignUpClick'
     },
 
     // the most recent filtered results
