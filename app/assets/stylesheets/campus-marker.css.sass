@@ -12,14 +12,6 @@ $duration-fade: 250ms
 @function marker-icon-offset($index)
   @return -($index * ($size-marker-width + $size-marker-margin))
 
-@keyframes fade-in
-  from
-    opacity: 0
-
-@keyframes fade-out
-  to
-    opacity: 0
-
 .campus-marker
   display: block
   position: absolute
@@ -35,7 +27,6 @@ $duration-fade: 250ms
   background: image-url('markers.png') no-repeat 0 0
   background-size: (($size-marker-width + $size-marker-margin) * $num-marker-icons) $size-marker-height
 
-  animation: fade-in $duration-fade
   transition-property: opacity, margin-top
   transition-duration: 150ms
 
@@ -47,10 +38,6 @@ $duration-fade: 250ms
   &.campus-marker-selected
     background-position: marker-icon-offset(1) 0
     margin-top: -($size-marker-height + ($size-marker-height / 8))
-
-  // class added when a marker is removed from the map
-  &.campus-marker-remove
-    animation: fade-out $duration-fade
 
   &:hover
     margin-top: -($size-marker-height + ($size-marker-height / 8))
@@ -66,10 +53,6 @@ $duration-fade: 250ms
   position: absolute
   left: 0
   top: 0
-
-  animation: fade-in $duration-fade
-  &.campus-marker-remove
-    animation: fade-out $duration-fade
 
   width: $size-shadow-width
   height: $size-shadow-height

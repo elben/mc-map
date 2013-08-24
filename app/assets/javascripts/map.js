@@ -7,8 +7,6 @@
 
 (function () {
 
-  var SUPPORTS_CSS_ANIMATION = $('html').hasClass('cssanimations');
-
   // use custom marker icons for the campuses
   var CampusIcon = L.Icon.extend({
     options: {
@@ -177,8 +175,7 @@
       var defaults = {
         marker_toggle_duration_ms: 250,
         marker_selected_class: 'campus-marker-selected',
-        marker_dimmed_class: 'campus-marker-dimmed',
-        marker_remove_class: 'campus-marker-remove'
+        marker_dimmed_class: 'campus-marker-dimmed'
       };
       this.options = $.extend(defaults, options);
 
@@ -296,34 +293,11 @@
 
       // remove non-present markers and enable present ones
       _.each(this.markers, function (marker, id) {
-        var fun = _.bind(function () { this.map.addLayer(marker); }, this);
-
         if (!presentMarkers[id]) {
-          // remove the marker after the delay fires
-          fun = _.bind(function () {
-            // tell the marker DOM to style itself for fade-out
-            var $icon = $(marker._icon);
-            var $shadow = $(marker._shadow);
-            $icon.addClass(this.options.marker_remove_class);
-            $shadow.addClass(this.options.marker_remove_class);
-
-            // remove the marker once its animation is done
-            if (SUPPORTS_CSS_ANIMATION) {
-              _.delay(_.bind(function () {
-                // reset the marker style
-                $icon.removeClass(this.options.marker_remove_class);
-                $shadow.removeClass(this.options.marker_remove_class);
-                this.map.removeLayer(marker);
-              }, this), 250);
-            } else {
-              $marker.removeClass(this.options.marker_remove_class);
-              this.map.removeLayer(marker);
-            }
-          }, this);
+          this.map.removeLayer(marker);
+        } else {
+          this.map.addLayer(marker);
         }
-
-        // add or remove the marker as specified
-        _.delay(fun, Math.random() * this.options.marker_toggle_duration_ms);
       }, this);
 
       return this;
