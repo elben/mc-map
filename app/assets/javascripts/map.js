@@ -616,14 +616,19 @@
     },
 
     // render a community and return the rendered jQuery object
-    renderCommunity: function (community) {
+    renderCommunity: function (community, selected) {
       var json = community.toJSON();
 
       // make 'kinds' into a list of display names, not enum values
       var kinds = _.values(community.get('kinds'));
       json.kinds = kinds;
 
-      return $(this.template(json));
+      var $result = $(this.template(json));
+
+      // select the community if specified
+      $result.toggleClass(this.options.result_selected_class, selected);
+
+      return $result;
     },
 
     // score a community by the number of filters it matches
@@ -682,12 +687,14 @@
       // make sure the results are sorted
       this.sortFilteredResults();
 
-      // clear out the old communities and add the new ones
+      // clear out the old communities
       this.$el.empty();
 
       // render an amount of communities necessary to force the list to scroll
       _.every(this.filteredResults, function (community) {
-        var $community = this.renderCommunity(community);
+        // render the community, marking it as selected if necessary
+        var isSelected = community.id === this.selectedCommunityId;
+        var $community = this.renderCommunity(community, isSelected);
         this.$el.append($community);
 
         // return false if we're done, canceling iteration
@@ -759,30 +766,21 @@
       return this;
     },
 
-    highlightSelectedResult: function () {
-      // highlight the selected search result once we've re-rendered
-      var id = this.selectedCommunityId;
-      this.$el.find('.community-search-result[data-id="' + id + '"]')
-          .addClass(this.options.result_selected_class);
-
-      return this;
-    },
-
     handleMapViewChange: function (viewBounds, visibleCommunityIds) {
       // store the visible communities for sorting search results
       this.visibleCommunityIds = visibleCommunityIds;
-      this.renderSearchResults().highlightSelectedResult();
+      this.renderSearchResults();
     },
 
     // set the clicked marker as the selected one
     handleMapMarkerClick: function (marker, id) {
       this.selectedCommunityId = id;
       this.mapView.unhighlightMarkers().highlightMarker(id);
-      this.renderSearchResults().highlightSelectedResult();
+      this.renderSearchResults();
     },
 
+    // un-highlight the selected result when the map is clicked
     handleMapClick: function (latlng) {
-      // un-highlight the selected result
       this.selectedCommunityId = null;
       this.$el.children().removeClass(this.options.result_selected_class);
     }
