@@ -574,12 +574,8 @@
 
     events: {
       'scroll': 'handleResultsScroll',
-
       'click .community-search-result': 'handleResultClick',
-      'touchstart .community-search-result': 'handleResultClick',
-
-      'click .community-search-result-sign-up-button': 'handleSignUpClick',
-      'touchstart .community-search-result-sign-up-button': 'handleSignUpClick'
+      'click .community-search-result-sign-up-button': 'handleSignUpClick'
     },
 
     // the most recent filtered results
