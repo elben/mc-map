@@ -12,4 +12,3 @@
 // BLANK LINE SHOULD GO AFTER THE REQUIRES BELOW.
 //
 //= require modernizr
-//= require map
