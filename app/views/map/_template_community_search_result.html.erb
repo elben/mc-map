@@ -9,6 +9,10 @@
     </div>
 
     <div class="community-search-result-long-info">
+      {{#description}}
+      <p class="community-search-result-description">{{description}}</p>
+      {{/description}}
+
       {{#address}}
       <address>
         {{line_1}} {{line_2}}<br />

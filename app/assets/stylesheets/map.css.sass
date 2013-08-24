@@ -173,20 +173,27 @@ h2
   &.selected
     background-color: lighten($color-highlight, 25%)
 
+    .community-search-result-long-info
+      display: block
+
   header
     font-family: $font-fancy
     font-size: 18px
     color: $color-text-header
+
+  address
+    font-family: $font-fancy
+    margin-top: 0.4em
+    margin-bottom: 0.8em
 
   .community-search-result-short-info
     font-family: $font-fancy
     font-size: 14px
     color: $color-text
 
+  // hide until shown when selected
   .community-search-result-long-info
-    address
-      margin: 0.4em 0
-    // TODO
+    display: none
 
 .community-search-result-host-day
   text-transform: capitalize
