@@ -14,15 +14,18 @@
   <div id="form-fields">
     <div class="form-field">
       <%= label_tag 'member[name]', 'Name' %>
-      <%= text_field_tag 'member[name]', nil, :required => true %>
+      <%= text_field_tag 'member[name]', nil,
+          :required => true, :id => 'name' %>
     </div>
     <div class="form-field">
       <%= label_tag 'member[email]', 'Email' %>
-      <%= email_field_tag 'member[email]', nil, :required => true %>
+      <%= email_field_tag 'member[email]', nil,
+          :required => true, :id => 'email' %>
     </div>
     <div class="form-field">
       <%= label_tag 'member[phone_number]', 'Phone number' %>
-      <%= telephone_field_tag 'member[phone_number]', nil, :required => true %>
+      <%= telephone_field_tag 'member[phone_number]', nil,
+          :required => true, :id => 'phone-number'%>
     </div>
   </div>
 
@@ -32,3 +35,4 @@
   <%= submit_tag 'Sign Up', :class => 'form-submit-button' %>
 <% end %>
 
+<%= javascript_include_tag "signup" %>
