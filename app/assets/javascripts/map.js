@@ -412,6 +412,19 @@
       this.unhighlightMarkers();
       this.trigger('click', e.latlng);
       return this;
+    },
+
+    // pan the map to show a community
+    panToCommunity: function (id) {
+      // find the given marker
+      var marker = this.markers[id];
+
+      // pan to it if it exists
+      if (marker) {
+        this.map.panTo(marker.getLatLng(), { animate: true });
+      }
+
+      return this;
     }
 
   });
@@ -772,6 +785,11 @@
       this.mapView
           .unhighlightMarkers()
           .highlightMarker(communityId);
+
+      // center the view on its marker if it's not in-view
+      if (!_.contains(this.visibleCommunityIds, communityId)) {
+        this.mapView.panToCommunity(communityId);
+      }
 
       return this;
     },
