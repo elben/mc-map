@@ -636,14 +636,19 @@
         return _.has(kinds, k);
       }).length;
 
+      // having the same matching filters is better
+      if (this.filters.get('kind').length === score) {
+        score += 10;
+      }
+
       // presence in the visible results is even better still
       if (_.contains(this.visibleCommunityIds, community.get('id'))) {
-        score += 10;
+        score += 100;
       }
 
       // being the selected community is worth even more
       if (this.selectedCommunityId === community.get('id')) {
-        score += 100;
+        score += 1000;
       }
 
       return score;
