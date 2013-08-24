@@ -47,9 +47,7 @@ h2
   top: 0
   bottom: 0
 
-  // nominal width of a mobile device in portrait
   width: $size-sidebar-width
-
   padding: $size-padding
 
   background-color: $color-background
@@ -249,3 +247,22 @@ h2
 .loading .community-search-result-sign-up-button
   background-position: 0.5em center
   padding-left: 2.0em
+
+// change layout to side-by-side when too skinny
+@media screen and (max-width: $media-portrait-min-width)
+  $size-percent-width-sidebar: 50%
+
+  #map
+    left: 0
+    right: 0
+    top: 0
+    height: 100% - $size-percent-width-sidebar
+
+  #sidebar
+    right: 0
+    left: 0
+    bottom: 0
+    top: auto
+
+    height: $size-percent-width-sidebar
+    width: 100%
