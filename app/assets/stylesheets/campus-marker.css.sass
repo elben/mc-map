@@ -41,36 +41,25 @@ $duration-fade: 250ms
 
   opacity: 0.9
 
+  background-position: marker-icon-offset(9) 0
+
+  // raise the marker and change its icon
+  &.campus-marker-selected
+    background-position: marker-icon-offset(1) 0
+    margin-top: -($size-marker-height + ($size-marker-height / 8))
+
   // class added when a marker is removed from the map
   &.campus-marker-remove
     animation: fade-out $duration-fade
-
-  // class added when a marker is dimmed
-  &.campus-marker-dimmed
-    opacity: 0.4
 
   &:hover
     margin-top: -($size-marker-height + ($size-marker-height / 8))
     background-image: image-url('markers-hover.png')
     opacity: 1.0
 
-    // don't animate when dimmed, for browsers that support it
+    // don't animate when dimmed
     &.campus-marker-dimmed
       margin-top: -($size-marker-height)
-
-  // calculate offsets for the icons
-  &.campus-marker-dtam
-    background-position: marker-icon-offset(0) 0
-  &.campus-marker-dtpm
-    background-position: marker-icon-offset(5) 0
-  &.campus-marker-stjam
-    background-position: marker-icon-offset(6) 0
-  &.campus-marker-stjpm
-    background-position: marker-icon-offset(9) 0
-  &.campus-marker-south
-    background-position: marker-icon-offset(1) 0
-  &.campus-marker-west
-    background-position: marker-icon-offset(7) 0
 
 .campus-marker-shadow
   display: block
@@ -81,9 +70,6 @@ $duration-fade: 250ms
   animation: fade-in $duration-fade
   &.campus-marker-remove
     animation: fade-out $duration-fade
-
-  &.campus-marker-dimmed
-    opacity: 0.4
 
   width: $size-shadow-width
   height: $size-shadow-height

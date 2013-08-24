@@ -170,6 +170,7 @@
     initialize: function (options) {
       var defaults = {
         marker_toggle_duration_ms: 250,
+        marker_selected_class: 'campus-marker-selected',
         marker_dimmed_class: 'campus-marker-dimmed',
         marker_remove_class: 'campus-marker-remove'
       };
@@ -328,9 +329,13 @@
         var $icon = $(marker._icon);
         var $shadow = $(marker._shadow);
 
-        // un-dim all markers and reset their offsets
+        // un-dim/select all markers
         $icon.removeClass(this.options.marker_dimmed_class);
+        $icon.removeClass(this.options.marker_selected_class);
         $shadow.removeClass(this.options.marker_dimmed_class);
+        $shadow.removeClass(this.options.marker_selected_class);
+
+        // reset their offsets
         marker.setZIndexOffset(0);
       }, this);
 
@@ -349,7 +354,9 @@
           $icon.addClass(this.options.marker_dimmed_class);
           $shadow.addClass(this.options.marker_dimmed_class);
         } else {
-          // raise the selected marker above all others
+          // raise the selected marker above all others and mark it 'selected'
+          $icon.addClass(this.options.marker_selected_class);
+          $shadow.addClass(this.options.marker_selected_class);
           marker.setZIndexOffset(1000);
         }
       }, this);
