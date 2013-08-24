@@ -580,7 +580,8 @@
 
     events: {
       'scroll': 'handleResultsScroll',
-      'click .community-search-result': 'handleResultClick'
+      'click .community-search-result': 'handleResultClick',
+      'click .community-search-result-sign-up-button': 'handleSignUpClick'
     },
 
     // the most recent filtered results
@@ -616,19 +617,20 @@
     },
 
     // render a community and return the rendered jQuery object
-    renderCommunity: function (community, selected) {
+    renderCommunity: function (community) {
       var json = community.toJSON();
 
       // make 'kinds' into a list of display names, not enum values
       var kinds = _.values(community.get('kinds'));
       json.kinds = kinds;
 
-      var $result = $(this.template(json));
+      var $community = $(this.template(json));
 
-      // select the community if specified
-      $result.toggleClass(this.options.result_selected_class, selected);
+      // mark the community as selected if it's the currently-selected one
+      $community.toggleClass(this.options.result_selected_class,
+          community.get('id') === this.selectedCommunityId);
 
-      return $result;
+      return $community;
     },
 
     // score a community by the number of filters it matches
@@ -687,19 +689,27 @@
       // make sure the results are sorted
       this.sortFilteredResults();
 
-      // clear out the old communities
-      this.$el.empty();
+      // clear out old communities, keeping the selected community if it exists
+      var id = this.selectedCommunityId;
+      this.$el.children(':not([data-id="' + id + '"])').remove();
 
       // render an amount of communities necessary to force the list to scroll
       _.every(this.filteredResults, function (community) {
-        // render the community, marking it as selected if necessary
-        var isSelected = community.id === this.selectedCommunityId;
-        var $community = this.renderCommunity(community, isSelected);
-        this.$el.append($community);
+        // render the community if it's not the selected one, or if there is no
+        // currently selected community, but there should be
+        if (community.get('id') !== id ||
+            (this.$el.children('[data-id="' + id + '"]').length === 0 && id)) {
+          var $community = this.renderCommunity(community);
+          this.$el.append($community);
+        }
 
         // return false if we're done, canceling iteration
         return this.$el[0].scrollHeight <= $(window).height();
       }, this);
+
+      // make sure the selected community is/stays selected
+      this.$el.children('[data-id="' + id + '"]')
+          .addClass(this.options.result_selected_class);
 
       return this;
     },
@@ -770,6 +780,7 @@
       // store the visible communities for sorting search results
       this.visibleCommunityIds = visibleCommunityIds;
       this.renderSearchResults();
+      return this;
     },
 
     // set the clicked marker as the selected one
@@ -777,13 +788,20 @@
       this.selectedCommunityId = id;
       this.mapView.unhighlightMarkers().highlightMarker(id);
       this.renderSearchResults();
+      return this;
     },
 
     // un-highlight the selected result when the map is clicked
     handleMapClick: function (latlng) {
       this.selectedCommunityId = null;
       this.$el.children().removeClass(this.options.result_selected_class);
-    }
+      return this;
+    },
+
+    // show the sign-up page in an iframe when the sign-up button is clicked
+    handleSignUpClick: function (e) {
+
+    },
 
   });
 

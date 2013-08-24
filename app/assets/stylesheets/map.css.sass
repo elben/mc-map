@@ -166,15 +166,10 @@ h2
 
   background-color: $color-background-light
 
-  &~ .community-search-result
-    margin-top: $size-padding
+  // tell the user they can click the results to see more info
+  cursor: pointer
 
-  // gently highlight the selected result
-  &.selected
-    background-color: lighten($color-highlight, 25%)
-
-    .community-search-result-long-info
-      display: block
+  transition: background-color, 200ms
 
   header
     font-family: $font-fancy
@@ -193,7 +188,25 @@ h2
 
   // hide until shown when selected
   .community-search-result-long-info
-    display: none
+    max-height: 0
+    overflow: hidden
+    transition: max-height 500ms
+
+  &~ .community-search-result
+    margin-top: $size-padding
+
+  // gently highlight the selected result
+  &.selected
+    background-color: lighten($color-highlight, 25%)
+
+    // revert the cursor once selected
+    cursor: auto
+
+    .community-search-result-long-info
+      max-height: 1000px
+
+  &:hover
+    background-color: lighten($color-highlight, 25%)
 
 .community-search-result-host-day
   text-transform: capitalize
