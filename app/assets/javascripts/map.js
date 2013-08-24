@@ -716,7 +716,7 @@
 
     // render more community results into the results list
     renderMoreResults: function (numberToRender) {
-      numberToRender = numberToRender || 25;
+      numberToRender = numberToRender || 10;
 
       var index = this.$el.children().length;
       var endIndex = Math.min(index + numberToRender,
