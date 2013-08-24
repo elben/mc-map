@@ -1,0 +1,67 @@
+@import 'theme'
+
+$size-marker-small: 20px
+$size-marker-medium: 30px
+$size-marker-large: 40px
+
+// override Leaflet's automatically-applied sizing styles
+.marker-cluster-small
+  width: $size-marker-small + 10px !important
+  height: $size-marker-small + 10px !important
+
+  div
+    width: $size-marker-small !important
+    height: $size-marker-small !important
+
+  span
+    line-height: $size-marker-small !important
+
+.marker-cluster-medium
+  width: $size-marker-medium + 10px !important
+  height: $size-marker-medium + 10px !important
+
+  div
+    width: $size-marker-medium !important
+    height: $size-marker-medium !important
+
+  span
+    line-height: $size-marker-medium !important
+
+.marker-cluster-large
+  width: $size-marker-large + 10px !important
+  height: $size-marker-large + 10px !important
+
+  div
+    width: $size-marker-large !important
+    height: $size-marker-large !important
+
+  span
+    line-height: $size-marker-large !important
+
+// acts as the border around the central number circle
+.marker-cluster
+  background-color: rgba(white, 0.8)
+  background-clip: padding-box
+  border-radius: 1000px
+
+// an inner circle that container the number of clustered markers
+.marker-cluster div
+  margin-left: 5px
+  margin-top: 5px
+
+  text-align: center
+  border-radius: 1000px
+  font: 12px $font-fancy
+
+  background-color: rgba($color-cluster-background, 0.9)
+
+// the number of markers in a cluster
+.marker-cluster span
+  color: white
+  font-weight: bold
+  line-height: $size-marker-medium
+
+// marker animations
+.leaflet-cluster-anim
+  .leaflet-marker-icon, .leaflet-marker-shadow
+    transition: transform 0.2s ease-out, opacity 0.2s ease-in

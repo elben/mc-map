@@ -1,5 +1,6 @@
 //= require jquery
 //= require leaflet
+//= require leaflet.markercluster
 //= require Control.Loading
 //= require mustache
 //= require underscore
@@ -168,8 +169,17 @@
 
     communities: null,
 
-    // a cache of all markers currently on the map
     markers: {},
+
+    // markers currently on the map
+    markerLayer: L.markerClusterGroup({
+      removeOutsideVisibleBounds: true,
+      zoomToBoundsOnClick: true,
+      showCoverageOnHover: true,
+      spiderifyOnMaxZoom: true,
+      maxClusterRadius: 40,
+      disableClusteringAtZoom: 12
+    }),
 
     initialize: function (options) {
       var defaults = {
@@ -194,6 +204,9 @@
       // toggle a loading control while the communities list is syncing
       this.listenTo(this.communities, 'request', this.showLoadingControl);
       this.listenTo(this.communities, 'sync', this.hideLoadingControl);
+
+      // listen to marker click events
+      this.markerLayer.on('click', _.bind(this.handleMarkerClick, this));
 
       // zoom the map to fit all the communities on the first update only
       this.listenToOnce(this.communities, 'sync', this.zoomToFitCommunities);
@@ -252,6 +265,8 @@
         // bind specific events for the map
         this.map.on('moveend', _.bind(this.handleViewChange, this));
         this.map.on('click', _.bind(this.handleClick, this));
+
+        this.map.addLayer(this.markerLayer);
       }
 
       return this;
@@ -259,14 +274,15 @@
 
     // render all the markers from the communities list
     renderMarkers: function (communities) {
-      var presentMarkers = {};
+      // add updated markers to the marker layer
+      var markers = [];
       communities.each(function (community) {
         // only add the community to the map if it has geodata available
         if (community.hasGeodata()) {
-          // try to retrieve the marker from the cache
-          var marker = this.markers[community.id];
+          var communityId = community.get('id');
+          var marker = this.markers[communityId];
 
-          // create a new marker and add it to the map if it's not already on it
+          // create a new marker if we couldn't find one in the cache
           if (!marker) {
             marker = L.marker(community.get('latlng'), {
               // the campus values here and in the stylesheets correspond to the
@@ -279,32 +295,24 @@
               riseOnHover: true
             });
 
-            // listen to this marker's click event
-            marker.on('click', _.bind(this.handleMarkerClick, this));
-
-            // cache the marker for later use
-            this.markers[community.id] = marker;
+            // cache the marker for re-use later
+            this.markers[communityId] = marker;
           }
 
-          // label the marker as 'present' for this update
-          presentMarkers[community.id] = true;
+          // add the marker to this round's render list
+          markers.push(marker);
         }
       }, this);
 
-      // remove non-present markers and enable present ones
-      _.each(this.markers, function (marker, id) {
-        if (!presentMarkers[id]) {
-          this.map.removeLayer(marker);
-        } else {
-          this.map.addLayer(marker);
-        }
-      }, this);
+      // swap old markers and new markers all at once
+      this.markerLayer.clearLayers();
+      this.markerLayer.addLayers(markers);
 
       return this;
     },
 
     // remove the highlight from all markers
-    unhighlightMarkers: function () {
+    unHighlightMarkers: function () {
       _.each(this.markers, function (marker, id) {
         var $icon = $(marker._icon);
         var $shadow = $(marker._shadow);
@@ -324,6 +332,9 @@
 
     // dim all the markers but this one
     highlightMarker: function (visibleId) {
+      // remove any old highlight
+      this.unHighlightMarkers();
+
       // dim all the markers except for the selected one
       _.each(this.markers, function (marker, id) {
         var $icon = $(marker._icon);
@@ -382,26 +393,30 @@
 
     // trigger an event when a marker is clicked
     handleMarkerClick: function (e) {
-      var marker = e.target;
+      var marker = e.layer;
       this.trigger('markerclick', marker, marker.options.communityId);
       return this;
     },
 
     // unhighlight all markers and send a generic click event
     handleClick: function (e) {
-      this.unhighlightMarkers();
+      this.unHighlightMarkers();
       this.trigger('click', e.latlng);
       return this;
     },
 
-    // pan the map to show a community
-    panToCommunity: function (id) {
+    // pan/zoom the map to show a community, calling the callback when done
+    showCommunity: function (id, callback, context) {
       // find the given marker
       var marker = this.markers[id];
 
-      // pan to it if it exists
+      // zoom to it if it exists
       if (marker) {
-        this.map.panTo(marker.getLatLng(), { animate: true });
+        this.markerLayer.zoomToShowLayer(marker, function () {
+          if (typeof callback === 'function') {
+            callback.call(context || this);
+          }
+        });
       }
 
       return this;
@@ -659,7 +674,7 @@
 
     // set the search results to reflect the searched communities
     render: function () {
-      this.mapView.unhighlightMarkers();
+      this.mapView.unHighlightMarkers();
 
       // get and store the filtered results
       this.filteredResults = this.collection.query(
@@ -764,15 +779,10 @@
       // select this result
       this.selectedCommunityId = communityId;
 
-      // highlight its marker
-      this.mapView
-          .unhighlightMarkers()
-          .highlightMarker(communityId);
-
-      // center the view on its marker if it's not in-view
-      if (!_.contains(this.visibleCommunityIds, communityId)) {
-        this.mapView.panToCommunity(communityId);
-      }
+      // zoom to the community's marker and highlight it once done
+      this.mapView.showCommunity(communityId, function () {
+        this.mapView.highlightMarker(communityId);
+      }, this);
 
       return this;
     },
@@ -787,7 +797,7 @@
     // set the clicked marker as the selected one
     handleMapMarkerClick: function (marker, id) {
       this.selectedCommunityId = id;
-      this.mapView.unhighlightMarkers().highlightMarker(id);
+      this.mapView.highlightMarker(id);
       this.renderSearchResults();
       return this;
     },
