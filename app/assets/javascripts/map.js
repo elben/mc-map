@@ -43,6 +43,8 @@
   // compile the templates we'll be using
   var tmplCommunitySearchResult = Mustache.compile(
     $('#template-community-search-result').html());
+  var tmplCommunitySearchResultFrame = Mustache.compile(
+    $('#template-community-search-result-frame').html());
 
   // checkbox filters
   var Filters = Backbone.Model.extend({
@@ -590,6 +592,7 @@
     collection: null,
 
     template: tmplCommunitySearchResult,
+    frameTemplate: tmplCommunitySearchResultFrame,
 
     events: {
       'scroll': 'handleResultsScroll',
@@ -608,7 +611,8 @@
 
     initialize: function (options) {
       var defaults = {
-        result_selected_class: 'selected'
+        result_selected_class: 'selected',
+        info_expanded_class: 'expanded'
       };
       this.options = $.extend(defaults, options);
 
@@ -818,8 +822,37 @@
 
     // show the sign-up page in an iframe when the sign-up button is clicked
     handleSignUpClick: function (e) {
+      e.preventDefault();
 
+      var $button = $(e.currentTarget);
+      var $result = $button.parents('.community-search-result');
+      var $longInfo = $result.find('.community-search-result-long-info');
+
+      var url = $button.attr('href');
+      var $frame = $(this.frameTemplate({ url: url }));
+
+      // add the sign-up iframe and mark the info box as 'expanded'
+      $longInfo.addClass(this.options.info_expanded_class);
+      $longInfo.append($frame);
+
+      // whenever the frame loads, resize its iframe to fit it. we have to
+      // attach the event handler directly since the 'load' event doesn't
+      // bubble, and Backbone relies on that for its event binding.
+      $frame.on('load', _.bind(this.handleFrameLoad, this));
+
+      return this;
     },
+
+    // resize the iframe whenever it loads
+    handleFrameLoad: function (e) {
+      var $frame = $(e.currentTarget);
+      var content = $frame.contents();
+
+      var $frameBody = $('body', content);
+      $frame.height($frameBody.height());
+
+      return this;
+    }
 
   });
 

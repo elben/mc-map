@@ -20,7 +20,6 @@
 body
   font-family: $font-normal
   color: $color-text
-  background-color: $color-background
   font-size: 14px
 
 h1, h2, h3, h4, h5, h6
@@ -181,17 +180,6 @@ h2
     margin-top: 0.4em
     margin-bottom: 0.8em
 
-  .community-search-result-short-info
-    font-family: $font-fancy
-    font-size: 14px
-    color: $color-text
-
-  // hide until shown when selected
-  .community-search-result-long-info
-    max-height: 0
-    overflow: hidden
-    transition: max-height 500ms
-
   &~ .community-search-result
     margin-top: $size-padding
 
@@ -203,10 +191,34 @@ h2
     cursor: auto
 
     .community-search-result-long-info
-      max-height: 1000px
+      max-height: 600px
 
   &:hover
     background-color: lighten($color-highlight, 25%)
+
+.community-search-result-short-info
+  font-family: $font-fancy
+  font-size: 14px
+  color: $color-text
+
+.community-search-result-frame
+  width: 100%
+
+  // this gets set in JavaScript once we determine how tall the frame is
+  height: 0
+
+  transition: height 300ms
+
+// hide until shown when selected
+.community-search-result-long-info
+  max-height: 0
+  overflow: hidden
+  transition-property: height, max-height
+  transition-duration: 300ms
+
+  &.expanded
+    .community-search-result-sign-up-button
+      display: none
 
 .community-search-result-host-day
   text-transform: capitalize
