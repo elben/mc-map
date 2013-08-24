@@ -185,7 +185,7 @@ h2
 
   // gently highlight the selected result
   &.selected
-    background-color: lighten($color-highlight, 25%)
+    background-color: lighten($color-highlight, 30%)
 
     // revert the cursor once selected
     cursor: auto
@@ -194,7 +194,7 @@ h2
       max-height: 600px
 
   &:hover
-    background-color: lighten($color-highlight, 25%)
+    background-color: lighten($color-highlight, 30%)
 
 .community-search-result-short-info
   font-family: $font-fancy
@@ -216,10 +216,6 @@ h2
   transition-property: height, max-height
   transition-duration: 300ms
 
-  &.expanded
-    .community-search-result-sign-up-button
-      display: none
-
 .community-search-result-host-day
   text-transform: capitalize
 
@@ -236,3 +232,17 @@ h2
   text-decoration: none
   text-transform: uppercase
 
+  transition-property: padding-left, background-position
+  transition-duration: 150ms
+
+  // make sure the loading image is ready BEFORE the button is marked 'loading'
+  background-image: image-url('loading-signup.gif')
+  background-repeat: no-repeat
+  background-position: -20px center
+
+.loaded .community-search-result-sign-up-button
+  display: none
+
+.loading .community-search-result-sign-up-button
+  background-position: 0.5em center
+  padding-left: 2.0em

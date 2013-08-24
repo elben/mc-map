@@ -1,13 +1,14 @@
 //= require jquery
 
 (function () {
+  var $form = $('form');
+  var $submit = $('form input[type="submit"]');
+  var $name = $('#name');
+  var $email = $('#email');
+  var $phoneNumber = $('#phone-number');
+
   // store use info locally whenever they successfully submit the form
   if (window.localStorage) {
-    var $form = $('form');
-    var $name = $('#name');
-    var $email = $('#email');
-    var $phoneNumber = $('#phone-number');
-
     // the key prefix we store the information under
     var keyPrefix = 'sign-up-info-';
 
@@ -31,4 +32,7 @@
     $email.val(email);
     $phoneNumber.val(phoneNumber);
   }
+
+  // mark the form as 'loading' when the submit button is clicked
+  $submit.on('click', function (e) { $form.addClass('loading'); });
 }());

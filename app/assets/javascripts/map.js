@@ -612,7 +612,8 @@
     initialize: function (options) {
       var defaults = {
         result_selected_class: 'selected',
-        info_expanded_class: 'expanded'
+        info_loading_class: 'loading',
+        info_loaded_class: 'loaded'
       };
       this.options = $.extend(defaults, options);
 
@@ -828,14 +829,15 @@
       var $result = $button.parents('.community-search-result');
       var $longInfo = $result.find('.community-search-result-long-info');
 
+      // mark the info as 'loading'
+      $longInfo.addClass(this.options.info_loading_class);
+
+      // add the frame to the info
       var url = $button.attr('href');
       var $frame = $(this.frameTemplate({ url: url }));
-
-      // add the sign-up iframe and mark the info box as 'expanded'
-      $longInfo.addClass(this.options.info_expanded_class);
       $longInfo.append($frame);
 
-      // whenever the frame loads, resize its iframe to fit it. we have to
+      // whenever the frame loads, resize it to fit its content. we have to
       // attach the event handler directly since the 'load' event doesn't
       // bubble, and Backbone relies on that for its event binding.
       $frame.on('load', _.bind(this.handleFrameLoad, this));
@@ -846,10 +848,16 @@
     // resize the iframe whenever it loads
     handleFrameLoad: function (e) {
       var $frame = $(e.currentTarget);
-      var content = $frame.contents();
+      var $result = $frame.parents('.community-search-result');
+      var $longInfo = $result.find('.community-search-result-long-info');
 
-      var $frameBody = $('body', content);
+      // adjust the frame's height to match its contents
+      var $frameBody = $('body', $frame.contents());
       $frame.height($frameBody.height());
+
+      // remove the 'loading' class from its parent and mark it as 'loaded'
+      $longInfo.removeClass(this.options.info_loading_class);
+      $longInfo.addClass(this.options.info_loaded_class);
 
       return this;
     }

@@ -42,3 +42,15 @@
   margin-top: 0.8em
 
   background-color: $color-highlight
+
+  transition-property: padding-left, background-position
+  transition-duration: 150ms
+
+  // make sure the loading image is ready BEFORE the button is marked 'loading'
+  background-image: image-url('loading-signup.gif')
+  background-repeat: no-repeat
+  background-position: -20px center
+
+.loading .form-submit-button
+  background-position: 0.5em center
+  padding-left: 2.0em
