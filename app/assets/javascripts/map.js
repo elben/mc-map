@@ -643,13 +643,13 @@
         return _.has(kinds, k);
       }).length;
 
-      // having the same matching filters is better
-      if (this.filters.get('kind').length === score) {
+      // presence in the visible results is even better
+      if (_.contains(this.visibleCommunityIds, community.get('id'))) {
         score += 10;
       }
 
-      // presence in the visible results is even better still
-      if (_.contains(this.visibleCommunityIds, community.get('id'))) {
+      // having the same matching filters is better still
+      if (this.filters.get('kind').length === score) {
         score += 100;
       }
 
