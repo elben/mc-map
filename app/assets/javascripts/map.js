@@ -178,7 +178,7 @@
       showCoverageOnHover: true,
       spiderifyOnMaxZoom: true,
       maxClusterRadius: 40,
-      disableClusteringAtZoom: 12
+      disableClusteringAtZoom: 11
     }),
 
     initialize: function (options) {
