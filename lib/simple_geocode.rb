@@ -23,8 +23,8 @@ class SimpleGeocode
       location = response["results"].try(:first).try(:[], "geometry").try(:[], "location")
       if location
         return OpenStruct.new(
-          latitude: location['lat'],
-          longitude: location['lng'],
+          latitude: location['lat'].to_f,
+          longitude: location['lng'].to_f,
         )
       end
     else
