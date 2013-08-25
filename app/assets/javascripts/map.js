@@ -198,8 +198,7 @@
       zoomToBoundsOnClick: true,
       showCoverageOnHover: true,
       spiderifyOnMaxZoom: true,
-      maxClusterRadius: 40,
-      disableClusteringAtZoom: 11,
+      maxClusterRadius: 30,
       iconCreateFunction: createClusterIcon
     }),
 
