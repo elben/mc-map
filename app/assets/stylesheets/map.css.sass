@@ -52,6 +52,8 @@ h2
 
   background-color: $color-background
 
+  border-left: 1px solid darken($color-background, 20%)
+
 .checkbox-filter
   position: relative
 
@@ -267,7 +269,7 @@ h2
   background-position: 0.5em center
   padding-left: 2.0em
 
-// change layout to side-by-side when too skinny
+// change layout to top/bottom when too skinny
 @media screen and (max-width: $media-portrait-min-width)
   $size-percent-width-sidebar: 55%
 
@@ -282,6 +284,9 @@ h2
     left: 0
     bottom: 0
     top: auto
+
+    border-left: none
+    border-top: 1px solid darken($color-background, 20%)
 
     height: $size-percent-width-sidebar
     width: 100%
