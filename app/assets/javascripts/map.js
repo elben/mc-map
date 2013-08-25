@@ -185,6 +185,13 @@
 
     markers: {},
 
+    // the Esri map tiles layer (free!)
+    tileLayer: L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+      detectRetina: true,
+      reuseTiles: true
+    }),
+
     // markers currently on the map
     markerLayer: L.markerClusterGroup({
       removeOutsideVisibleBounds: true,
@@ -270,12 +277,8 @@
           attributionControl: false
         });
 
-        // add the Esri map tiles layer (free!)
-        L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
-          // detectRetina: true,
-          // reuseTiles: true
-        }).addTo(this.map);
+        // add the map tiles layer
+        this.map.addLayer(this.tileLayer);
 
         // bind specific events for the map
         this.map.on('moveend', _.bind(this.handleViewChange, this));
