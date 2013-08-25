@@ -96,6 +96,8 @@ h2
   left: $size-padding
   height: $size-filters
 
+  background-color: $color-background
+
   // filter tab headers
   nav
     @include clearfix()
@@ -119,6 +121,18 @@ h2
 
       &:hover
         background-color: $color-background-light
+
+#filters-header
+  // the header is shown only for smaller devices
+  display: none
+
+.mobile-header
+  text-align: center
+  line-height: 1.5em
+  background-color: white
+  margin-bottom: $size-padding
+
+  cursor: pointer
 
 .filter-tab-content
   border-top: 1px solid $color-text-header
@@ -161,6 +175,10 @@ h2
   left: $size-padding
   right: $size-padding
 
+#search-results-header
+  // hidden except on smaller devices, used to toggle to results from filters
+  display: none
+
 .community-search-result
   padding: $size-padding
 
@@ -181,8 +199,9 @@ h2
     margin-top: 0.4em
     margin-bottom: 0.8em
 
+  // delimit search results with a small margin to view the background through
   &~ .community-search-result
-    margin-top: $size-padding
+    margin-top: 1px
 
   // gently highlight the selected result
   &.selected
@@ -266,3 +285,49 @@ h2
 
     height: $size-percent-width-sidebar
     width: 100%
+
+// hide filters behind a click and expand results for smaller devices
+@media screen and (max-device-width: $media-mobile-min-width)
+  // make results take up the entire pane
+  #search-results
+    top: $size-padding * 4
+
+  #search-results-header
+    display: block
+
+  // show the filters title until hovered over
+  #filters-header
+    display: block
+
+  // hide filters behind a top bar until 'hovered' over, which ends up being a
+  // click on mobile devices.
+  #filters
+    top: $size-padding
+    height: $size-padding * 2
+
+    // put it on top of the search results
+    z-index: 1
+
+    cursor: pointer
+
+    // hide contents until hovered over
+    nav, .filter-tab
+      visibility: hidden
+
+    &:hover
+      // expand the filters to take up the entire section
+      bottom: $size-padding
+      height: auto
+
+      // position the filters lower to reveal the search results header, the
+      // clicking which will return the user to the search results view by
+      // disabling the 'hover' state on the filters.
+      top: $size-padding * 4
+
+      // hide the header so we can reveal the search results header
+      #filters-header
+        display: none
+
+      // show contents again
+      nav, .filter-tab
+        visibility: visible

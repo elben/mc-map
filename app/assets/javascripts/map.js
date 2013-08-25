@@ -799,6 +799,7 @@
       this.selectedCommunityId = id;
       this.mapView.highlightMarker(id);
       this.renderSearchResults();
+
       return this;
     },
 
