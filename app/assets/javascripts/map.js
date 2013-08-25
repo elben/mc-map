@@ -39,7 +39,7 @@
     }
   });
 
-  // the icon used for cluster indicators
+  // create the icon used for cluster indicators
   var createClusterIcon = function (cluster) {
     var childCount = cluster.getChildCount();
 
