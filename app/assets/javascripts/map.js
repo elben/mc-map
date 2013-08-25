@@ -655,6 +655,25 @@
       var kinds = _.values(community.get('kinds'));
       json.kinds = kinds;
 
+      // add a pretty address string (in query format) for Google maps linking
+      if (json.address) {
+        json.address_query = encodeURIComponent(
+          (json.address.line_1 || '') +
+
+          (json.address.line_2 ? ' ' : '') +
+          (json.address.line_2 || '') +
+
+          ', ' +
+          (json.address.city || '') +
+          ' ' +
+
+          (json.address.province || '') +
+          ', ' +
+
+          (json.address.postal || '')
+        );
+      }
+
       var $community = $(this.template(json));
 
       // mark the community as selected if it's the currently-selected one

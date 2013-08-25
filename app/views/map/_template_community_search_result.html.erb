@@ -15,8 +15,10 @@
 
       {{#address}}
       <address>
-        {{line_1}} {{line_2}}<br />
-        {{city}}, {{province}} {{postal}}
+        <a href="https://www.google.com/maps/preview#!q={{address_query}}" target="_blank">
+          {{line_1}} {{line_2}}<br />
+          {{city}}, {{province}} {{postal}}
+        </a>
       </address>
       {{/address}}
 
