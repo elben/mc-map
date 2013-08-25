@@ -4,7 +4,7 @@ class CommunitiesImport
 
   # Community column name mapped to its corresponding row index (possibly index range)
   COLUMN_TO_INDEX = {
-    entry_id: 0,
+    campus: 0,
     leader_first_name: 1,
     leader_last_name: 2,
     coleader_first_name: 3,
@@ -18,10 +18,10 @@ class CommunitiesImport
     address_postal: 11,
     address_country: 12,
     host_day: 13..19,
-    host_kind: 20..29,
-    already_in_mc: 30,
-    current_mc_leader: 31
-    # column 32 is blank
+    kind_list: 20..28,
+    already_in_mc: 29,
+    current_mc_leader: 30,
+    useful_info: 31,
   }
 
   # read the given CSV file and import its contents
@@ -32,11 +32,22 @@ class CommunitiesImport
 
   # parse a CSV string according to the St. John Wufoo data's CSV export format
   def self.import_string!(string, column_overrides={})
-    # Using the St. John AM host signup Wufoo form CSV export, skipping the
-    # first row, which we're assuming is the headers row.
+    communities = []
+
+    # skipping the first row, which is likely the header row
     CSV.parse(string, headers: :first_row, return_headers: false) do |row|
 
       community_hash = {
+        campus: self.get_row_value(row, :campus, transform: {
+          'Downtown AM' => :dtam,
+          'Downtown PM' => :dtpm,
+          'downtown PM' => :dtpm,
+          'St. John AM' => :stjam,
+          'St. John PM' => :stjpm,
+          'West' => :west,
+          'South' => :south,
+        }),
+
         leader_first_name: self.get_row_value(row, :leader_first_name),
         leader_last_name: self.get_row_value(row, :leader_last_name),
         coleader_first_name: self.get_row_value(row, :coleader_first_name),
@@ -49,15 +60,61 @@ class CommunitiesImport
         address_province: self.get_row_value(row, :address_province),
         address_postal: self.get_row_value(row, :address_postal),
 
-        # for these assignments, the corresponding Community model's enums MUST
-        # be in the same order that the CSV specifies.
-        host_day: self.get_row_value(row, :host_day, values: Community::DAYS),
-        host_kind: self.get_row_value(row, :host_kind, values: Community::MC_KINDS.keys),
+        host_day: self.get_row_value(row, :host_day, transform: {
+          'Monday' => 'monday',
+          'Tuesday' => 'tuesday',
+          'Wednesday' => 'wednesday',
+          'Thursday' => 'thursday',
+          'Friday' => 'friday',
+          'Saturday' => 'saturday',
+          'Sunday' => 'sunday',
+
+          # force a day to be present if not specified
+          nil => 'monday',
+        }).first,
+
+        kind_list: self.get_row_value(row, :kind_list, transform: {
+          "Men" => :men,
+          "Men Only" => :men,
+
+          "Women" => :women,
+          "Women Only" => :women,
+
+          "Open to everyone" => :open,
+          "Open to Everyone" => :open,
+          "Open to everyone (HIGHLY recommended)" => :open,
+
+          "Single College Men" => [:singles, :college, :men],
+          "Single College Women" => [:singles, :college, :women],
+
+          "College" => :college,
+
+          "Interested in the nations (Goer MC)" => :goer,
+          "Interested in the Nations (Goer MC)" => :goer,
+          "International Focused: Goer Mc" => :goer,
+          "International Focused: Goer MC" => :goer,
+
+          "Over 40 years old" => :over40,
+
+          "Families with children" => :family,
+          "Families with Children" => :family,
+
+          "Singles/Young Professionals" => :singles,
+          "Singles / Young Professionals" => :singles,
+
+          "Nearly/Newly Married Couples" => :newly_married,
+
+          # force a kind to be specified
+          nil => :open,
+        }),
       }
 
       # build a new community from the values we just parsed
-      Community.create(community_hash.merge(column_overrides))
+      communities << Community.new(community_hash.merge(column_overrides))
     end
+
+    # create all the communities at once, once we know our data was good
+    communities.each { |c| c.save }
   end
 
   # get a value from a specific row, compressing those values if the row is a
@@ -72,29 +129,48 @@ class CommunitiesImport
 
     # if it's a plain, just return the data from the specified column
     if row_index.is_a? Integer
-      return (row[row_index] || '').strip
+      result = (row[row_index] || '').strip
+
+      # transform result using given values, if necessary
+      if (opts[:transform] && opts[:transform][result])
+        return opts[:transform][result]
+      end
+
+      # make sure we expect the given value, because there will likely be a
+      # problem if we didn't!
+      if opts[:transform] && !opts[:transform][result]
+        raise "Failed to transform value #{value_name}: #{result}"
+      end
+
+      return result
     end
 
-    # otherwise, treat it as a Range and get its compressed value
-    self.get_compressed_row_value(row, row_index, opts[:values])
+    # otherwise, treat it as a Range and get its values list
+    self.get_row_values(row, row_index, opts[:transform])
   end
 
-  # take a series of row values and compress them into a single value.
-  # value_name should point to a range value in COLUMN_TO_INDEX.
-  def self.get_compressed_row_value(row, range, values)
-    # ensure 'range' and 'values' lengths match up
-    if range.count < values.count
-      msg = "there must be at least #{range.count} " +
-          "#{"value".pluralize range.count} "
-      raise ArgumentError, msg
-    end
+  # take a series of columns and get all the values therein
+  def self.get_row_values(row, range, transform={})
+    result = []
 
-    # get the first value in the values array that's non-nil in the row columns
-    result = nil
-    values.each_with_index do |value, index|
-      if row[range.begin + index]
-        result = value
-        break
+    # get the values from the columns, transforming them as we go
+    range.each do |index|
+      # get the value and map it to something else if necessary
+      value = row[index]
+      if transform[value]
+        value = transform[value]
+      else
+        raise "Failed to transform range value #{range}: #{value}"
+      end
+
+      # add the value to the list if it existed
+      if !value.blank?
+        if value.is_a? Array
+          # add a list of values if necessary
+          result += value
+        else
+          result << value
+        end
       end
     end
 
