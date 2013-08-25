@@ -3,63 +3,61 @@
 $size-marker-small: 20px
 $size-marker-medium: 30px
 $size-marker-large: 40px
+$size-marker-border: 5px
 
 // override Leaflet's automatically-applied sizing styles
 .marker-cluster-small
-  width: $size-marker-small + 10px !important
-  height: $size-marker-small + 10px !important
+  width: $size-marker-small !important
+  height: $size-marker-small !important
 
-  div
-    width: $size-marker-small !important
-    height: $size-marker-small !important
+  margin-left: -($size-marker-small / 2) - $size-marker-border !important
+  margin-top: -($size-marker-small / 2) - $size-marker-border !important
 
   span
     line-height: $size-marker-small !important
 
 .marker-cluster-medium
-  width: $size-marker-medium + 10px !important
-  height: $size-marker-medium + 10px !important
+  width: $size-marker-medium !important
+  height: $size-marker-medium !important
 
-  div
-    width: $size-marker-medium !important
-    height: $size-marker-medium !important
+  margin-left: -($size-marker-medium / 2) - $size-marker-border !important
+  margin-top: -($size-marker-medium / 2) - $size-marker-border !important
 
   span
     line-height: $size-marker-medium !important
 
 .marker-cluster-large
-  width: $size-marker-large + 10px !important
-  height: $size-marker-large + 10px !important
+  width: $size-marker-large !important
+  height: $size-marker-large !important
 
-  div
-    width: $size-marker-large !important
-    height: $size-marker-large !important
+  margin-left: -($size-marker-large / 2) - $size-marker-border !important
+  margin-top: -($size-marker-large / 2) - $size-marker-border !important
 
   span
     line-height: $size-marker-large !important
 
 // acts as the border around the central number circle
 .marker-cluster
-  background-color: rgba(white, 0.8)
-  background-clip: padding-box
-  border-radius: 1000px
+  box-sizing: content-box
 
-// an inner circle that container the number of clustered markers
-.marker-cluster div
-  margin-left: 5px
-  margin-top: 5px
+  border: $size-marker-border solid white
+  border-color: rgba(white, 0.8)
+
+  background-clip: padding-box
+  border-radius: 200%
 
   text-align: center
-  border-radius: 1000px
   font: 12px $font-fancy
 
   background-color: rgba($color-cluster-background, 0.9)
 
-// the number of markers in a cluster
-.marker-cluster span
-  color: white
-  font-weight: bold
-  line-height: $size-marker-medium
+  opacity: 0.98 !important
+
+  // the number of markers in a cluster
+  span
+    color: white
+    font-weight: bold
+    line-height: $size-marker-medium
 
 // marker animations
 .leaflet-cluster-anim

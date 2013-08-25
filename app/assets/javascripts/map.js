@@ -39,11 +39,24 @@
     }
   });
 
-  // compile the templates we'll be using
-  var tmplCommunitySearchResult = Mustache.compile(
-    $('#template-community-search-result').html());
-  var tmplCommunitySearchResultFrame = Mustache.compile(
-    $('#template-community-search-result-frame').html());
+  // the icon used for cluster indicators
+  var createClusterIcon = function (cluster) {
+    var childCount = cluster.getChildCount();
+
+    var iconSize = 'large';
+    if (childCount < 10) {
+      iconSize = 'small';
+    } else if (childCount < 100) {
+      iconSize = 'medium';
+    }
+
+    // a lightweight icon for the cluster
+    return new L.DivIcon({
+      // the HTML that goes inside the parent div
+      html: '<span>' + childCount + '</span>',
+      className: 'marker-cluster marker-cluster-' + iconSize,
+    });
+  };
 
   // checkbox filters
   var Filters = Backbone.Model.extend({
@@ -178,7 +191,8 @@
       showCoverageOnHover: true,
       spiderifyOnMaxZoom: true,
       maxClusterRadius: 40,
-      disableClusteringAtZoom: 11
+      disableClusteringAtZoom: 11,
+      iconCreateFunction: createClusterIcon
     }),
 
     initialize: function (options) {
@@ -584,8 +598,10 @@
     // the collection of communities to manage
     collection: null,
 
-    template: tmplCommunitySearchResult,
-    frameTemplate: tmplCommunitySearchResultFrame,
+    template: Mustache.compile(
+        $('#template-community-search-result').html()),
+    frameTemplate: Mustache.compile(
+        $('#template-community-search-result-frame').html()),
 
     events: {
       'scroll': 'handleResultsScroll',
