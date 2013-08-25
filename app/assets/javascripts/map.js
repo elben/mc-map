@@ -111,6 +111,7 @@
     // select only the clicked checkbox, deselecting all others
     handleOnlyClick: function (e) {
       e.preventDefault();
+
       var $filter = $(e.currentTarget).parents('.checkbox-filter');
       var $checkbox = $filter.find('input[type="checkbox"]');
 

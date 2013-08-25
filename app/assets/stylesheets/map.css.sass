@@ -60,26 +60,31 @@ h2
   font-family: $font-fancy
   font-size: 16px
 
-  padding: 0.3em
+  padding-top: 0.2em
+  padding-bottom: 0.2em
+
+  // leave room for the 'only' button
+  padding-right: 2em
 
   cursor: pointer
 
   input
-    font-size: 14px
+    position: absolute
+    top: 0.5em
+    left: 0
+
+    font-size: 1em
 
   label
-    position: absolute
-    left: 1.5em
-    right: 0
+    // make it take up most of the space so it's easier to toggle the filter
+    display: inline-block
+    width: 93%
+    margin-left: 7%
 
     cursor: pointer
 
   &:hover
     color: black
-
-  &~ .checkbox-filter
-    padding-top: 0.2em
-    padding-bottom: 0.2em
 
 .checkbox-only
   position: absolute
@@ -293,6 +298,13 @@ h2
 
 // hide filters behind a click and expand results for smaller devices
 @media screen and (max-device-width: $media-mobile-min-width)
+  // increase filter size to ease finger-tapping
+  .checkbox-filter
+    font-size: 20px
+
+    input
+      top: 0.6em
+
   // make results take up the entire pane
   #search-results
     top: $size-padding * 4
