@@ -834,7 +834,7 @@
       return this;
     },
 
-    // resize the iframe whenever it loads
+    // resize the iframe and focus its first input whenever it loads
     handleFrameLoad: function (e) {
       var $frame = $(e.currentTarget);
       var $result = $frame.parents('.community-search-result');

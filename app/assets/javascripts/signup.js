@@ -46,4 +46,7 @@
   $name.on('invalid', handleInvalidForm);
   $email.on('invalid', handleInvalidForm);
   $phoneNumber.on('invalid', handleInvalidForm);
+
+  // focus the first visible input
+  $('input:visible').first().trigger('focus');
 }());
