@@ -7,6 +7,8 @@
   var $email = $('#email');
   var $phoneNumber = $('#phone-number');
 
+  var loadingClass = 'loading';
+
   // store use info locally whenever they successfully submit the form
   if (window.localStorage) {
     // the key prefix we store the information under
@@ -33,6 +35,15 @@
     $phoneNumber.val(phoneNumber);
   }
 
-  // mark the form as 'loading' when the submit button is clicked
-  $submit.on('click', function (e) { $form.addClass('loading'); });
+  // mark the form as 'loading' when the submit button is clicked, but disable
+  // it if any of the elements was invalid.
+  $submit.on('click', function (e) { $form.addClass(loadingClass); });
+
+  var handleInvalidForm = function (e) {
+    $form.removeClass(loadingClass);
+  };
+
+  $name.on('invalid', handleInvalidForm);
+  $email.on('invalid', handleInvalidForm);
+  $phoneNumber.on('invalid', handleInvalidForm);
 }());
