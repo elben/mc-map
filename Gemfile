@@ -9,7 +9,6 @@ gem "httparty"
 gem 'jquery-rails'
 gem "jquery-ui-rails"
 gem "kaminari"
-gem "leaflet-rails"
 gem "sentry-raven"
 gem 'activeadmin'
 gem 'acts-as-taggable-on'

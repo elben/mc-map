@@ -102,7 +102,6 @@ GEM
     kaminari (0.14.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    leaflet-rails (0.6.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -213,7 +212,6 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   kaminari
-  leaflet-rails
   mailcatcher
   paranoia (~> 1.0)
   pg
