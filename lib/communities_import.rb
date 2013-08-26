@@ -100,10 +100,10 @@ class CommunitiesImport
 
       community_hash = {
         campus: campus,
-        leader_first_name: self.get_row_value(row, :leader_first_name),
-        leader_last_name: self.get_row_value(row, :leader_last_name),
-        coleader_first_name: self.get_row_value(row, :coleader_first_name),
-        coleader_last_name: self.get_row_value(row, :coleader_last_name),
+        leader_first_name: self.get_row_value(row, :leader_first_name).titleize,
+        leader_last_name: self.get_row_value(row, :leader_last_name).titleize,
+        coleader_first_name: self.get_row_value(row, :coleader_first_name).titleize,
+        coleader_last_name: self.get_row_value(row, :coleader_last_name).titleize,
         email: self.get_row_value(row, :email),
         phone_number: self.get_row_value(row, :phone_number),
         address_line_1: self.get_row_value(row, :address_line_1),
