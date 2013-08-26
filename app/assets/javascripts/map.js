@@ -746,8 +746,9 @@
       _.every(this.filteredResults, function (community) {
         // render the community if it's not the selected one, or if there is no
         // currently selected community, but there should be
-        if (community.get('id') !== id ||
-            (this.$el.children('[data-id="' + id + '"]').length === 0 && id)) {
+        var $selectedCommunity = this.$el.children('[data-id="' + id + '"]');
+        var noSelectedRendered = $selectedCommunity.length === 0 && id;
+        if (community.get('id') !== id || noSelectedRendered) {
           var $community = this.renderCommunity(community);
           this.$el.append($community);
         }
