@@ -37,17 +37,69 @@ class CommunitiesImport
     # skipping the first row, which is likely the header row
     CSV.parse(string, headers: :first_row, return_headers: false) do |row|
 
-      community_hash = {
-        campus: self.get_row_value(row, :campus, transform: {
-          'Downtown AM' => :dtam,
-          'Downtown PM' => :dtpm,
-          'downtown PM' => :dtpm,
-          'St. John AM' => :stjam,
-          'St. John PM' => :stjpm,
-          'West' => :west,
-          'South' => :south,
-        }),
+      campus = self.get_row_value(row, :campus, transform: {
+        'Downtown AM' => :dtam,
+        'Downtown PM' => :dtpm,
+        'downtown PM' => :dtpm,
+        'St. John AM' => :stjam,
+        'St. John PM' => :stjpm,
+        'West' => :west,
+        'South' => :south,
+      })
 
+      # force a campus to be specified
+      campus = :dtam if campus.blank?
+
+      host_days = self.get_row_value(row, :host_day, transform: {
+        'Monday' => 'monday',
+        'Tuesday' => 'tuesday',
+        'Wednesday' => 'wednesday',
+        'Thursday' => 'thursday',
+        'Friday' => 'friday',
+        'Saturday' => 'saturday',
+        'Sunday' => 'sunday'
+      })
+
+      # force a day to be specified
+      host_days = ['monday'] if host_days.empty?
+
+      kind_list = self.get_row_value(row, :kind_list, transform: {
+        "Men" => :men,
+        "Men Only" => :men,
+
+        "Women" => :women,
+        "Women Only" => :women,
+
+        "Open to everyone" => :open,
+        "Open to Everyone" => :open,
+        "Open to everyone (HIGHLY recommended)" => :open,
+
+        "Single College Men" => [:singles, :college, :men],
+        "Single College Women" => [:singles, :college, :women],
+
+        "College" => :college,
+
+        "Interested in the nations (Goer MC)" => :goer,
+        "Interested in the Nations (Goer MC)" => :goer,
+        "International Focused: Goer Mc" => :goer,
+        "International Focused: Goer MC" => :goer,
+
+        "Over 40 years old" => :over40,
+
+        "Families with children" => :family,
+        "Families with Children" => :family,
+
+        "Singles/Young Professionals" => :singles,
+        "Singles / Young Professionals" => :singles,
+
+        "Nearly/Newly Married Couples" => :newly_married,
+      })
+
+      # force a kind to be specified
+      kind_list = [:open] if kind_list.empty?
+
+      community_hash = {
+        campus: campus,
         leader_first_name: self.get_row_value(row, :leader_first_name),
         leader_last_name: self.get_row_value(row, :leader_last_name),
         coleader_first_name: self.get_row_value(row, :coleader_first_name),
@@ -59,54 +111,8 @@ class CommunitiesImport
         address_city: self.get_row_value(row, :address_city),
         address_province: self.get_row_value(row, :address_province),
         address_postal: self.get_row_value(row, :address_postal),
-
-        host_day: self.get_row_value(row, :host_day, transform: {
-          'Monday' => 'monday',
-          'Tuesday' => 'tuesday',
-          'Wednesday' => 'wednesday',
-          'Thursday' => 'thursday',
-          'Friday' => 'friday',
-          'Saturday' => 'saturday',
-          'Sunday' => 'sunday',
-
-          # force a day to be present if not specified
-          nil => 'monday',
-        }).first,
-
-        kind_list: self.get_row_value(row, :kind_list, transform: {
-          "Men" => :men,
-          "Men Only" => :men,
-
-          "Women" => :women,
-          "Women Only" => :women,
-
-          "Open to everyone" => :open,
-          "Open to Everyone" => :open,
-          "Open to everyone (HIGHLY recommended)" => :open,
-
-          "Single College Men" => [:singles, :college, :men],
-          "Single College Women" => [:singles, :college, :women],
-
-          "College" => :college,
-
-          "Interested in the nations (Goer MC)" => :goer,
-          "Interested in the Nations (Goer MC)" => :goer,
-          "International Focused: Goer Mc" => :goer,
-          "International Focused: Goer MC" => :goer,
-
-          "Over 40 years old" => :over40,
-
-          "Families with children" => :family,
-          "Families with Children" => :family,
-
-          "Singles/Young Professionals" => :singles,
-          "Singles / Young Professionals" => :singles,
-
-          "Nearly/Newly Married Couples" => :newly_married,
-
-          # force a kind to be specified
-          nil => :open,
-        }),
+        host_day: host_days.first,
+        kind_list: kind_list,
       }
 
       # build a new community from the values we just parsed
@@ -159,8 +165,6 @@ class CommunitiesImport
       value = row[index]
       if transform[value]
         value = transform[value]
-      else
-        raise "Failed to transform range value #{range}: #{value}"
       end
 
       # add the value to the list if it existed
