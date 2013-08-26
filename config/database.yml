@@ -19,8 +19,11 @@ test:
   timeout: 5000
 
 production:
+  username: mc_map
+  password: phohtizeeshoo8Thee
   adapter: postgresql
   database: mc_map
+  host: localhost
   pool: 20
   timeout: 5000
 
