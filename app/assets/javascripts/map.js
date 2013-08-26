@@ -925,7 +925,9 @@
 
   });
 
-  // start the app!
-  var app = new AppView();
+  // start the app if we're on the map page
+  if ($('#map').length > 0) {
+    var app = new AppView();
+  }
 
 }());
