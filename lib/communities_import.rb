@@ -21,7 +21,7 @@ class CommunitiesImport
     kind_list: 20..28,
     already_in_mc: 29,
     current_mc_leader: 30,
-    useful_info: 31,
+    additional_info: 31,
   }
 
   # read the given CSV file and import its contents
@@ -113,6 +113,7 @@ class CommunitiesImport
         address_postal: self.get_row_value(row, :address_postal),
         host_day: host_days.first,
         kind_list: kind_list,
+        description: self.get_row_value(row, :additional_info),
       }
 
       # build a new community from the values we just parsed
