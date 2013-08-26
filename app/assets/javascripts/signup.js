@@ -1,11 +1,11 @@
 //= require jquery
 
 (function () {
-  var $form = $('form');
-  var $submit = $('form input[type="submit"]');
-  var $name = $('#name');
-  var $email = $('#email');
-  var $phoneNumber = $('#phone-number');
+  var $form = $('#signup-form');
+  var $submit = $form.find('input[type="submit"]');
+  var $name = $form.find('#name');
+  var $email = $form.find('#email');
+  var $phoneNumber = $form.find('#phone-number');
 
   var loadingClass = 'loading';
 
@@ -48,5 +48,5 @@
   $phoneNumber.on('invalid', handleInvalidForm);
 
   // focus the first visible input
-  $('input:visible').first().trigger('focus');
+  $form.find('input:visible').first().trigger('focus');
 }());
