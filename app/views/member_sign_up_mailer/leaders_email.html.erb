@@ -1,12 +1,32 @@
+<style type="text/css">
+  td:first-child {
+    text-align: right;
+    font-weight: bold;
+  }
+</style>
+
 <p>Hi <%= @community.leader_first_name %>,</p>
 
 <p>Someone has signed up for your missional community!</p>
 
 <p>Here is their information:</p>
 
-<b>Name</b>: <%= @member.name %></br>
-<b>Email</b>: <%= @member.email %></br>
-<b>Phone</b>: <%= @member.phone_number %></br>
+<table>
+  <tbody>
+    <tr>
+      <td>Name:</td>
+      <td><%= @member.name %></td>
+    </tr>
+    <tr>
+      <td>Email:</td>
+      <td><%= @member.email %></td>
+    </tr>
+    <tr>
+      <td>Phone:</td>
+      <td><%= @member.phone_number %></td>
+    </tr>
+  </tbody>
+</table>
 
 <p>Please contact them in the next 48 hours, welcoming them to your missional community!</p>
 
