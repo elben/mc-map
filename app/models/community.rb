@@ -251,8 +251,11 @@ class Community < ActiveRecord::Base
     members = self.members << member
 
     unless members.blank?
-      # email the leader when first adding a member to their community
-      MemberSignUpMailer.leaders_email(member, self).deliver
+      # email the leader when first adding a member to their community, if the
+      # leader has an email.
+      unless member.email.blank?
+        MemberSignUpMailer.leaders_email(member, self).deliver
+      end
     end
 
     # email the new member even if they've already signed up
