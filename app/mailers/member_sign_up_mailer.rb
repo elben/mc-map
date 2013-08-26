@@ -5,8 +5,8 @@ class MemberSignUpMailer < ActionMailer::Base
   def welcome_email(member, community)
     @member = member
     @community = community
-    from = @community.email || "connections@ministries.austinstone.rog"
-    mail(from: from, to: member.email, subject: "Austin Stone missional community confirmation")
+    reply_to = @community.email || "connections@ministries.austinstone.rog"
+    mail(reply_to: reply_to, to: member.email, subject: "Austin Stone missional community confirmation")
   end
 
   # Sent to leaders of MC after new member
