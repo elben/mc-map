@@ -1,6 +1,6 @@
 <h2>Thanks for signing up!</h2>
 <p>
   <%= @community.leader_first_name %>
-  <% if @community.coleader_first_name %>or <%= @community.coleader_first_name %><% end %>
+  <% unless @community.coleader_first_name.blank? %>or <%= @community.coleader_first_name %><% end %>
   will be in touch with you soon!
 </p>
