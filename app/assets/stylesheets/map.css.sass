@@ -374,6 +374,9 @@ h2
       bottom: $size-padding - 1
       height: auto
 
+      // disable tap highlights, since these don't play nice with them
+      -webkit-tap-highlight-color: rgba(white, 0%)
+
       // position the filters lower to reveal the search results header, the
       // clicking which will return the user to the search results view by
       // disabling the 'hover' state on the filters.
