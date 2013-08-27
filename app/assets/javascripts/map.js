@@ -802,9 +802,9 @@
     renderMoreResults: function (numberToRender) {
       numberToRender = numberToRender || 10;
 
-      var index = this.$el.children().length;
+      var index = this.$el.children('.community-search-result').length;
       var endIndex = Math.min(index + numberToRender,
-          this.filteredResults.length - 1);
+          this.filteredResults.length);
 
       // render some more community results
       for (; index < endIndex; index++) {
