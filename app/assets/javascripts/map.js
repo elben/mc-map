@@ -71,7 +71,8 @@
     selectedTabClass: 'selected',
 
     events: {
-      'change input[type="checkbox"]': 'handleFilterChange',
+      'change .checkbox-filter input[type="checkbox"]': 'handleFilterChange',
+      'change #toggle-selection-checkbox': 'handleToggleChange',
 
       'click nav a': 'handleTabSelect',
       'touchstart nav a': 'handleTabSelect',
@@ -82,6 +83,7 @@
 
     initialize: function () {
       this.$filterTabs = this.$el.find('.filter-tab');
+      this.$toggleCheckbox = this.$el.find('#toggle-selection-checkbox');
     },
 
     // update the model when a filter is changed
@@ -120,6 +122,38 @@
 
       // uncheck all sibling checkboxes
       $filter.siblings().find('input[type="checkbox"]').prop('checked', false);
+
+      // update filters, since no event gets triggered by 'prop'
+      this.handleFilterChange();
+
+      return this;
+    },
+
+    // toggle all checkboxes when the toggle checkbox changes
+    handleToggleChange: function (e) {
+      e.preventDefault();
+
+      var $checkbox = $(e.currentTarget);
+
+      // get the checkboxes in the currently selected filter tab
+      var $checkboxes = this.$filterTabs.filter('.' + this.selectedTabClass)
+          .find('.checkbox-filter input[type="checkbox"]');
+
+      // first, get the state of all the checkboxes
+      var checkboxStates = $checkboxes.map(function () {
+        var $checkbox = $(this);
+        return $checkbox.prop('checked');
+      });
+
+      var allChecked = _.every(checkboxStates);
+
+      // if they're all checked, uncheck them. otherwise, check them.
+      $checkboxes.prop('checked', !allChecked);
+
+      // set the checkbox's state to match the current state of its charges. if
+      // they're all checked (or some are checked), it's unchecked. otherwise,
+      // it's checked. o, for a native tri-state checkbox...
+      $checkbox.prop('checked', !allChecked);
 
       // update filters, since no event gets triggered by 'prop'
       this.handleFilterChange();

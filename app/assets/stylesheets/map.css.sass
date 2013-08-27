@@ -6,6 +6,8 @@
 
 @import 'theme'
 
+$size-filters-footer: 2em
+
 @mixin clearfix()
   *zoom: 1
 
@@ -84,8 +86,8 @@ h2
 
     cursor: pointer
 
-  &:hover
-    color: black
+    &:hover
+      color: black
 
 .checkbox-only
   position: absolute
@@ -95,6 +97,10 @@ h2
   font-size: 0.8em
 
   color: #999999
+
+#filters-header
+  // the header is shown only for smaller devices
+  display: none
 
 #filters
   position: absolute
@@ -130,9 +136,31 @@ h2
       &:hover
         background-color: $color-background-light
 
-#filters-header
-  // the header is shown only for smaller devices
-  display: none
+#filters-footer
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 0
+
+  background-color: $color-background-light
+
+  height: $size-filters-footer
+  line-height: $size-filters-footer
+  padding-left: 0.9em
+  padding-right: 0.9em
+
+  border-top: 1px solid $color-background
+
+  font-size: 16px
+  font-family: $font-fancy
+
+  label
+    display: inline-block
+    width: 90%
+    cursor: pointer
+
+    &:hover
+      color: black
 
 .mobile-header
   text-align: center
@@ -156,7 +184,7 @@ h2
   top: 2.15em
   left: 0
   right: 0
-  bottom: 0
+  bottom: $size-filters-footer
 
   padding: 1em
   padding-top: 0.5em
@@ -210,9 +238,7 @@ h2
       color: inherit
       text-decoration: none
 
-      &:hover
-      &:active
-      &:visited
+      &:hover, &:active, &:visited
         color: inherit
 
       &:hover
@@ -340,7 +366,7 @@ h2
     cursor: pointer
 
     // hide contents until hovered over
-    nav, .filter-tab
+    nav, .filter-tab, #filters-footer
       visibility: hidden
 
     &:hover
@@ -358,5 +384,5 @@ h2
         display: none
 
       // show contents again
-      nav, .filter-tab
+      nav, .filter-tab, #filters-footer
         visibility: visible
