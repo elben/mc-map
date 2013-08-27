@@ -36,6 +36,81 @@ h1, h2, h3, h4, h5, h6
 h2
   font-size: 18px
 
+// the button used for sign-up and form reset
+.custom-button
+  // reset all its styles so we can get it down to 'blank'
+  display: inline-block
+  background: none
+  border: none
+  border-radius: none
+  margin: 0
+  padding: 0
+
+  padding: 0.4em
+  padding-left: 1.6em
+  padding-right: 1.6em
+
+  user-select: none
+
+  font-family: $font-fancy
+  color: black
+  text-decoration: none
+  text-transform: uppercase
+
+  transition: all 150ms
+
+  background-color: white
+
+  // make sure the loading image is ready BEFORE the button is marked 'loading',
+  // so there's no load lag while it's fetched from the server.
+  background-image: image-url('loading-white.gif')
+
+  // hide the loading spinner off-screen until it's needed (if it's needed)
+  background-repeat: no-repeat
+  background-position: -20px center
+
+  &~ .custom-button
+    margin-left: 0.5em
+
+  &:hover
+    background-color: grey
+
+  &:active
+    background-color: darkgrey
+    box-shadow: 0 0.1em 0.3em rgba(black, 0.2) inset
+
+// display the loading button depending on the state of the container it's in
+.loaded .custom-button-loadable
+  // hide loaded buttons
+  display: none
+
+.loading .custom-button-loadable
+  // show the loading spinner while loading
+  background-position: 0.5em center
+  padding-left: 2.0em
+
+// the button that tries to exude an "i'm important!" aura
+.custom-button-yellow
+  background-color: $color-highlight
+  background-image: image-url('loading-yellow.gif')
+
+  &:hover
+    background-color: lighten($color-highlight, 10%)
+
+  &:active
+    background-color: darken($color-highlight, 2%)
+
+// the button that tries to exude an "i'm important!" aura
+.custom-button-grey
+  background-color: $color-background
+  background-image: image-url('loading-grey.gif')
+
+  &:hover
+    background-color: lighten($color-background, 3%)
+
+  &:active
+    background-color: darken($color-background, 3%)
+
 // map takes up the entire screen, everything else overlays on top of it
 #map
   position: fixed
@@ -283,34 +358,6 @@ h2
 
 .community-search-result-host-day
   text-transform: capitalize
-
-.community-search-result-sign-up-button
-  display: inline-block
-
-  padding: 0.4em
-  padding-left: 1.6em
-  padding-right: 1.6em
-
-  font-family: $font-fancy
-  background-color: $color-highlight
-  color: black
-  text-decoration: none
-  text-transform: uppercase
-
-  transition-property: padding-left, background-position
-  transition-duration: 150ms
-
-  // make sure the loading image is ready BEFORE the button is marked 'loading'
-  background-image: image-url('loading-signup.gif')
-  background-repeat: no-repeat
-  background-position: -20px center
-
-.loaded .community-search-result-sign-up-button
-  display: none
-
-.loading .community-search-result-sign-up-button
-  background-position: 0.5em center
-  padding-left: 2.0em
 
 // change layout to top/bottom when too skinny
 @media screen and (max-width: $media-portrait-min-width)

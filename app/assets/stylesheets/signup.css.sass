@@ -23,34 +23,9 @@
     padding-left: 0.5em
     padding-right: 0.5em
 
-.form-submit-button
-  // reset all its styles so we can get it down to 'blank'
-  display: block
-  background: none
-  border: none
-  border-radius: none
-  margin: 0
-  padding: 0
+#form-actions
+  margin-top: 0.7em
 
-  font-family: $font-fancy
-  text-transform: uppercase
-
-  padding: 0.4em
-  padding-left: 1.6em
-  padding-right: 1.6em
-
-  margin-top: 0.8em
-
-  background-color: $color-highlight
-
-  transition-property: padding-left, background-position
-  transition-duration: 150ms
-
-  // make sure the loading image is ready BEFORE the button is marked 'loading'
-  background-image: image-url('loading-signup.gif')
-  background-repeat: no-repeat
-  background-position: -20px center
-
-.loading .form-submit-button
-  background-position: 0.5em center
-  padding-left: 2.0em
+#form-reset-button
+  // bring its style in-line with the sign-up button
+  vertical-align: -0.1em
