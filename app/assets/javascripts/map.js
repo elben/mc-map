@@ -68,8 +68,6 @@
   });
 
   var FiltersView = Backbone.View.extend({
-    selectedTabClass: 'selected',
-
     events: {
       'change .checkbox-filter input[type="checkbox"]': 'handleFilterChange',
       'change #toggle-selection-checkbox': 'handleToggleChange',
@@ -81,7 +79,12 @@
       'touchstart .checkbox-only': 'handleOnlyClick'
     },
 
-    initialize: function () {
+    initialize: function (options) {
+      var defaults = {
+        selected_tab_class: 'selected'
+      };
+      this.options = $.extend(defaults, options);
+
       this.$filterTabs = this.$el.find('.filter-tab');
       this.$toggleCheckbox = this.$el.find('#toggle-selection-checkbox');
     },
@@ -100,14 +103,14 @@
       // select the nav button
       var $navButton = $(e.currentTarget);
       $navButton
-          .addClass(this.selectedTabClass)
+          .addClass(this.options.selected_tab_class)
           .siblings()
-          .removeClass(this.selectedTabClass);
+          .removeClass(this.options.selected_tab_class);
 
       // select the corresponding tab
-      this.$filterTabs.removeClass(this.selectedTabClass);
+      this.$filterTabs.removeClass(this.options.selected_tab_class);
       var tabSelector = '#' + $(e.currentTarget).attr('data-tab-id');
-      $(tabSelector).addClass(this.selectedTabClass);
+      $(tabSelector).addClass(this.options.selected_tab_class);
     },
 
     // select only the clicked checkbox, deselecting all others
@@ -136,7 +139,8 @@
       var $checkbox = $(e.currentTarget);
 
       // get the checkboxes in the currently selected filter tab
-      var $checkboxes = this.$filterTabs.filter('.' + this.selectedTabClass)
+      var $checkboxes = this.$filterTabs
+          .filter('.' + this.options.selected_tab_class)
           .find('.checkbox-filter input[type="checkbox"]');
 
       // first, get the state of all the checkboxes
@@ -195,7 +199,9 @@
 
     render: function () {
       // if nothing is checked, check the first tab
-      if (this.$filterTabs.filter(this.selectedTabClass).length === 0) {
+      var $selectedTabs = this.$filterTabs
+          .filter('.' + this.options.selected_tab_class);
+      if ($selectedTabs.length === 0) {
         this.$el.find('.filter-nav-button').first().trigger('click');
       }
 
@@ -658,6 +664,7 @@
     initialize: function (options) {
       var defaults = {
         result_selected_class: 'selected',
+        result_placeholder_class: 'search-result-vertical-placeholder',
         info_loading_class: 'loading',
         info_loaded_class: 'loaded'
       };
@@ -781,8 +788,8 @@
         // render the community if it's not the selected one, or if there is no
         // currently selected community, but there should be
         var $selectedCommunity = this.$el.children('[data-id="' + id + '"]');
-        var noSelectedRendered = $selectedCommunity.length === 0 && id;
-        if (community.get('id') !== id || noSelectedRendered) {
+        var selectedNotRendered = $selectedCommunity.length === 0 && id;
+        if (community.get('id') !== id || selectedNotRendered) {
           var $community = this.renderCommunity(community);
           this.$el.append($community);
         }
@@ -790,6 +797,9 @@
         // return false if we're done, canceling iteration
         return this.$el[0].scrollHeight <= $(window).height();
       }, this);
+
+      // fill the remaining vertical space with a placeholder element
+      this.renderPlaceholder();
 
       // make sure the selected community is/stays selected
       this.$el.children('[data-id="' + id + '"]')
@@ -813,6 +823,42 @@
         this.$el.append($community);
       }
 
+      // fill the remaining space with the placeholder element
+      this.renderPlaceholder();
+
+      return this;
+    },
+
+    // render a vertical placeholder element into the results list to take up
+    // vertical space and simulate a full list. helps preserve scroll momentum
+    // on mobile devices.
+    renderPlaceholder: function () {
+      var $communities = this.$el.children('.community-search-result');
+      var numRemaining = this.filteredResults.length - $communities.length;
+
+      // get the current placeholder, or create one if one isn't present
+      var $placeholder = this.$el.children(
+          '.' + this.options.result_placeholder_class);
+      if ($placeholder.length === 0) {
+        $placeholder = $('<div></div>');
+        $placeholder.addClass(this.options.result_placeholder_class);
+        $placeholder.css('visibility', 'hidden');
+      }
+
+      // either update the placeholder's height to estimate remaining elements,
+      // or remove it from the list entirely.
+      if (numRemaining > 0) {
+        var $community = $communities.first();
+        var remainingHeight = $community.outerHeight() * 1.1 * numRemaining;
+        $placeholder.css('height', Math.round(remainingHeight));
+
+        // make sure the placeholder is always the last element in the list
+        this.$el.append($placeholder);
+      } else {
+        // remove the placeholder if there are no more results to render
+        $placeholder.remove();
+      }
+
       return this;
     },
 
@@ -826,12 +872,17 @@
     },
 
     handleResultsScroll: function (e) {
+      // get the placeholder element, if it exists
+      var $placeholder = this.$el.children(
+          '.' + this.options.result_placeholder_class);
+      var placeholderHeight = $placeholder.outerHeight() || 0;
+
       // see if we're near the bottom
       var scrollHeight = this.$el[0].scrollHeight;
       var scrollBottom = this.$el.scrollTop() + this.$el.height();
 
       // if we're withing some margin of the bottom, render more communities
-      if (scrollBottom >= scrollHeight - 200) {
+      if (scrollBottom >= scrollHeight - placeholderHeight - 400) {
         this.renderMoreResults();
       }
 
