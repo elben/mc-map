@@ -54,7 +54,7 @@
     return new L.DivIcon({
       // the HTML that goes inside the parent div
       html: '<span>' + childCount + '</span>',
-      className: 'marker-cluster marker-cluster-' + iconSize,
+      className: 'marker-cluster marker-cluster-' + iconSize
     });
   };
 
@@ -76,11 +76,14 @@
       'touchstart nav a': 'handleTabSelect',
 
       'click .checkbox-only': 'handleOnlyClick',
-      'touchstart .checkbox-only': 'handleOnlyClick'
+      'touchstart .checkbox-only': 'handleOnlyClick',
+
+      'click #filters-header': 'handleHeaderClick'
     },
 
     initialize: function (options) {
       var defaults = {
+        disabled_class: 'disabled',
         selected_tab_class: 'selected'
       };
       this.options = $.extend(defaults, options);
@@ -165,6 +168,13 @@
       return this;
     },
 
+    // emit an event when the header is clicked
+    handleHeaderClick: function (e) {
+      e.preventDefault();
+      this.trigger('headerclick');
+      return this;
+    },
+
     // sync the current filter state to the model, causing change events for all
     // changed filter properties.
     updateAllFilters: function () {
@@ -206,7 +216,14 @@
       }
 
       return this;
+    },
+
+    // toggle the display of the filters on or off
+    toggle: function (enable) {
+      this.$el.toggleClass(this.options.disabled_class, !enable);
+      return this;
     }
+
   });
 
   var Map = Backbone.Model.extend({
@@ -647,9 +664,10 @@
         $('#template-community-search-result-frame').html()),
 
     events: {
-      'scroll': 'handleResultsScroll',
       'click .community-search-result': 'handleResultClick',
-      'click .community-search-result-sign-up-button': 'handleSignUpClick'
+      'click .community-search-result-sign-up-button': 'handleSignUpClick',
+
+      'click #search-results-header': 'handleHeaderClick'
     },
 
     // the most recent filtered results
@@ -661,8 +679,13 @@
     // the id of the most recently-selected community
     selectedCommunityId: null,
 
+    $list: null,
+    $filters: null,
+    $searchResults: null,
+
     initialize: function (options) {
       var defaults = {
+        disabled_class: 'disabled',
         result_selected_class: 'selected',
         result_placeholder_class: 'search-result-vertical-placeholder',
         info_loading_class: 'loading',
@@ -670,11 +693,15 @@
       };
       this.options = $.extend(defaults, options);
 
+      this.$list = this.$el.children('ul');
+
       this.filters = options.filters;
+      this.filtersView = options.filtersView;
       this.mapView = options.mapView;
 
       // update our URL whenever the filters change
       this.listenTo(this.filters, 'change', this.render);
+      this.listenTo(this.filtersView, 'headerclick', this.handleFiltersHeaderClick);
 
       // re-render whenever the collection changes
       this.listenTo(this.collection, 'change', this.render);
@@ -685,6 +712,9 @@
       this.listenTo(this.mapView, 'viewchange', this.handleMapViewChange);
       this.listenTo(this.mapView, 'markerclick', this.handleMapMarkerClick);
       this.listenTo(this.mapView, 'click', this.handleMapClick);
+
+      // scroll event doesn't bubble, so bind directly to the element
+      this.$list.on('scroll', _.bind(this.handleResultsScroll, this));
     },
 
     // render a community and return the rendered jQuery object
@@ -781,28 +811,28 @@
 
       // clear out old communities, keeping the selected community if it exists
       var id = this.selectedCommunityId;
-      this.$el.children(':not([data-id="' + id + '"])').remove();
+      this.$list.children(':not([data-id="' + id + '"])').remove();
 
       // render an amount of communities necessary to force the list to scroll
       _.every(this.filteredResults, function (community) {
         // render the community if it's not the selected one, or if there is no
         // currently selected community, but there should be
-        var $selectedCommunity = this.$el.children('[data-id="' + id + '"]');
+        var $selectedCommunity = this.$list.children('[data-id="' + id + '"]');
         var selectedNotRendered = $selectedCommunity.length === 0 && id;
         if (community.get('id') !== id || selectedNotRendered) {
           var $community = this.renderCommunity(community);
-          this.$el.append($community);
+          this.$list.append($community);
         }
 
         // return false if we're done, canceling iteration
-        return this.$el[0].scrollHeight <= $(window).height();
+        return this.$list[0].scrollHeight <= $(window).height();
       }, this);
 
       // fill the remaining vertical space with a placeholder element
       this.renderPlaceholder();
 
       // make sure the selected community is/stays selected
-      this.$el.children('[data-id="' + id + '"]')
+      this.$list.children('[data-id="' + id + '"]')
           .addClass(this.options.result_selected_class);
 
       return this;
@@ -812,7 +842,7 @@
     renderMoreResults: function (numberToRender) {
       numberToRender = numberToRender || 10;
 
-      var index = this.$el.children('.community-search-result').length;
+      var index = this.$list.children('.community-search-result').length;
       var endIndex = Math.min(index + numberToRender,
           this.filteredResults.length);
 
@@ -820,7 +850,7 @@
       for (; index < endIndex; index++) {
         var community = this.filteredResults[index];
         var $community = this.renderCommunity(community);
-        this.$el.append($community);
+        this.$list.append($community);
       }
 
       // fill the remaining space with the placeholder element
@@ -833,11 +863,11 @@
     // vertical space and simulate a full list. helps preserve scroll momentum
     // on mobile devices.
     renderPlaceholder: function () {
-      var $communities = this.$el.children('.community-search-result');
+      var $communities = this.$list.children('.community-search-result');
       var numRemaining = this.filteredResults.length - $communities.length;
 
       // get the current placeholder, or create one if one isn't present
-      var $placeholder = this.$el.children(
+      var $placeholder = this.$list.children(
           '.' + this.options.result_placeholder_class);
       if ($placeholder.length === 0) {
         $placeholder = $('<div></div>');
@@ -853,7 +883,7 @@
         $placeholder.css('height', Math.round(remainingHeight));
 
         // make sure the placeholder is always the last element in the list
-        this.$el.append($placeholder);
+        this.$list.append($placeholder);
       } else {
         // remove the placeholder if there are no more results to render
         $placeholder.remove();
@@ -871,15 +901,21 @@
       return this;
     },
 
+    // toggle the display of the search results on or off
+    toggle: function (enable) {
+      this.$el.toggleClass(this.options.disabled_class, !enable);
+      return this;
+    },
+
     handleResultsScroll: function (e) {
       // get the placeholder element, if it exists
-      var $placeholder = this.$el.children(
+      var $placeholder = this.$list.children(
           '.' + this.options.result_placeholder_class);
       var placeholderHeight = $placeholder.outerHeight() || 0;
 
       // see if we're near the bottom
-      var scrollHeight = this.$el[0].scrollHeight;
-      var scrollBottom = this.$el.scrollTop() + this.$el.height();
+      var scrollHeight = this.$list[0].scrollHeight;
+      var scrollBottom = this.$list.scrollTop() + this.$list.height();
 
       // if we're withing some margin of the bottom, render more communities
       if (scrollBottom >= scrollHeight - placeholderHeight - 400) {
@@ -930,7 +966,8 @@
     // un-highlight the selected result when the map is clicked
     handleMapClick: function (latlng) {
       this.selectedCommunityId = null;
-      this.$el.children().removeClass(this.options.result_selected_class);
+      this.$list.children('.community-search-result')
+          .removeClass(this.options.result_selected_class);
       return this;
     },
 
@@ -973,6 +1010,16 @@
       $longInfo.addClass(this.options.info_loaded_class);
 
       return this;
+    },
+
+    handleHeaderClick: function (e) {
+      this.toggle(false);
+      this.filtersView.toggle(true);
+    },
+
+    handleFiltersHeaderClick: function () {
+      this.toggle(true);
+      this.filtersView.toggle(false);
     }
 
   });
@@ -1000,7 +1047,10 @@
 
       this.communitiesView = new CommunitiesView({
         el: $('#search-results'),
+
         mapView: this.mapView,
+        filtersView: this.filtersView,
+
         filters: this.filters,
         collection: this.communities
       });

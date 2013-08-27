@@ -187,6 +187,10 @@ h2
 
   background-color: $color-background
 
+  // can be hidden on mobile browsers
+  &.disabled
+    display: none
+
   // filter tab headers
   nav
     @include clearfix()
@@ -199,6 +203,9 @@ h2
 
       width: 33.3333%
       padding: 0.3em
+
+      // make sure the bottoms extend beneath the filter tabs, so there's no gap
+      padding-bottom: 1em
 
       font-family: $font-fancy
       font-size: 16px
@@ -272,18 +279,27 @@ h2
 
 #search-results
   display: block
-  list-style-type: none
-  overflow: auto
-  overflow-x: hidden
-
-  margin: 0
-  padding: 0
+  overflow: hidden
 
   position: absolute
   top: $size-filters + 2 * $size-padding
   bottom: $size-padding
   left: $size-padding
   right: $size-padding
+
+  ul
+    height: 100%
+
+    list-style-type: none
+    overflow: auto
+    overflow-x: hidden
+
+    margin: 0
+    padding: 0
+
+  // put this below the filters on mobile browsers
+  &.disabled
+    display: none
 
 #search-results-header
   // hidden except on smaller devices, used to toggle to results from filters
@@ -385,54 +401,34 @@ h2
 @media screen and (max-device-width: $media-mobile-min-width)
   // increase filter size to ease finger-tapping
   .checkbox-filter
-    font-size: 20px
+    line-height: 1.8em
 
     input
       top: 0.6em
 
-  // make results take up the entire pane
-  #search-results
-    top: $size-padding * 4
-
+  // show both the headers, allowing the user to click them and toggle the panes
   #search-results-header
     display: block
-
-  // show the filters title until hovered over
   #filters-header
     display: block
 
-  // hide filters behind a top bar until 'hovered' over, which ends up being a
-  // click on mobile devices.
-  #filters
+  // make results take up the entire pane
+  #search-results
     top: $size-padding
-    height: $size-padding * 2
+    background-color: $color-background
 
-    // put it on top of the search results
-    z-index: 1
+  #filters
+    // expand the filters to take up the entire section
+    top: $size-padding
+    bottom: $size-padding
 
-    cursor: pointer
+    // remove the explicity-set height
+    height: auto
 
-    // hide contents until hovered over
-    nav, .filter-tab, #filters-footer
-      visibility: hidden
+    background-color: $color-background
 
-    &:hover
-      // expand the filters to take up the entire section
-      bottom: $size-padding - 1
-      height: auto
+    // disable tap highlights, since these don't play nice with them
+    // -webkit-tap-highlight-color: rgba(white, 0%)
 
-      // disable tap highlights, since these don't play nice with them
-      -webkit-tap-highlight-color: rgba(white, 0%)
-
-      // position the filters lower to reveal the search results header, the
-      // clicking which will return the user to the search results view by
-      // disabling the 'hover' state on the filters.
-      top: $size-padding * 4
-
-      // hide the header so we can reveal the search results header
-      #filters-header
-        display: none
-
-      // show contents again
-      nav, .filter-tab, #filters-footer
-        visibility: visible
+  .filter-tab
+    top: 5em
