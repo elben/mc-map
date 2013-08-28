@@ -5,6 +5,7 @@
 //= require mustache
 //= require underscore
 //= require backbone
+//= require scrollfix
 
 (function () {
 
@@ -214,6 +215,12 @@
       if ($selectedTabs.length === 0) {
         this.$el.find('.filter-nav-button').first().trigger('click');
       }
+
+      // fix scrolling for all filter tabs
+      this.$filterTabs.each(function () {
+        var $content = $(this).find('.filter-tab-content');
+        new ScrollFix($content[0]);
+      });
 
       return this;
     },
@@ -670,6 +677,9 @@
       'click #search-results-header': 'handleHeaderClick'
     },
 
+    // flag so we don't re-fix the scrollable area for mobile devices
+    scrollFixed: false,
+
     // the most recent filtered results
     filteredResults: [],
 
@@ -783,6 +793,12 @@
 
     // set the search results to reflect the searched communities
     render: function () {
+      // fix full-screen scrolling problem for iOS devices
+      if (!this.scrollFixed) {
+        new ScrollFix(this.$list[0]);
+        this.scrollFixed = true;
+      }
+
       this.mapView.unHighlightMarkers();
 
       // get and store the filtered results
