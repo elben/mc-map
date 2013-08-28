@@ -1057,6 +1057,13 @@
 
       // load initial community data from the server, updating the view
       this.communities.fetch();
+
+      this.render();
+    },
+
+    render: function () {
+      // hide the URL bar on iOS
+      _.defer(function () { window.scrollTo(0, 1); });
     }
 
   });

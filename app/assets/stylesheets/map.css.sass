@@ -21,6 +21,14 @@ $size-filters-footer: 2em
 *
   box-sizing: border-box
 
+// make the HTML just tall enough to allow us to disable the iOS address bar
+html
+  box-sizing: content-box
+  height: 100%
+
+  // large enough for the iOS chrome to get scrolled past
+  padding-bottom: 60px
+
 body
   font-family: $font-normal
   color: $color-text
