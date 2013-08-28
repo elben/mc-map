@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130811224407) do
+ActiveRecord::Schema.define(:version => 20130828035354) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(:version => 20130811224407) do
     t.string   "lat"
     t.string   "lng"
     t.string   "campus"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.datetime "deleted_at"
     t.string   "email"
     t.string   "phone_number"
@@ -75,11 +75,13 @@ ActiveRecord::Schema.define(:version => 20130811224407) do
     t.string   "address_postal"
     t.string   "host_day"
     t.text     "description"
+    t.boolean  "hidden",              :default => false, :null => false
   end
 
   add_index "communities", ["campus"], :name => "index_communities_on_campus"
   add_index "communities", ["coleader_first_name"], :name => "index_communities_on_coleader_first_name"
   add_index "communities", ["coleader_last_name"], :name => "index_communities_on_coleader_last_name"
+  add_index "communities", ["hidden"], :name => "index_communities_on_hidden"
   add_index "communities", ["host_day"], :name => "index_communities_on_host_day"
   add_index "communities", ["leader_first_name"], :name => "index_communities_on_leader_first_name"
   add_index "communities", ["leader_last_name"], :name => "index_communities_on_leader_last_name"
