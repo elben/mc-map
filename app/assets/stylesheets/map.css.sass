@@ -26,9 +26,6 @@ html
   box-sizing: content-box
   height: 100%
 
-  // large enough for the iOS chrome to get scrolled past
-  padding-bottom: 60px
-
 body
   font-family: $font-normal
   color: $color-text
@@ -384,6 +381,10 @@ html.framed,
 
 // hide filters behind a click and expand results for smaller devices
 @media screen and (max-device-width: $media-mobile-min-width)
+  html
+    // large enough for the iOS chrome to get scrolled past
+    padding-bottom: 60px
+
   // increase filter size to ease finger-tapping
   .checkbox-filter
     line-height: 1.8em
