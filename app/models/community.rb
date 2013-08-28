@@ -23,6 +23,7 @@ class Community < ActiveRecord::Base
     :slug,
     :deleted_at,
     :kind_list,
+    :hidden,
   ])
 
 
@@ -44,6 +45,9 @@ class Community < ActiveRecord::Base
     # filter by kinds tags; OR match
     tagged_with(kinds, on: :kinds, any: true)
   }
+
+  scope :visible, -> { where(hidden: false) }
+  scope :hidden, -> { where(hidden: true) }
 
   CAMPUSES = {
     stjam: "St. John AM",

@@ -1,12 +1,13 @@
 class CommunitiesController < ApplicationController
   # params:
-  #   limit - number of results per page, defaults to 50
-  #   page - page of results to get, defaults to 1 (NOT zero-based)
-  #   campus - blank, or enum value from Community::CAMPUSES
-  #   host_day - blank, or enum value from Community::DAYS
-  #   kinds - blank, or comma-seperated list of enum value from
-  #           Community::MC_KINDS
-  #   points_only - true if only minimal point data is to be returned
+  #   limit       - Number of results per page, defaults to 50
+  #   page        - Page of results to get, defaults to 1 (NOT zero-based)
+  #   campus      - Blank, or enum value from Community::CAMPUSES
+  #   host_day    - Blank, or enum value from Community::DAYS
+  #   kinds       - Blank, or comma-seperated list of enum value from
+  #                 Community::MC_KINDS
+  #   points_only - True if only minimal point data is to be returned
+  #   show_hidden - Show hidden commmunities. Defaults to false.
   def index
     # pull params from the params hash
     limit = (params[:limit] || 50).to_i
@@ -19,6 +20,11 @@ class CommunitiesController < ApplicationController
       # Turn into array, split by comma, to do IN query.
       # e.g. where host_day IN ('monday', ...)
       filters[k] = v.downcase.split(",")
+    end
+
+    unless params[:show_hidden]
+      # Don't show hidden
+      filters[:hidden] = false
     end
 
     communities = Community.where(filters).with_kinds(params[:kinds]).page(page).per(limit)

@@ -21,6 +21,11 @@ ActiveAdmin.register Community do
     column "Members" do |c|
       c.members.count
     end
+    column "Hidden", sortable: :hidden do |c|
+      if c.hidden?
+        "yes"
+      end
+    end
   end
 
   form do |f|
@@ -41,6 +46,7 @@ ActiveAdmin.register Community do
       f.input :address_province
       f.input :address_postal
       f.input :description
+      f.input :hidden, as: :radio
     end
 
     f.actions
@@ -72,6 +78,7 @@ ActiveAdmin.register Community do
         column :email
         column :phone_number
       end
+      row :hidden
     end
     active_admin_comments
   end
