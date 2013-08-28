@@ -1,8 +1,10 @@
 <div class="checkbox-filter checkbox-filter-<%= name %> checkbox-filter-<%= name %>-<%= value %>">
   <% checkbox_id = "checkbox-#{name}-#{value}" %>
-  <input type="checkbox" id="<%= checkbox_id %>" data-filter-name="<%= name %>"
-      value="<%= value %>"<% if local_assigns.fetch :checked, false %> checked<% end %> />
-  <label for="<%= checkbox_id %>"><%= display_text %></label>
+  <label for="<%= checkbox_id %>">
+    <input type="checkbox" id="<%= checkbox_id %>" data-filter-name="<%= name %>"
+        value="<%= value %>"<% if local_assigns.fetch :checked, false %> checked<% end %> />
+    <span><%= display_text %></span>
+  </label>
 
   <% if local_assigns.fetch :only, true %>
   <a href="#" class="checkbox-only">Only</a>
