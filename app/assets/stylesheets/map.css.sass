@@ -256,7 +256,7 @@ h2
   text-align: center
   line-height: 1.5em
   background-color: white
-  margin-bottom: $size-padding
+  margin-bottom: $size-padding-mobile
 
   cursor: pointer
 
@@ -383,28 +383,6 @@ h2
 .community-search-result-host-day
   text-transform: capitalize
 
-// change layout to top/bottom when too skinny
-@media screen and (max-width: $media-portrait-min-width)
-  $size-percent-width-sidebar: 55%
-
-  #map
-    left: 0
-    right: 0
-    top: 0
-    height: 100% - $size-percent-width-sidebar
-
-  #sidebar
-    right: 0
-    left: 0
-    bottom: 0
-    top: auto
-
-    border-left: none
-    border-top: 1px solid darken($color-background, 20%)
-
-    height: $size-percent-width-sidebar
-    width: 100%
-
 // hide filters behind a click and expand results for smaller devices
 @media screen and (max-device-width: $media-mobile-min-width)
   // increase filter size to ease finger-tapping
@@ -422,21 +400,50 @@ h2
 
   // make results take up the entire pane
   #search-results
-    top: $size-padding
+    // reduce padding on mobile devices to increase usable space
+    top: $size-padding-mobile
+    right: $size-padding-mobile
+    bottom: $size-padding-mobile
+    left: $size-padding-mobile
+
     background-color: $color-background
 
   #filters
-    // expand the filters to take up the entire section
-    top: $size-padding
-    bottom: $size-padding
+    // expand filters to take up the entire space
+    top: $size-padding-mobile
+    right: $size-padding-mobile
+    bottom: $size-padding-mobile
+    left: $size-padding-mobile
 
     // remove the explicity-set height
     height: auto
 
     background-color: $color-background
 
-    // disable tap highlights, since these don't play nice with them
-    // -webkit-tap-highlight-color: rgba(white, 0%)
-
   .filter-tab
-    top: 5em
+    top: 4.5em
+
+  // 'disable' hover color on mobile
+  .community-search-result:hover
+    background-color: $color-background-light
+
+// change layout to top/bottom when too skinny
+@media screen and (max-width: $media-portrait-min-width)
+  $size-percent-width-sidebar: 55%
+
+  #map
+    left: 0
+    right: 0
+    top: 0
+
+    // add just enough space to prevent a 1px line between the map and sidebar
+    height: 100% - $size-percent-width-sidebar + 0.25%
+
+  #sidebar
+    right: 0
+    left: 0
+    bottom: 0
+    top: auto
+
+    height: $size-percent-width-sidebar
+    width: 100%
