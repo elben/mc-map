@@ -672,7 +672,9 @@
 
     events: {
       'click .community-search-result': 'handleResultClick',
+
       'click .community-search-result-sign-up-button': 'handleSignUpClick',
+      'touchend .community-search-result-sign-up-button': 'handleMobileSignUpClick',
 
       'click #search-results-header': 'handleHeaderClick'
     },
@@ -1011,6 +1013,21 @@
       return this;
     },
 
+    // open a popup for signup info on mobile when the button is clicked
+    handleMobileSignUpClick: function (e) {
+      e.preventDefault();
+
+      var $button = $(e.currentTarget);
+      var $result = $button.parents('.community-search-result');
+      var $longInfo = $result.find('.community-search-result-long-info');
+
+      // open a popup for the signup info
+      var url = $button.attr('href');
+      var popup = window.open(url, 'MC Sign-Up');
+
+      return this;
+    },
+
     // resize the iframe and focus its first input whenever it loads
     handleFrameLoad: function (e) {
       var $frame = $(e.currentTarget);
@@ -1049,7 +1066,10 @@
     mapView: null,
     filtersView: null,
 
-    initialize: function () {
+    initialize: function (options) {
+      var defaults = {};
+      this.options = $.extend(defaults, options);
+
       this.filtersView = new FiltersView({
         el: $('#filters'),
         model: this.filters

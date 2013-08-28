@@ -1,14 +1,20 @@
 //= require jquery
 
 (function () {
+
   var $form = $('#signup-form');
+  var $signupSuccess = $('#signup-success');
+
   var $submit = $form.find('input[type="submit"]');
   var $reset = $form.find('#form-reset-button');
+  var $close = $form.find('#window-close-button');
 
   // all user-editable inputs
   var $inputs = $form.find('input:visible:not([type="submit"])');
 
   var loadingClass = 'loading';
+  var framedClass = 'framed';
+
   var storageKeyPrefix = 'sign-up-input-value:';
   var storageKeyRegexp = new RegExp(storageKeyPrefix + '#([a-zA-Z0-9_-]+)');
 
@@ -30,6 +36,12 @@
     $form.removeClass(loadingClass);
 
     $inputs.val('');
+  };
+
+  // close the window when the close button is clicked
+  var handleCloseClick = function (e) {
+    e.preventDefault();
+    window.close();
   };
 
   // get the name of a key to store input information under
@@ -70,10 +82,16 @@
   $form.on('submit', storeInputValues);
   loadInputValues();
 
-  $reset.on('click', handleResetClick);
+  $reset.on('click touchstart', handleResetClick);
+  $close.on('click touchstart', handleCloseClick);
   $submit.on('click', handleSubmitClick);
   $inputs.on('invalid', handleInvalidForm);
 
   // focus the first visible input
   $inputs.first().trigger('focus');
+
+  // close the window (if it was a popup) after successful signup
+  if ($signupSuccess.length > 0) {
+    setTimeout(function () { window.close(); }, 3 * 1000);
+  }
 }());

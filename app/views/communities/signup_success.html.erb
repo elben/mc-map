@@ -1,6 +1,12 @@
-<h2>Thanks for signing up!</h2>
-<p>
-  <%= @community.leader_first_name %>
-  <% unless @community.coleader_first_name.blank? %>or <%= @community.coleader_first_name %><% end %>
-  will be in touch with you soon!
-</p>
+<section id="signup-success">
+  <h2>Thanks for signing up!</h2>
+  <p>
+    <%= @community.leader_first_name %>
+    <% unless @community.coleader_first_name.blank? %>or <%= @community.coleader_first_name %><% end %>
+    will be in touch with you soon!
+  </p>
+
+  <p class="unframed-only-display">
+    You'll be returned to the previous page shortly...
+  </p>
+</section>

@@ -1,5 +1,15 @@
 @import 'theme'
 
+#signup-form
+  padding: $size-padding
+
+  h2
+    margin-bottom: 0.5em
+
+// when we're framed in to the main map page, don't use padding
+.framed #signup-form
+  padding: 0
+
 .form-field
   width: 100%
 
@@ -24,7 +34,7 @@
     padding-right: 0.5em
 
 #form-actions
-  margin-top: 0.7em
+  margin-top: 1em
 
 #form-reset-button
   // bring its style in-line with the sign-up button
