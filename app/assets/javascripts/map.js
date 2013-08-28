@@ -510,6 +510,7 @@
     defaults: {
       id: '',
       campus: '',
+      campus_display: '',
       email: '',
       leader_first_name: '',
       leader_last_name: '',
@@ -545,6 +546,7 @@
       var attributes = {
         id: responseJSON.slug,
         campus: responseJSON.campus,
+        campus_display: responseJSON.campus_display,
         email: responseJSON.email,
         leader_first_name: responseJSON.leader_first_name,
         leader_last_name: responseJSON.leader_last_name,

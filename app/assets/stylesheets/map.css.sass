@@ -324,6 +324,14 @@ html.framed,
     font-size: 18px
     color: $color-text-header
 
+    p
+      font-family: $font-fancy
+      font-size: 0.8em
+      color: $color-text
+
+      margin: 0
+      margin-bottom: 0.6em
+
   address
     font-family: $font-fancy
     margin-top: 0.4em
@@ -355,6 +363,13 @@ html.framed,
 
   &:hover
     background-color: lighten($color-highlight, 30%)
+
+.community-search-result-kind
+  &:after
+    content: ','
+
+  &:last-child:after
+    content: ''
 
 .community-search-result-short-info
   font-family: $font-fancy

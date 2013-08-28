@@ -224,6 +224,9 @@ class Community < ActiveRecord::Base
       }
     }
 
+    # add the campus display name, since there's no other good way to get it
+    json[:campus_display] = Community::CAMPUSES[self.campus.to_sym]
+
     # add geometry information if possible
     if self.lat && self.lng
       json[:location][:geometry] = {

@@ -2,10 +2,11 @@
   <li data-id="{{id}}" data-campus="{{campus}}" class="community-search-result">
     <header>
       <span>{{leader_first_name}} {{leader_last_name}}</span>{{#coleader_first_name}}, <span>{{coleader_first_name}} {{coleader_last_name}}</span>{{/coleader_first_name}}
+      <p>{{campus_display}}, meets <span class="community-search-result-host-day">{{host_day}}s</span></p>
     </header>
 
     <div class="community-search-result-short-info">
-      {{#kinds}}<span class="community-search-result-kind">{{.}}</span>, {{/kinds}}meets <span class="community-search-result-host-day">{{host_day}}s</span>
+      {{#kinds}}<span class="community-search-result-kind">{{.}}</span> {{/kinds}}
     </div>
 
     <div class="community-search-result-long-info">
