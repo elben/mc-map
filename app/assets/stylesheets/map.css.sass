@@ -195,10 +195,6 @@ h2
 
   background-color: $color-background
 
-  // can be hidden on mobile browsers
-  &.disabled
-    display: none
-
   // filter tab headers
   nav
     @include clearfix()
@@ -305,10 +301,6 @@ h2
     margin: 0
     padding: 0
 
-  // put this below the filters on mobile browsers
-  &.disabled
-    display: none
-
 #search-results-header
   // hidden except on smaller devices, used to toggle to results from filters
   display: none
@@ -408,6 +400,10 @@ h2
 
     background-color: $color-background
 
+    // can be hidden on mobile browsers
+    &.disabled
+      display: none
+
   #filters
     // expand filters to take up the entire space
     top: $size-padding-mobile
@@ -419,6 +415,9 @@ h2
     height: auto
 
     background-color: $color-background
+
+    &.disabled
+      display: none
 
   .filter-tab
     top: 4.5em
