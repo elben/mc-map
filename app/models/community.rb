@@ -197,7 +197,6 @@ class Community < ActiveRecord::Base
     json = self.attributes.slice(
       'slug',
       'campus',
-      'email',
       'leader_first_name',
       'leader_last_name',
       'coleader_first_name',
