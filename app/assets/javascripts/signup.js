@@ -21,11 +21,16 @@
   // stop the loading spinners when the form is submitted, but invalid
   var handleInvalidForm = function (e) {
     $form.removeClass(loadingClass);
+
+    var $input = $(e.currentTarget);
+    trackEvent('signup', 'invalid', $input.attr('id'));
   };
 
   // show the loading animation until it's canceled or the form submits
   var handleSubmitClick = function () {
     $form.addClass(loadingClass);
+
+    trackEvent('signup', 'submit');
   };
 
   // reset all inputs when the reset button is clicked
@@ -36,11 +41,14 @@
     $form.removeClass(loadingClass);
 
     $inputs.val('');
+
+    trackEvent('signup', 'reset');
   };
 
   // close the window when the close button is clicked
   var handleCloseClick = function (e) {
     e.preventDefault();
+    trackEvent('signup', 'close');
     window.close();
   };
 
@@ -92,6 +100,8 @@
 
   // close the window (if it was a popup) after successful signup
   if ($signupSuccess.length > 0) {
+    trackEvent('signup', 'success',
+        'community:' + $signupSuccess.attr('data-community-id'));
     setTimeout(function () { window.close(); }, 3 * 1000);
   }
 }());

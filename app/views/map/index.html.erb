@@ -13,12 +13,14 @@
     <h2 id="filters-header" class="mobile-header">Show Search Results</h2>
 
     <nav>
-      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-campus">Campus</a>
+      <%# always set the first tab as 'selected' %>
+      <a class="filter-nav-button selected" href="#" data-tab-id="filter-tab-campus">Campus</a>
       <a class="filter-nav-button" href="#" data-tab-id="filter-tab-day">Day</a>
       <a class="filter-nav-button" href="#" data-tab-id="filter-tab-kind">Kind</a>
     </nav>
 
-    <div id="filter-tab-campus" class="filter-tab">
+    <%# always set the first tab as 'selected' %>
+    <div id="filter-tab-campus" class="filter-tab selected">
       <div class="filter-tab-content">
         <% Community::CAMPUSES.each do |campus, display_text| %>
           <%= render partial: 'checkbox_filter', locals: {

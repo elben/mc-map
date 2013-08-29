@@ -113,6 +113,13 @@
     handleFilterChange: function (e) {
       // update all the filters from the current checkbox states
       this.updateAllFilters();
+
+      var $checkbox = $(e.currentTarget);
+
+      // send the event with value 1 indicate 'checked', or 0 for 'unchecked'
+      trackEvent('filters', 'change', 'checkbox:' + $checkbox.attr('id'),
+          $checkbox.prop('checked') + 0);
+
       return this;
     },
 
@@ -131,6 +138,10 @@
       this.$filterTabs.removeClass(this.options.selected_tab_class);
       var tabSelector = '#' + $(e.currentTarget).attr('data-tab-id');
       $(tabSelector).addClass(this.options.selected_tab_class);
+
+      trackEvent('filters', 'click', 'tab:' + $navButton.attr('data-tab-id'));
+
+      return this;
     },
 
     // select only the clicked checkbox, deselecting all others
@@ -147,7 +158,9 @@
       $filter.siblings().find('input[type="checkbox"]').prop('checked', false);
 
       // update filters, since no event gets triggered by 'prop'
-      this.handleFilterChange();
+      this.updateAllFilters();
+
+      trackEvent('filters', 'click', 'only:' + $checkbox.attr('id'));
 
       return this;
     },
@@ -159,8 +172,9 @@
       var $checkbox = $(e.currentTarget);
 
       // get the checkboxes in the currently selected filter tab
-      var $checkboxes = this.$filterTabs
-          .filter('.' + this.options.selected_tab_class)
+      var $selectedTab = this.$filterTabs
+          .filter('.' + this.options.selected_tab_class);
+      var $checkboxes = $selectedTab
           .find('.checkbox-filter input[type="checkbox"]');
 
       // first, get the state of all the checkboxes
@@ -180,7 +194,9 @@
       $checkbox.prop('checked', !allChecked);
 
       // update filters, since no event gets triggered by 'prop'
-      this.handleFilterChange();
+      this.updateAllFilters();
+
+      trackEvent('filters', 'click', 'toggle-all:' + $selectedTab.attr('id'));
 
       return this;
     },
@@ -189,6 +205,9 @@
     handleHeaderClick: function (e) {
       e.preventDefault();
       this.trigger('headerclick');
+
+      trackEvent('filters', 'click', 'header');
+
       return this;
     },
 
@@ -337,6 +356,7 @@
 
       // listen to marker click events
       this.markerLayer.on('click', _.bind(this.handleMarkerClick, this));
+      this.markerLayer.on('clusterclick', _.bind(this.handleClusterClick, this));
 
       // zoom the map to fit all the communities on the first update only
       this.listenToOnce(this.communities, 'sync', this.zoomToFitCommunities);
@@ -391,6 +411,7 @@
         // bind specific events for the map
         this.map.on('moveend', _.bind(this.handleViewChange, this));
         this.map.on('click', _.bind(this.handleClick, this));
+        this.map.on('dragstart', _.bind(this.handleUserDrag, this));
 
         this.map.addLayer(this.markerLayer);
       }
@@ -517,10 +538,25 @@
       return this;
     },
 
+    // track when a user drags the map
+    handleUserDrag: function (e) {
+      trackEvent('map', 'drag', 'user-initiated');
+      return this;
+    },
+
     // trigger an event when a marker is clicked
     handleMarkerClick: function (e) {
       var marker = e.layer;
       this.trigger('markerclick', marker, marker.options.communityId);
+
+      trackEvent('map', 'click', 'marker:' + marker.options.communityId);
+
+      return this;
+    },
+
+    // trigger an event when a marker is clicked
+    handleClusterClick: function (e) {
+      trackEvent('map', 'click', 'cluster');
       return this;
     },
 
@@ -919,6 +955,12 @@
       // fill the remaining space with the placeholder element
       this.renderPlaceholder();
 
+      // we treat this as analogous to the user having scrolled the results,
+      // since this won't be triggered unless that's the case. this is to
+      // prevent firing off thousands of scroll events for what is essentially
+      // one action.
+      trackEvent('search-results', 'scroll', 'render-more-results');
+
       return this;
     },
 
@@ -1007,6 +1049,8 @@
         this.mapView.highlightMarker(communityId);
       }, this);
 
+      trackEvent('search-results', 'click', 'result:' + communityId);
+
       return this;
     },
 
@@ -1037,6 +1081,7 @@
     // show the sign-up page in an iframe when the sign-up button is clicked
     handleSignUpClick: function (e) {
       e.preventDefault();
+      e.stopPropagation();
 
       var $button = $(e.currentTarget);
       var $result = $button.parents('.community-search-result');
@@ -1055,6 +1100,8 @@
       // bubble, and Backbone relies on that for its event binding.
       $frame.on('load', _.bind(this.handleFrameLoad, this));
 
+      trackEvent('search-results', 'click', 'signup:' + $result.attr('data-id'));
+
       return this;
     },
 
@@ -1069,6 +1116,9 @@
       // open a popup for the signup info
       var url = $button.attr('href');
       var popup = window.open(url, 'MC Sign-Up');
+
+      trackEvent('search-results', 'click',
+          'signup:mobile' + $result.attr('data-id'));
 
       return this;
     },
@@ -1092,6 +1142,9 @@
 
     handleHeaderClick: function (e) {
       this.toggle(false);
+
+      trackEvent('search-results', 'click', 'header');
+
       this.filtersView.toggle(true);
     },
 
@@ -1140,11 +1193,20 @@
       this.communities.fetch();
 
       this.render();
+
+      // track user device rotation
+      $(window).on('orientationchange', this.handleOrientationChange);
     },
 
     render: function () {
       // hide the URL bar on iOS
       _.defer(function () { window.scrollTo(0, 1); });
+    },
+
+    // track when the user rotates their device
+    handleOrientationChange: function (e) {
+      trackEvent('map', 'rotate', 'orientation-change');
+      return this;
     }
 
   });

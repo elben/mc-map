@@ -13,3 +13,19 @@
 //
 //= require_self
 //= require_tree .
+
+// track an event using Google Analytics
+var trackEvent = function (category, action, label, value) {
+  // always call this in a separate stack frame, to prevent errors from borking
+  // the calling context, if there are any.
+  var args = Array.prototype.slice.call(arguments);
+  setTimeout(function () {
+    // log tracking events to the console when running locally
+    if (window.location.href.match(/localhost/) && window.console) {
+      window.console.log('trackEvent', args);
+    } else {
+      // otherwise, send them for real
+      ga('send', 'event', category, action, label, value);
+    }
+  }, 0);
+};
