@@ -15,7 +15,7 @@ gem 'acts-as-taggable-on'
 gem 'paranoia', '~> 1.0'
 gem 'pg'
 gem 'rails', '3.2.14'
-gem 'thin'
+gem 'puma'
 
 # Gems used only for assets and not required
 # in production environments by default.

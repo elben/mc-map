@@ -129,6 +129,8 @@ GEM
     polyamorous (0.5.0)
       activerecord (~> 3.0)
     polyglot (0.3.3)
+    puma (2.5.1)
+      rack (>= 1.1, < 2.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -214,9 +216,9 @@ DEPENDENCIES
   mailcatcher
   paranoia (~> 1.0)
   pg
+  puma
   rails (= 3.2.14)
   sass-rails (~> 3.2.3)
   sentry-raven
   sqlite3
-  thin
   uglifier (>= 1.0.3)
