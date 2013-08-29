@@ -59,6 +59,22 @@
     });
   };
 
+  // parse a query string
+  var parseParams = function (params) {
+    var qs = params.split('?')[1];
+    var results = {};
+
+    if (qs) {
+      var pairs = qs.split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var parts = pairs[i].split('=');
+        results[parts[0]] = decodeURIComponent(parts[1]);
+      }
+    }
+
+    return results;
+  };
+
   // checkbox filters
   var Filters = Backbone.Model.extend({
     defaults: {
@@ -221,6 +237,35 @@
         var $content = $(this).find('.filter-tab-content');
         new ScrollFix($content[0]);
       });
+
+      // if we got a 'campus' param in the URL, check only that corresponding
+      // checkbox.
+      var url = document.location.href;
+      if (window.location !== window.parent.location) {
+        // get referrer's URL to parse from parent iframe
+        url = document.referrer;
+      }
+
+      var params = parseParams(url);
+
+      // use the campus param as the sole campus filter if specified
+      if (params.campus) {
+        // see whether a corresponding checkbox exists
+        var $filter = this.$el.find('.checkbox-filter-campus-' + params.campus);
+
+        // if we got a checkbox, check ONLY it, none of its siblings
+        if ($filter.length > 0) {
+          // uncheck all the checkboxes for the campus tab
+          this.$el.find('.checkbox-filter-campus input[type="checkbox"]')
+              .prop('checked', false);
+
+          // check only our checkbox
+          $filter.find('input[type="checkbox"]').prop('checked', true);
+        }
+      }
+
+      // update the model from the filter checkboxes
+      this.updateAllFilters();
 
       return this;
     },
@@ -1073,7 +1118,7 @@
       this.filtersView = new FiltersView({
         el: $('#filters'),
         model: this.filters
-      }).updateAllFilters().render();
+      }).render();
 
       this.mapView = new MapView({
         el: $('#map'),
