@@ -223,6 +223,11 @@ html.framed,
       &:hover
         background-color: $color-background-light
 
+// remove top/right/bottom padding when iframed
+.framed #filters
+  top: 0
+  right: 0
+
 #filters-footer
   position: absolute
   bottom: 0
@@ -301,6 +306,12 @@ html.framed,
 
     margin: 0
     padding: 0
+
+// remove top/right/bottom padding when iframed
+.framed #search-results
+  top: $size-filters + $size-padding
+  bottom: 0
+  right: 0
 
 #search-results-header
   // hidden except on smaller devices, used to toggle to results from filters
