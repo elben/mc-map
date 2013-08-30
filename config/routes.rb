@@ -3,7 +3,7 @@ McMap::Application.routes.draw do
 
   resources :communities do
     collection do
-      get "kinds"
+      get "query"
     end
   end
 

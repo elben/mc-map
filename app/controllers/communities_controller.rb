@@ -1,4 +1,13 @@
 class CommunitiesController < ApplicationController
+  caches_page :index
+
+  def index
+    json = Community.all.map(&:output_json)
+    respond_to do |format|
+      format.json { render :json => json }
+    end
+  end
+
   # params:
   #   limit       - Number of results per page, defaults to 50
   #   page        - Page of results to get, defaults to 1 (NOT zero-based)
@@ -8,7 +17,7 @@ class CommunitiesController < ApplicationController
   #                 Community::MC_KINDS
   #   points_only - True if only minimal point data is to be returned
   #   show_hidden - Show hidden commmunities. Defaults to false.
-  def index
+  def query
     # pull params from the params hash
     limit = (params[:limit] || 50).to_i
     page = (params[:page] || 1).to_i
