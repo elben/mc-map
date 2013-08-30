@@ -30,6 +30,10 @@ class Community < ActiveRecord::Base
   before_validation :set_slug
   before_save :update_geo
 
+  after_save :expire_cache
+  after_destroy :expire_cache
+  after_touch :expire_cache
+
   has_and_belongs_to_many :members, before_add: :no_duplicates
   has_and_belongs_to_many :coaches, class_name: "AdminUser", join_table: :coaches_join
 
@@ -276,5 +280,10 @@ class Community < ActiveRecord::Base
     # ActiveRecord::Rollback is internally captured but not reraised. HABTM
     # doesn't create join if before_add throws exception.
     raise ActiveRecord::Rollback if member.communities.include?(self)
+  end
+
+  def expire_cache
+     ActionController::Base.expire_page(
+       Rails.application.routes.url_helpers.communities_path(format: :json))
   end
 end
