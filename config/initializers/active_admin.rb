@@ -5,7 +5,7 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "Austin Stone MC Map"
+  config.site_title = "Missional Community Finder | The Austin Stone Community Church"
 
   config.authorization_adapter = "LeadersAuthorization"
 
