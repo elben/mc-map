@@ -9,6 +9,33 @@
 
 (function () {
 
+  // use a custom marker for campuses
+  var CampusMarker = L.Icon.extend({
+    options: {
+      popupAnchor: [1, -32],
+      campus: ''
+    },
+
+    initialize: function (options) {
+      options = L.setOptions(this, options);
+    },
+
+    createIcon: function () {
+      // build the icon as a div so we can style it via CSS
+      var $marker = $('<div></div>');
+      $marker.addClass('custom-marker');
+      $marker.addClass('custom-marker-campus');
+      return $marker[0];
+    },
+
+    // create the shadow (we style it via CSS)
+    createShadow: function () {
+      var $shadow = $('<div></div>');
+      $shadow.addClass('custom-marker-shadow');
+      return $shadow[0];
+    }
+  });
+
   // use custom marker icons for the communities
   var CommunityIcon = L.Icon.extend({
     options: {
@@ -23,19 +50,15 @@
     createIcon: function () {
       // build the icon as a div so we can style it via CSS
       var $marker = $('<div></div>');
-
-      $marker.addClass('community-marker');
-      if (this.options.campus) {
-        $marker.addClass('community-marker-' + this.options.campus);
-      }
-
+      $marker.addClass('custom-marker');
+      $marker.addClass('custom-marker-community');
       return $marker[0];
     },
 
     // create the shadow (we style it via CSS)
     createShadow: function () {
       var $shadow = $('<div></div>');
-      $shadow.addClass('community-marker-shadow');
+      $shadow.addClass('custom-marker-shadow');
       return $shadow[0];
     }
   });
@@ -315,13 +338,13 @@
 
     // the Esri map tiles layer (free!)
     tileLayer: L.tileLayer('//server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+      attribution: 'Tiles &copy; Esri', // &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
       detectRetina: true,
       reuseTiles: true
     }),
 
     // markers currently on the map
-    markerLayer: L.markerClusterGroup({
+    communityMarkerLayer: L.markerClusterGroup({
       removeOutsideVisibleBounds: true,
       zoomToBoundsOnClick: true,
       showCoverageOnHover: true,
@@ -330,11 +353,14 @@
       iconCreateFunction: createClusterIcon
     }),
 
+    // all the campus markers
+    campusMarkerLayer: L.layerGroup(),
+
     initialize: function (options) {
       var defaults = {
         marker_toggle_duration_ms: 250,
-        marker_selected_class: 'community-marker-selected',
-        marker_dimmed_class: 'community-marker-dimmed'
+        marker_selected_class: 'custom-marker-selected',
+        marker_dimmed_class: 'custom-marker-dimmed'
       };
       this.options = $.extend(defaults, options);
 
@@ -355,8 +381,8 @@
       this.listenTo(this.communities, 'sync', this.hideLoadingControl);
 
       // listen to marker click events
-      this.markerLayer.on('click', _.bind(this.handleMarkerClick, this));
-      this.markerLayer.on('clusterclick', _.bind(this.handleClusterClick, this));
+      this.communityMarkerLayer.on('click', _.bind(this.handleMarkerClick, this));
+      this.communityMarkerLayer.on('clusterclick', _.bind(this.handleClusterClick, this));
 
       // zoom the map to fit all the communities on the first update only
       this.listenToOnce(this.communities, 'sync', this.zoomToFitCommunities);
@@ -401,8 +427,7 @@
           // the Esri map tiles don't go down further than this
           maxZoom: 17,
 
-          // TODO: put the Esri attribution SOMEWHERE
-          attributionControl: false
+          attributionControl: true
         });
 
         // add the map tiles layer
@@ -413,8 +438,41 @@
         this.map.on('click', _.bind(this.handleClick, this));
         this.map.on('dragstart', _.bind(this.handleUserDrag, this));
 
-        this.map.addLayer(this.markerLayer);
+        this.map.addLayer(this.communityMarkerLayer);
+        // this.map.addLayer(this.campusMarkerLayer);
+
+        // render all the campus markers once and for all
+        this.renderCampusMarkers();
       }
+
+      return this;
+    },
+
+    renderCampusMarkers: function () {
+      // add markers for all the campuses
+      var austinHighMarker = L.marker(L.latLng(30.272142, -97.764577), {
+        icon: new CampusMarker(),
+        title: 'Austin High School'
+      });
+      var stJohnMarker = L.marker(L.latLng(30.3340649, -97.7067932), {
+        icon: new CampusMarker(),
+        title: 'St. John'
+      });
+      var westMarker = L.marker(L.latLng(30.286642, -97.773685), {
+        icon: new CampusMarker(),
+        title: 'West Campus'
+      });
+      var southMarker = L.marker(L.latLng(30.169228, -97.808683), {
+        icon: new CampusMarker(),
+        title: 'South Campus'
+      });
+
+      // clear the current markers and add them back again
+      this.campusMarkerLayer.clearLayers();
+      this.campusMarkerLayer.addLayer(austinHighMarker);
+      this.campusMarkerLayer.addLayer(stJohnMarker);
+      this.campusMarkerLayer.addLayer(westMarker);
+      this.campusMarkerLayer.addLayer(southMarker);
 
       return this;
     },
@@ -432,12 +490,12 @@
           // create a new marker if we couldn't find one in the cache
           if (!marker) {
             marker = L.marker(community.get('latlng'), {
-              // the campus values here and in the stylesheets correspond to the
-              // keys in Community::CAMPUSES enum.
-              icon: new CommunityIcon({ campus: community.get('campus') }),
+              icon: new CommunityIcon(),
 
               // store this for later reference
               communityId: community.id,
+              title: (community.getDisplayName() + '\r\n' +
+                community.getDisplayAddress()),
 
               riseOnHover: true
             });
@@ -452,8 +510,8 @@
       }, this);
 
       // swap old markers and new markers all at once
-      this.markerLayer.clearLayers();
-      this.markerLayer.addLayers(markers);
+      this.communityMarkerLayer.clearLayers();
+      this.communityMarkerLayer.addLayers(markers);
 
       return this;
     },
@@ -574,7 +632,7 @@
 
       // zoom to it if it exists
       if (marker) {
-        this.markerLayer.zoomToShowLayer(marker, function () {
+        this.communityMarkerLayer.zoomToShowLayer(marker, function () {
           if (typeof callback === 'function') {
             callback.call(context || this);
           }
@@ -619,6 +677,49 @@
       } else {
         this.set('latlng', null);
       }
+    },
+
+    // return a pretty version of the leader(s) names
+    getDisplayName: function () {
+      var d = [
+        this.get('leader_first_name'),
+        ' ',
+        this.get('leader_last_name')
+      ];
+
+      if (this.get('coleader_first_name')) {
+        d = d.concat([
+          ', ',
+          this.get('coleader_first_name'),
+          ' ',
+          this.get('coleader_last_name')
+        ]);
+      }
+
+      return d.join('');
+    },
+
+    // return a pretty version of the address
+    getDisplayAddress: function () {
+      var addy = this.get('address');
+      var d = [addy.line_1];
+
+      if (addy.line_2) {
+        d.push(' ');
+        d.push(addy.line_2);
+      }
+
+      d.push('\n');
+
+      d = d.concat([
+        addy.city,
+        ', ',
+        addy.province,
+        ' ',
+        addy.postal
+      ]);
+
+      return d.join('');
     },
 
     parse: function (responseJSON) {
