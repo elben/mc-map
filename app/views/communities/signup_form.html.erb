@@ -1,53 +1,51 @@
-<% cache [@community, @member.errors.full_messages.to_sentence.hash] do %>
-  <%= form_tag "/signup", :id => "signup-form" do |f| %>
-    <h2 class="unframed-only-display">
-      Sign-up for <%= @community.leader_first_name %>
-      <%= @community.leader_last_name %><% if !@community.coleader_first_name.blank? %>
-        and
-        <%= @community.coleader_first_name %>
-        <%= @community.coleader_last_name %>'s
-        <% else %>'s
-      <% end %>
-      Community!
-    </h2>
-
-    <% if @member.errors.any? %>
-    <div id="form-errors">
-      <h2><%= pluralize(@member.errors.count, "error") %> caused this signup to fail:</h2>
-
-      <ul>
-      <% @member.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
+<%= form_tag "/signup", :id => "signup-form" do |f| %>
+  <h2 class="unframed-only-display">
+    Sign-up for <%= @community.leader_first_name %>
+    <%= @community.leader_last_name %><% if !@community.coleader_first_name.blank? %>
+      and
+      <%= @community.coleader_first_name %>
+      <%= @community.coleader_last_name %>'s
+      <% else %>'s
     <% end %>
+    Community!
+  </h2>
 
-    <div id="form-fields">
-      <div class="form-field">
-        <%= label_tag 'member[name]', 'Name' %>
-        <%= text_field_tag 'member[name]', nil,
-            :required => true, :id => 'name' %>
-      </div>
-      <div class="form-field">
-        <%= label_tag 'member[email]', 'Email' %>
-        <%= email_field_tag 'member[email]', nil,
-            :required => true, :id => 'email' %>
-      </div>
-      <div class="form-field">
-        <%= label_tag 'member[phone_number]', 'Phone number' %>
-        <%= telephone_field_tag 'member[phone_number]', nil,
-            :required => true, :id => 'phone-number'%>
-      </div>
-    </div>
+  <% if @member.errors.any? %>
+  <div id="form-errors">
+    <h2><%= pluralize(@member.errors.count, "error") %> caused this signup to fail:</h2>
 
-    <%# store the community id so we can create a member later %>
-    <%= hidden_field_tag :community_id, @community.slug, :required => true %>
-
-    <div id="form-actions">
-      <%= submit_tag 'Sign Up', :class => 'custom-button custom-button-yellow custom-button-loadable' %>
-      <a href="#" id="form-reset-button" class="custom-button custom-button-grey">Reset</a>
-      <a href="#" id="window-close-button" class="custom-button custom-button-grey unframed-only-display">Close</a>
-    </div>
+    <ul>
+    <% @member.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
   <% end %>
+
+  <div id="form-fields">
+    <div class="form-field">
+      <%= label_tag 'member[name]', 'Name' %>
+      <%= text_field_tag 'member[name]', nil,
+          :required => true, :id => 'name' %>
+    </div>
+    <div class="form-field">
+      <%= label_tag 'member[email]', 'Email' %>
+      <%= email_field_tag 'member[email]', nil,
+          :required => true, :id => 'email' %>
+    </div>
+    <div class="form-field">
+      <%= label_tag 'member[phone_number]', 'Phone number' %>
+      <%= telephone_field_tag 'member[phone_number]', nil,
+          :required => true, :id => 'phone-number'%>
+    </div>
+  </div>
+
+  <%# store the community id so we can create a member later %>
+  <%= hidden_field_tag :community_id, @community.slug, :required => true %>
+
+  <div id="form-actions">
+    <%= submit_tag 'Sign Up', :class => 'custom-button custom-button-yellow custom-button-loadable' %>
+    <a href="#" id="form-reset-button" class="custom-button custom-button-grey">Reset</a>
+    <a href="#" id="window-close-button" class="custom-button custom-button-grey unframed-only-display">Close</a>
+  </div>
 <% end %>
