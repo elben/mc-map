@@ -9,8 +9,8 @@
 
 (function () {
 
-  // use custom marker icons for the campuses
-  var CampusIcon = L.Icon.extend({
+  // use custom marker icons for the communities
+  var CommunityIcon = L.Icon.extend({
     options: {
       popupAnchor: [1, -32],
       campus: ''
@@ -24,9 +24,9 @@
       // build the icon as a div so we can style it via CSS
       var $marker = $('<div></div>');
 
-      $marker.addClass('campus-marker');
+      $marker.addClass('community-marker');
       if (this.options.campus) {
-        $marker.addClass('campus-marker-' + this.options.campus);
+        $marker.addClass('community-marker-' + this.options.campus);
       }
 
       return $marker[0];
@@ -35,7 +35,7 @@
     // create the shadow (we style it via CSS)
     createShadow: function () {
       var $shadow = $('<div></div>');
-      $shadow.addClass('campus-marker-shadow');
+      $shadow.addClass('community-marker-shadow');
       return $shadow[0];
     }
   });
@@ -333,8 +333,8 @@
     initialize: function (options) {
       var defaults = {
         marker_toggle_duration_ms: 250,
-        marker_selected_class: 'campus-marker-selected',
-        marker_dimmed_class: 'campus-marker-dimmed'
+        marker_selected_class: 'community-marker-selected',
+        marker_dimmed_class: 'community-marker-dimmed'
       };
       this.options = $.extend(defaults, options);
 
@@ -388,7 +388,7 @@
       // only render once, since we don't want to re-create the map every time
       if (!this.map) {
         var center = this.model.get('center');
-        var latlng = new L.LatLng(center[1], center[0]);
+        var latlng = L.latLng(center[1], center[0]);
 
         // create the map, rendering it into the DOM
         this.map = L.map(this.el, {
@@ -434,7 +434,7 @@
             marker = L.marker(community.get('latlng'), {
               // the campus values here and in the stylesheets correspond to the
               // keys in Community::CAMPUSES enum.
-              icon: new CampusIcon({ campus: community.get('campus') }),
+              icon: new CommunityIcon({ campus: community.get('campus') }),
 
               // store this for later reference
               communityId: community.id,
