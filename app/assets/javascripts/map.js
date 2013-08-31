@@ -10,7 +10,7 @@
 (function () {
 
   // use custom marker icons for the campuses
-  var CampusIcon = L.Icon.extend({
+  var CommunityIcon = L.Icon.extend({
     options: {
       popupAnchor: [1, -32],
       campus: ''
@@ -434,7 +434,7 @@
             marker = L.marker(community.get('latlng'), {
               // the campus values here and in the stylesheets correspond to the
               // keys in Community::CAMPUSES enum.
-              icon: new CampusIcon({ campus: community.get('campus') }),
+              icon: new CommunityIcon({ campus: community.get('campus') }),
 
               // store this for later reference
               communityId: community.id,
