@@ -6,3 +6,7 @@ McMap::Application.config.session_store :cookie_store, key: '_mc-map_session'
 # which shouldn't be used to store highly confidential information
 # (create the session table with "rails generate session_migration")
 # McMap::Application.config.session_store :active_record_store
+
+# Don't expire. Let memcache handle removal.
+Rails.application.config.session_store ActionDispatch::Session::CacheStore, :expire_after => 0
+

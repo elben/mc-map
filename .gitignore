@@ -18,3 +18,4 @@ pickle-email-*.html
 .project
 public/assets/*
 public/communities.json
+>>>>>>> cache

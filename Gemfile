@@ -16,6 +16,7 @@ gem 'paranoia', '~> 1.0'
 gem 'pg'
 gem 'rails', '3.2.14'
 gem 'puma'
+gem 'dalli'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -32,6 +33,8 @@ end
 group :development do
   gem 'sqlite3'
   gem "mailcatcher"
+  gem "better_errors"
+  gem "binding_of_caller"
 end
 
 # To use ActiveModel has_secure_password
