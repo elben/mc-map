@@ -374,7 +374,6 @@
       removeOutsideVisibleBounds: true,
       zoomToBoundsOnClick: false,
       showCoverageOnHover: false,
-      maxClusterRadius: Infinity,
       disableClusteringAtZoom: 12,
       iconCreateFunction: createCampusClusterIcon
     }),
