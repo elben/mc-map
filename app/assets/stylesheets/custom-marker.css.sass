@@ -12,12 +12,6 @@ $duration-fade: 250ms
 @function marker-icon-offset($index)
   @return -($index * ($size-marker-width + $size-marker-margin))
 
-@keyframes marker-fade-in
-  from
-    opacity: 0
-  to
-    opacity: 0.9
-
 .custom-marker
   display: block
   position: absolute
@@ -36,7 +30,8 @@ $duration-fade: 250ms
   transition-property: opacity, margin-top
   transition-duration: 150ms
 
-  opacity: 0.9
+  // override the marker clustering styles
+  opacity: 0.9 !important
 
   // change the selected marker's icon
   &.custom-marker-selected
@@ -62,7 +57,6 @@ $duration-fade: 250ms
 // campus markers
 .custom-marker-campus
   background-position: marker-icon-offset(5) 0
-  animation: marker-fade-in 250ms
 
   // show the campus text in the marker's center
   color: white
