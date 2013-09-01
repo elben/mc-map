@@ -5,6 +5,15 @@ ActiveAdmin.register Community do
   show :title => :title # Use Communtiy#title
 
   index do
+    members_count = CommunitiesMembers.group(:community_id).where(:community_id => communities).count
+
+    taggings_hash = {}
+    taggings = ActsAsTaggableOn::Tagging.where(:taggable_id => communities, :taggable_type => Community, :context => "kinds").includes(:tag)
+    taggings.each do |tagging|
+      taggings_hash[tagging.taggable_id] ||= []
+      taggings_hash[tagging.taggable_id] << tagging.tag
+    end
+
     selectable_column
     default_actions
     column :leader, sortable: :leader_last_name
@@ -13,13 +22,13 @@ ActiveAdmin.register Community do
       c.host_day.titleize
     end
     column "Kinds" do |c|
-      c.kinds.join(", ")
+      taggings_hash[c.id].join(", ") if taggings_hash[c.id]
     end
     column "E-mail", sortable: :email do |c|
       link_to(c.email, "mailto:#{c.email}", target: "_blank")
     end
     column "Members" do |c|
-      c.members.count
+      members_count[c.id].to_i
     end
     column "Hidden", sortable: :hidden do |c|
       if c.hidden?
