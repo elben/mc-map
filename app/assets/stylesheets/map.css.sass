@@ -1,8 +1,8 @@
 //= require leaflet
 //= require leaflet.ie
 //= require Control.Loading
-//= require MarkerCluster
-//= require campus-marker
+//= require marker-cluster
+//= require custom-marker
 
 @import 'theme'
 
@@ -406,7 +406,7 @@ html.framed,
   text-transform: capitalize
 
 // hide filters behind a click and expand results for smaller devices
-@media screen and (max-device-width: $media-mobile-min-width)
+@media screen and (max-width: $media-mobile-min-width)
   html
     // large enough for the iOS chrome to get scrolled past
     padding-bottom: 60px

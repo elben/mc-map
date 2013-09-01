@@ -48,8 +48,6 @@ $size-marker-border: 2.5px
   text-align: center
   font: 12px $font-fancy
 
-  background-color: rgba($color-cluster-background, 0.9)
-
   opacity: 0.98 !important
 
   // the number of markers in a cluster
@@ -57,6 +55,14 @@ $size-marker-border: 2.5px
     color: white
     font-weight: bold
     line-height: $size-marker-medium
+
+.marker-cluster-community
+  background-color: rgba($color-cluster-community-background, 0.9)
+
+// hide campus marker clusters, since we're only using the clustering for its
+// fancy "show/hide at certain zooms" feature and animations.
+.marker-cluster-campus
+  display: none
 
 // marker animations
 .leaflet-cluster-anim

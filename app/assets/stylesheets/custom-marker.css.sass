@@ -12,6 +12,12 @@ $duration-fade: 250ms
 @function marker-icon-offset($index)
   @return -($index * ($size-marker-width + $size-marker-margin))
 
+@keyframes marker-fade-in
+  from
+    opacity: 0
+  to
+    opacity: 0.9
+
 .custom-marker
   display: block
   position: absolute
@@ -56,6 +62,21 @@ $duration-fade: 250ms
 // campus markers
 .custom-marker-campus
   background-position: marker-icon-offset(5) 0
+  animation: marker-fade-in 250ms
+
+  // show the campus text in the marker's center
+  color: white
+  font-size: 14px
+  font-weight: bold
+  text-indent: -1px
+  font-family: $font-fancy
+  text-align: center
+  line-height: $size-marker-height - 9px
+
+  &:hover
+    margin-top: -($size-marker-height)
+    background-image: image-url('markers-hover.png')
+    opacity: 1.0
 
 .custom-marker-shadow
   display: block

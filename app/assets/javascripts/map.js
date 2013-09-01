@@ -23,8 +23,11 @@
     createIcon: function () {
       // build the icon as a div so we can style it via CSS
       var $marker = $('<div></div>');
+
+      $marker.append(this.options.campus);
       $marker.addClass('custom-marker');
       $marker.addClass('custom-marker-campus');
+
       return $marker[0];
     },
 
@@ -63,8 +66,7 @@
     }
   });
 
-  // create the icon used for cluster indicators
-  var createClusterIcon = function (cluster) {
+  var createClusterIcon = function (cluster, className) {
     var childCount = cluster.getChildCount();
 
     var iconSize = 'large';
@@ -78,8 +80,22 @@
     return new L.DivIcon({
       // the HTML that goes inside the parent div
       html: '<span>' + childCount + '</span>',
-      className: 'marker-cluster marker-cluster-' + iconSize
+      className: [
+        'marker-cluster',
+        'marker-cluster-' + iconSize,
+         className
+      ].join(' ')
     });
+  };
+
+  // create the icon used for cluster indicators
+  var createCommunityClusterIcon = function (cluster) {
+    return createClusterIcon(cluster, 'marker-cluster-community');
+  };
+
+  // create the icon used for cluster indicators
+  var createCampusClusterIcon = function (cluster) {
+    return createClusterIcon(cluster, 'marker-cluster-campus');
   };
 
   // parse a query string
@@ -350,11 +366,18 @@
       showCoverageOnHover: true,
       spiderifyOnMaxZoom: true,
       maxClusterRadius: 30,
-      iconCreateFunction: createClusterIcon
+      iconCreateFunction: createCommunityClusterIcon
     }),
 
-    // all the campus markers
-    campusMarkerLayer: L.layerGroup(),
+    // all the campus markers, but only shown when zoom passes a certain point
+    campusMarkerLayer: L.markerClusterGroup({
+      removeOutsideVisibleBounds: true,
+      zoomToBoundsOnClick: false,
+      showCoverageOnHover: false,
+      maxClusterRadius: Infinity,
+      disableClusteringAtZoom: 12,
+      iconCreateFunction: createCampusClusterIcon
+    }),
 
     initialize: function (options) {
       var defaults = {
@@ -438,8 +461,8 @@
         this.map.on('click', _.bind(this.handleClick, this));
         this.map.on('dragstart', _.bind(this.handleUserDrag, this));
 
+        this.map.addLayer(this.campusMarkerLayer);
         this.map.addLayer(this.communityMarkerLayer);
-        // this.map.addLayer(this.campusMarkerLayer);
 
         // render all the campus markers once and for all
         this.renderCampusMarkers();
@@ -451,23 +474,27 @@
     renderCampusMarkers: function () {
       // add markers for all the campuses
       var austinHighMarker = L.marker(L.latLng(30.272142, -97.764577), {
-        icon: new CampusMarker(),
-        title: 'Austin High School'
+        icon: new CampusMarker({ campus: 'DT' }),
+        title: 'Austin High School',
+        riseOnHover: true
       });
       var stJohnMarker = L.marker(L.latLng(30.3340649, -97.7067932), {
-        icon: new CampusMarker(),
-        title: 'St. John'
+        icon: new CampusMarker({ campus: 'STJ' }),
+        title: 'St. John',
+        riseOnHover: true
       });
       var westMarker = L.marker(L.latLng(30.286642, -97.773685), {
-        icon: new CampusMarker(),
-        title: 'West Campus'
+        icon: new CampusMarker({ campus: 'W' }),
+        title: 'West Campus',
+        riseOnHover: true
       });
       var southMarker = L.marker(L.latLng(30.169228, -97.808683), {
-        icon: new CampusMarker(),
-        title: 'South Campus'
+        icon: new CampusMarker({ campus: 'S' }),
+        title: 'South Campus',
+        riseOnHover: true
       });
 
-      // clear the current markers and add them back again
+      // add the markers to the marker layer, so they get clustered
       this.campusMarkerLayer.clearLayers();
       this.campusMarkerLayer.addLayer(austinHighMarker);
       this.campusMarkerLayer.addLayer(stJohnMarker);
