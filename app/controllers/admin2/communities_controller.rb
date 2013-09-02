@@ -14,4 +14,11 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
   def show
     @community = Community.find(params[:id])
   end
+
+  def add_coach
+    @community = Community.find(params[:id])
+    admin_user = AdminUser.find(params[:admin_user_id])
+    @community.coaches << admin_user
+    redirect_to :back
+  end
 end

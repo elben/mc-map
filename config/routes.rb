@@ -3,7 +3,12 @@ McMap::Application.routes.draw do
 
   namespace :admin2 do
     root controller: :admin2, action: :index
-    resources :communities
+    resources :communities do
+      member do
+        post "add_coach"
+        post "remove_coach"
+      end
+    end
   end
 
   resources :communities do

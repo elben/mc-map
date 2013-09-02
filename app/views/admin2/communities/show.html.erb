@@ -1,0 +1,21 @@
+<% content_for :header do %>
+  <h2><%= @community.title %></h2>
+<% end %>
+
+<% unless @community.coaches.include?(current_admin_user) %>
+  <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
+    <fieldset>
+      <%= hidden_field_tag :admin_user_id, current_admin_user.id %>
+      <%= submit_tag "Add me as coach", :class => "btn" %>
+    </fieldset>
+  <% end %>
+<% else %>
+  You are a coach.
+<% end %>
+
+<%= form_tag({:controller => 'communities', :action => :add_coach}, {:class => "form-inline"}) do %>
+  <fieldset>
+    <%= select_tag(:admin_user_id, options_from_collection_for_select(AdminUser.all, :id, :email)) %>
+    <%= submit_tag "Add coach", :class => "btn" %>
+  </fieldset>
+<% end %>
