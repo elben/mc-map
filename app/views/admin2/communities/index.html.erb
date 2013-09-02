@@ -19,9 +19,9 @@
             <td><%= c.leader %></td>
             <td><%= c.campus %></td>
             <td><%= c.host_day %></td>
-            <td class="mc-kind"><%= c.kind_list.join(", ") %></td>
+            <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
             <td><%= c.email %></td>
-            <td><%= c.members.count %></td>
+            <td><%= @members_count[c.id].to_i %></td>
           </tr>
         <% end %>
       </table>
