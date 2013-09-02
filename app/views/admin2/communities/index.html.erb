@@ -1,31 +1,26 @@
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span12">
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Leader</th>
-            <th>Campus</th>
-            <th>Day</th>
-            <th>Kinds</th>
-            <th>E-mail</th>
-            <th>Members</th>
-          </tr>
-        </thead>
-        <% @communities.each do |c| %>
-          <tr class="<%= "hidden" if c.hidden? %>">
-            <td><%= link_to "View", admin2_community_path(c) %></td>
-            <td><%= c.leader %></td>
-            <td><%= c.campus %></td>
-            <td><%= c.host_day %></td>
-            <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
-            <td><%= c.email %></td>
-            <td><%= @members_count[c.id].to_i %></td>
-          </tr>
-        <% end %>
-      </table>
-    </div>
-  </div>
+<div class="span12">
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Leader</th>
+        <th>Campus</th>
+        <th>Day</th>
+        <th>Kinds</th>
+        <th>E-mail</th>
+        <th>Members</th>
+      </tr>
+    </thead>
+    <% @communities.each do |c| %>
+      <tr class="<%= "hidden" if c.hidden? %>">
+        <td><%= link_to "View", admin2_community_path(c) %></td>
+        <td><%= c.leader %></td>
+        <td><%= c.campus %></td>
+        <td><%= c.host_day %></td>
+        <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
+        <td><%= c.email %></td>
+        <td><%= @members_count[c.id].to_i %></td>
+      </tr>
+    <% end %>
+  </table>
 </div>
-

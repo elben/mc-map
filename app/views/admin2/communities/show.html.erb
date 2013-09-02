@@ -1,6 +1,41 @@
 <% content_for :header do %>
-  <h2><%= @community.title %></h2>
+  <%= @community.title %>
 <% end %>
+
+<div class="row">
+  <div class="span2">Leader</div>
+  <div class="span4"><%= @community.leader %></div>
+</div>
+<div class="row">
+  <div class="span2">Co-leader</div>
+  <div class="span4"><%= @community.coleader %></div>
+</div>
+<div class="row">
+  <div class="span2">Campus</div>
+  <div class="span4"><%= @community.campus_name %></div>
+</div>
+<div class="row">
+  <div class="span2">E-mail</div>
+  <div class="span4"><%= @community.email %></div>
+</div>
+<div class="row">
+  <div class="span2">Phone</div>
+  <div class="span4"><%= @community.phone_number %></div>
+</div>
+<div class="row">
+  <div class="span2">Address</div>
+  <div class="span4">
+    <address>
+      <% unless @community.address_line_1.blank? %>
+        <%= @community.address_line_1 %><br>
+      <% end %>
+      <% unless @community.address_line_2.blank? %>
+        <%= @community.address_line_2 %><br>
+      <% end %>
+      <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
+    </address>
+  </div>
+</div>
 
 <% unless @community.coaches.include?(current_admin_user) %>
   <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
