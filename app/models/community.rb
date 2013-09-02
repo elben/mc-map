@@ -24,6 +24,7 @@ class Community < ActiveRecord::Base
     :deleted_at,
     :kind_list,
     :hidden,
+    :kind_ids,
   ])
 
 

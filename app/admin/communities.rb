@@ -88,6 +88,13 @@ ActiveAdmin.register Community do
         column :phone_number
       end
       row :hidden
+      row :coach do |community|
+        if community.coaches.include?(current_admin_user)
+          link_to("remove me as a coach", remove_coach_admin_community_path(community), method: :post)
+        else
+          link_to("add me as a coach", add_coach_admin_community_path(community), method: :post)
+        end
+      end
     end
     active_admin_comments
   end
@@ -110,6 +117,22 @@ ActiveAdmin.register Community do
       respond_to do |format|
         format.html { redirect_to admin_communities_url }
       end
+    end
+  end
+
+  member_action :add_coach, :method => :post do
+    community = Community.find(params[:id])
+    if community && !community.coaches.include?(current_admin_user)
+      community.coaches << current_admin_user
+      redirect_to :back
+    end
+  end
+
+  member_action :remove_coach, :method => :post do
+    community = Community.find(params[:id])
+    if community && community.coaches.include?(current_admin_user)
+      community.coaches.delete(current_admin_user)
+      redirect_to :back
     end
   end
 end
