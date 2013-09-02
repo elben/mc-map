@@ -1,6 +1,11 @@
 McMap::Application.routes.draw do
   root :to => 'map#index'
 
+  namespace :admin2 do
+    root controller: :admin2, action: :index
+    resources :communities
+  end
+
   resources :communities do
     collection do
       get "query"
