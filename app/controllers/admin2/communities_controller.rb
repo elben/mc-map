@@ -21,4 +21,11 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
     @community.coaches << admin_user
     redirect_to :back
   end
+
+  def remove_coach
+    @community = Community.find(params[:id])
+    admin_user = AdminUser.find(params[:admin_user_id])
+    @community.coaches.destroy(admin_user)
+    redirect_to :back
+  end
 end
