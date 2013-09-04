@@ -30,7 +30,7 @@ class Community < ActiveRecord::Base
   validates :leader_first_name, :leader_last_name, :host_day, :campus, presence: true
   validate :presence_of_kinds
 
-  before_validation :set_slug
+  before_validation :set_slug, :find_kinds
   before_save :update_geo, :strip_stuff
 
   after_save :expire_cache
@@ -279,9 +279,27 @@ class Community < ActiveRecord::Base
 
   private
 
+  def find_kinds
+    tags = []
+    self.kind_ids.each do |kind_id|
+      unless kind_id.blank?
+        tag = ActsAsTaggableOn::Tag.find(kind_id)
+        if tag
+          tags << tag
+        end
+      end
+    end
+
+    # Used in validations
+    self.kind_list = tags.map(&:name)
+
+    # Set as nil to prevent validation errors. Not sure exactly why.
+    self.kind_ids = nil
+  end
+
   def presence_of_kinds
-    if kinds.blank?
-      errors.add(:kinds, "Please include at least one kind.")
+    if kind_list.blank?
+      errors.add(:kind_list, "Please include at least one kind.")
     end
   end
 
