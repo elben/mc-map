@@ -280,6 +280,8 @@ class Community < ActiveRecord::Base
   private
 
   def find_kinds
+    return unless self.kind_list.blank?
+
     tags = []
     self.kind_ids.each do |kind_id|
       unless kind_id.blank?
