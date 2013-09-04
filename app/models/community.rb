@@ -27,6 +27,8 @@ class Community < ActiveRecord::Base
     :kind_ids,
   ])
 
+  validates :leader_first_name, :leader_last_name, :host_day, :campus, presence: true
+  validate :presence_of_kinds
 
   before_validation :set_slug
   before_save :update_geo, :strip_stuff
@@ -276,6 +278,12 @@ class Community < ActiveRecord::Base
   end
 
   private
+
+  def presence_of_kinds
+    if kinds.blank?
+      errors.add(:kinds, "Please include at least one kind.")
+    end
+  end
 
   def strip_stuff
     ["email",
