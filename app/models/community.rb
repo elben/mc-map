@@ -28,7 +28,7 @@ class Community < ActiveRecord::Base
   ])
 
   validates :leader_first_name, :leader_last_name, :host_day, :campus, presence: true
-  validate :presence_of_kinds
+  validate :presence_of_kinds, on: :create
 
   before_validation :set_slug, :find_kinds
   before_save :update_geo, :strip_stuff
