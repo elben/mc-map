@@ -790,7 +790,7 @@
 
   var Communities = Backbone.Collection.extend({
     // load all the communities!
-    url: '/communities?limit=99999',
+    url: '/communities',
     model: Community,
 
     index: {},
