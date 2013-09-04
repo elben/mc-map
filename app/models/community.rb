@@ -29,7 +29,7 @@ class Community < ActiveRecord::Base
 
 
   before_validation :set_slug
-  before_save :update_geo
+  before_save :update_geo, :strip_stuff
 
   after_save :expire_cache
   after_destroy :expire_cache
@@ -276,6 +276,24 @@ class Community < ActiveRecord::Base
   end
 
   private
+
+  def strip_stuff
+    ["email",
+     "phone_number",
+     "leader_first_name",
+     "leader_last_name",
+     "coleader_first_name",
+     "coleader_last_name",
+     "address_line_1",
+     "address_line_2",
+     "address_city",
+     "address_province",
+     "address_postal",
+     "host_day",
+     "description"].each do |attr|
+       self[attr] = self[attr].try(:strip)
+     end
+  end
 
   def no_duplicates(member)
     # ActiveRecord::Rollback is internally captured but not reraised. HABTM
