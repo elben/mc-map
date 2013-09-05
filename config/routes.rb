@@ -9,6 +9,7 @@ McMap::Application.routes.draw do
         post "remove_coach"
       end
     end
+    resources :members
   end
 
   resources :communities do

@@ -3,50 +3,57 @@
   <li class="active"><%= @community.title %></li>
 </ul>
 
-<table class="attributes-table">
-  <tr>
-    <td class="attribute-name">Leader</td>
-    <td><%= @community.leader %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Co-Leader</td>
-    <td><%= @community.coleader %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Campus</td>
-    <td><%= @community.campus_name %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">E-mail</td>
-    <td><%= @community.email %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Day</td>
-    <td><%= @community.host_day.capitalize %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Kinds</td>
-    <td><%= @community.kinds_display %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Phone</td>
-    <td><%= @community.phone_number %></td>
-  </tr>
-  <tr>
-    <td class="attribute-name">Address</td>
-    <td>
-      <address>
-        <% unless @community.address_line_1.blank? %>
-          <%= @community.address_line_1 %><br>
-        <% end %>
-        <% unless @community.address_line_2.blank? %>
-          <%= @community.address_line_2 %><br>
-        <% end %>
-        <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
-      </address>
-    </td>
-  </tr>
-</table>
+<ul class="nav nav-tabs">
+  <li class="active"><%= link_to("Info", "#", "data-nav-page-link" => "info") %></li>
+  <li><%= link_to("Members", "#", "data-nav-page-link" => "members") %></li>
+</ul>
+
+<div data-nav-page="info">
+  <table class="attributes-table">
+    <tr>
+      <td class="attribute-name">Leader</td>
+      <td><%= @community.leader %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Co-Leader</td>
+      <td><%= @community.coleader %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Campus</td>
+      <td><%= @community.campus_name %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">E-mail</td>
+      <td><%= @community.email %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Day</td>
+      <td><%= @community.host_day.capitalize %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Kinds</td>
+      <td><%= @community.kinds_display %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Phone</td>
+      <td><%= @community.phone_number %></td>
+    </tr>
+    <tr>
+      <td class="attribute-name">Address</td>
+      <td>
+        <address>
+          <% unless @community.address_line_1.blank? %>
+            <%= @community.address_line_1 %><br>
+          <% end %>
+          <% unless @community.address_line_2.blank? %>
+            <%= @community.address_line_2 %><br>
+          <% end %>
+          <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
+        </address>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3>Coaches</h3>
 
