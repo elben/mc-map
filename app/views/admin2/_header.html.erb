@@ -2,9 +2,9 @@
   <div class="navbar-inner">
     <a class="brand" href="#">MC Admin</a>
     <ul class="nav">
-      <li class="active"><a href="#">Dashboard</a></li>
-      <li><%= link_to "Communities", admin2_communities_path %></li>
-      <li><%= link_to "Members", admin2_members_path %></li>
+      <li data-name="dashboard"><%= link_to "Dashboard", admin2_root_path %></li>
+      <li data-name="communities"><%= link_to "Communities", admin2_communities_path %></li>
+      <li data-name="members"><%= link_to "Members", admin2_members_path %></li>
     </ul>
   </div>
 </div>
