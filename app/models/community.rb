@@ -28,9 +28,9 @@ class Community < ActiveRecord::Base
   ])
 
   validates :leader_first_name, :leader_last_name, :host_day, :campus, presence: true
-  validate :presence_of_kinds, on: :create
+  # validate :presence_of_kinds, on: :create
 
-  before_validation :set_slug, :find_kinds
+  before_validation :set_slug #, :kind_ids_to_kind_list
   before_save :update_geo, :strip_stuff
 
   after_save :expire_cache
@@ -279,8 +279,9 @@ class Community < ActiveRecord::Base
 
   private
 
-  def find_kinds
-    return unless self.kind_list.blank?
+  def kind_ids_to_kind_list
+    # No kind_ids to transform to kind_list. So kip this method.
+    return if self.kind_ids.blank?
 
     tags = []
     self.kind_ids.each do |kind_id|
