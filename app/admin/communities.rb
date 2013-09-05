@@ -101,6 +101,19 @@ ActiveAdmin.register Community do
 
   controller do
     def create
+      if params["community"].try(:[], "kind_ids")
+        tags = []
+        kind_ids = params["community"].delete("kind_ids")
+        kind_ids.each do |kind_id|
+          next if kind_id.blank?
+          tag = ActsAsTaggableOn::Tag.find(kind_id)
+          if tag
+            tags << tag
+          end
+        end
+        params["community"]["kind_list"] = tags.map(&:name).join(", ")
+      end
+
       create! do |format|
         format.html { redirect_to admin_communities_url }
       end
