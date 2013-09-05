@@ -2,7 +2,7 @@ class CommunitiesController < ApplicationController
   caches_page :index
 
   def index
-    json = Community.all.map(&:output_json)
+    json = Community.visible.all.map(&:output_json)
     respond_to do |format|
       format.json { render :json => json }
     end
