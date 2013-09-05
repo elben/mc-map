@@ -3,7 +3,9 @@
   <head>
     <title>Missional Community Finder | The Austin Stone Community Church</title>
     <%= stylesheet_link_tag "admin2", :media => "all" %>
-    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag "#{params[:controller]}", :media => "all" %>
+    <%= javascript_include_tag "admin2" %>
+    <%= javascript_include_tag "#{params[:controller]}" %>
 
     <%# enable HTML5 elements in old browsers %>
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script><![endif]-->
