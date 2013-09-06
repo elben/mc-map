@@ -1,4 +1,5 @@
 //= require jquery
+//= require bootstrap-alert
 //= require underscore
 //= require backbone
 

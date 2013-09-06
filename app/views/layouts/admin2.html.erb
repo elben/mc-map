@@ -15,6 +15,12 @@
       <%= render "admin2/header" %>
     </header>
     <main class="container">
+      <% flash.each do |name, msg| -%>
+        <div class="alert <%= bootstrap_alert_class(name) %>">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <%= msg %>
+        </div>
+      <% end -%>
       <%= yield %>
     </main>
   </body>
