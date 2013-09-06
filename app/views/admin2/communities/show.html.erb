@@ -55,6 +55,7 @@
         </td>
       </tr>
     </table>
+    <div><%= link_to "Edit", edit_admin2_community_path(@community) %></div>
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
@@ -100,6 +101,7 @@
     <% if @community.members.blank? %>
       No members.
     <% else %>
+      <div><%= @community.members.count %> members total.</div>
       <table class="table">
         <thead>
           <tr>

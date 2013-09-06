@@ -1,4 +1,6 @@
 class Admin2::CommunitiesController < Admin2::Admin2Controller
+  before_filter :find_community, only: [:show, :edit]
+
   def index
     @communities = Community.all
 
@@ -12,7 +14,9 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
   end
 
   def show
-    @community = Community.find(params[:id])
+  end
+
+  def edit
   end
 
   def add_coach
@@ -27,5 +31,11 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
     admin_user = AdminUser.find(params[:admin_user_id])
     @community.coaches.destroy(admin_user)
     redirect_to :back
+  end
+
+  private
+
+  def find_community
+    @community = Community.find(params[:id])
   end
 end
