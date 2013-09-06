@@ -1,2 +1,7 @@
-<h2>Edit Community</h2>
+<ul class="breadcrumb">
+  <li><a href="<%= admin2_communities_path %>">Communities</a> <span class="divider">/</span></li>
+  <li><%= link_to @community.title, admin2_community_path(@community)%> <span class="divider">/</span></li>
+  <li class="active">Edit</li>
+</ul>
+
 <%= render 'form', locals: {community: @community} %>
