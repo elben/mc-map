@@ -58,6 +58,9 @@
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
+    <% if @community.coaches.blank? %>
+      No coaches.
+    <% else %>
     <table class="table">
       <thead>
         <tr>
@@ -73,6 +76,7 @@
         <% end %>
       </tbody>
     </table>
+    <% end %>
 
     <% unless @community.coaches.include?(current_admin_user) %>
       <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
@@ -93,23 +97,27 @@
   </div>
 
   <div id="community-members" class="sheet" data-sheet="members" style="display: none;">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>E-mail</th>
-          <th>Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @community.members.each do |member| %>
+    <% if @community.members.blank? %>
+      No members.
+    <% else %>
+      <table class="table">
+        <thead>
           <tr>
-            <td><%= member.name %></td>
-            <td><%= member.email %></td>
-            <td><%= member.phone_number %></td>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Phone</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @community.members.each do |member| %>
+            <tr>
+              <td><%= member.name %></td>
+              <td><%= member.email %></td>
+              <td><%= member.phone_number %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 </div>
