@@ -1,4 +1,5 @@
-// TODO convert to backbone
-$(function() {
-  $(".navbar").find("li[data-name='communities']").addClass("active")
-})
+$(function () {
+  var communitiesView = new AdminViews.CommunitiesView({
+    el: $("#communities"),
+  });
+});

@@ -1,4 +1,5 @@
-// TODO convert to backbone
-$(function() {
-  $(".navbar").find("li[data-name='dashboard']").addClass("active")
-})
+$(function () {
+  var dashboardView = new AdminViews.DashboardView({
+    el: $("#dashboard"),
+  });
+});
