@@ -7,11 +7,8 @@ $(function () {
     events: {
       "click li[data-sheet] a": "handleSheetChange",
     },
-    sheets: null, // Name of sheets
     currentSheetName: null,
     initialize: function (options) {
-      this.sheets = $("li [data-sheet]").map(function (idx, li) { return $(li).data("sheet"); });
-
       this.changeSheet("info"); // Defaults to Info sheet
     },
     handleSheetChange: function (e) {
@@ -19,9 +16,11 @@ $(function () {
       this.changeSheet(toSheetName);
     },
     changeSheet: function (toSheetName) {
+      // Hide old sheet and unhighlight nav
       this.$el.find("a[data-sheet='" + this.currentSheetName + "']").parent().removeClass("active");
       this.$el.find(".sheet[data-sheet='" + this.currentSheetName + "']").hide()
 
+      // Show new sheet and highlight nav
       this.$el.find("a[data-sheet='" + toSheetName + "']").parent().addClass("active");
       this.$el.find(".sheet[data-sheet='" + toSheetName + "']").show()
 

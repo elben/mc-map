@@ -16,7 +16,7 @@ $(function () {
       this.selected = options.selected || "dashboard";
     },
     render: function () {
-      // set active to selected. Unselect all.
+      // Highlight selected nav. Assumes others were unselected.
       this.$el.find("li[data-name='" + this.selected + "']").addClass("active");
       return this;
     }
