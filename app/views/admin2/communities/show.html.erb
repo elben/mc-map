@@ -1,91 +1,115 @@
-<ul class="breadcrumb">
-  <li><a href="<%= admin2_communities_path %>">Communities</a> <span class="divider">/</span></li>
-  <li class="active"><%= @community.title %></li>
-</ul>
+<div id="community">
+  <ul class="breadcrumb">
+    <li><a href="<%= admin2_communities_path %>">Communities</a> <span class="divider">/</span></li>
+    <li class="active"><%= @community.title %></li>
+  </ul>
 
-<ul class="nav nav-tabs">
-  <li class="active"><%= link_to("Info", "#", "data-nav-page-link" => "info") %></li>
-  <li><%= link_to("Members", "#", "data-nav-page-link" => "members") %></li>
-</ul>
+  <ul class="nav nav-tabs">
+    <li data-sheet="info"><%= link_to("Info", "#", "data-sheet" => "info") %></li>
+    <li data-sheet="coaches"><%= link_to("Coaches", "#", "data-sheet" => "coaches") %></li>
+    <li data-sheet="members"><%= link_to("Members", "#", "data-sheet" => "members") %></li>
+  </ul>
 
-<div data-nav-page="info">
-  <table class="attributes-table">
-    <tr>
-      <td class="attribute-name">Leader</td>
-      <td><%= @community.leader %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Co-Leader</td>
-      <td><%= @community.coleader %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Campus</td>
-      <td><%= @community.campus_name %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">E-mail</td>
-      <td><%= @community.email %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Day</td>
-      <td><%= @community.host_day.capitalize %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Kinds</td>
-      <td><%= @community.kinds_display %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Phone</td>
-      <td><%= @community.phone_number %></td>
-    </tr>
-    <tr>
-      <td class="attribute-name">Address</td>
-      <td>
-        <address>
-          <% unless @community.address_line_1.blank? %>
-            <%= @community.address_line_1 %><br>
-          <% end %>
-          <% unless @community.address_line_2.blank? %>
-            <%= @community.address_line_2 %><br>
-          <% end %>
-          <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
-        </address>
-      </td>
-    </tr>
-  </table>
-</div>
-
-<h3>Coaches</h3>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>E-mail</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @community.coaches.each do |coach| %>
+  <div id="community-info" class="sheet" data-sheet="info" style="display: none;">
+    <table class="attributes-table">
       <tr>
-        <td><%= link_to coach.email, "#" %></td>
-        <td>Remove</td>
+        <td class="attribute-name">Leader</td>
+        <td><%= @community.leader %></td>
       </tr>
+      <tr>
+        <td class="attribute-name">Co-Leader</td>
+        <td><%= @community.coleader %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Campus</td>
+        <td><%= @community.campus_name %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">E-mail</td>
+        <td><%= @community.email %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Day</td>
+        <td><%= @community.host_day.capitalize %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Kinds</td>
+        <td><%= @community.kinds_display %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Phone</td>
+        <td><%= @community.phone_number %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Address</td>
+        <td>
+          <address>
+            <% unless @community.address_line_1.blank? %>
+              <%= @community.address_line_1 %><br>
+            <% end %>
+            <% unless @community.address_line_2.blank? %>
+              <%= @community.address_line_2 %><br>
+            <% end %>
+            <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
+          </address>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>E-mail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @community.coaches.each do |coach| %>
+          <tr>
+            <td><%= link_to coach.email, "#" %></td>
+            <td>Remove</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <% unless @community.coaches.include?(current_admin_user) %>
+      <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
+        <fieldset>
+          <%= hidden_field_tag :admin_user_id, current_admin_user.id %>
+          <%= submit_tag "Add me as coach", :class => "btn" %>
+        </fieldset>
+      <% end %>
+    <% else %>
     <% end %>
-  </tbody>
-</table>
 
-<% unless @community.coaches.include?(current_admin_user) %>
-  <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
-    <fieldset>
-      <%= hidden_field_tag :admin_user_id, current_admin_user.id %>
-      <%= submit_tag "Add me as coach", :class => "btn" %>
-    </fieldset>
-  <% end %>
-<% else %>
-<% end %>
+    <%= form_tag({:controller => 'communities', :action => :add_coach}, {:class => "form-inline"}) do %>
+      <fieldset>
+        <%= select_tag(:admin_user_id, options_from_collection_for_select(AdminUser.all, :id, :email)) %>
+        <%= submit_tag "Add coach", :class => "btn" %>
+      </fieldset>
+    <% end %>
+  </div>
 
-<%= form_tag({:controller => 'communities', :action => :add_coach}, {:class => "form-inline"}) do %>
-  <fieldset>
-    <%= select_tag(:admin_user_id, options_from_collection_for_select(AdminUser.all, :id, :email)) %>
-    <%= submit_tag "Add coach", :class => "btn" %>
-  </fieldset>
-<% end %>
+  <div id="community-members" class="sheet" data-sheet="members" style="display: none;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>E-mail</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @community.members.each do |member| %>
+          <tr>
+            <td><%= member.name %></td>
+            <td><%= member.email %></td>
+            <td><%= member.phone_number %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
