@@ -12,8 +12,8 @@
       </tr>
     </thead>
     <% @communities.each do |c| %>
-      <tr class="<%= "hidden" if c.hidden? %>">
-        <td><%= link_to "View", admin2_community_path(c) %></td>
+      <tr>
+        <td><% if c.hidden? %><span class="label hidden-community">Hidden</span><% end %><%= link_to "View", admin2_community_path(c) %></td>
         <td><%= c.leader %></td>
         <td><%= c.campus %></td>
         <td><%= c.host_day %></td>
