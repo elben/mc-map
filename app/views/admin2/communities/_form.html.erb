@@ -33,6 +33,11 @@
   </div>
   <div class="control-group <%= error_classes_for_attributes(:kind_list) %>">
     <%= f.label :kind_list, "Kinds", class: "control-label" %>
+    <% if @community.errors.include?(:kind_list) %>
+      <div class="controls">
+        <span class="help-block"><strong><%= @community.errors[:kind_list].first %></strong></span>
+      </div>
+    <% end %>
     <% Community::MC_KINDS.each do |kind, description| %>
       <div class="controls">
         <label class="checkbox inline" name="kind_list">
