@@ -72,13 +72,17 @@
     <table class="table">
       <thead>
         <tr>
+          <th>Name</th>
           <th>E-mail</th>
+          <th>Phone</th>
         </tr>
       </thead>
       <tbody>
         <% @community.coaches.each do |coach| %>
           <tr>
-            <td><%= link_to coach.email, "#" %></td>
+            <td><%= coach.name %></td>
+            <td><%= link_to coach.email, "mailto:#{coach.email}" %></td>
+            <td><%= coach.phone_number %></td>
             <td>Remove</td>
           </tr>
         <% end %>
