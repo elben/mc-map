@@ -14,4 +14,10 @@ module ApplicationHelper
       return "alert-error"
     end
   end
+
+  def error_classes_for_attributes(*attributes)
+    if @error_keys && !(@error_keys.to_set & attributes.to_set).blank?
+      "error"
+    end
+  end
 end

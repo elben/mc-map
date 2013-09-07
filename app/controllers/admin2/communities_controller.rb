@@ -25,6 +25,7 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
         format.html { redirect_to admin2_community_path(@community), notice: "Community was successfully updated." }
         format.json { head :no_content }
       else
+        @error_keys = @community.errors.keys
         format.html { render action: "edit" }
         format.json { render json: @community.errors, status: :unprocessable_entity }
       end

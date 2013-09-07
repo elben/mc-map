@@ -1,37 +1,37 @@
 <%= form_for [:admin2, @community], {:html => {:class => "form-horizontal"}} do |f| %>
-  <div class="control-group">
-    <%= f.label :leader, class: "control-label" %>
+  <div class="control-group <%= error_classes_for_attributes(:leader_first_name, :leader_last_name) %>">
+    <%= f.label :leader_first_name, "Leader", class: "control-label" %>
     <div class="controls">
       <%= f.text_field :leader_first_name, placeholder: "First name" %>
       <%= f.text_field :leader_last_name, placeholder: "Last name" %>
     </div>
   </div>
-  <div class="control-group">
-    <%= f.label :coleader, "Co-leader", class: "control-label" %>
+  <div class="control-group <%= error_classes_for_attributes(:coleader_first_name, :coleader_last_name) %>">
+    <%= f.label :coleader_first_name, "Co-leader", class: "control-label" %>
     <div class="controls">
       <%= f.text_field :coleader_first_name, placeholder: "First name" %>
       <%= f.text_field :coleader_last_name, placeholder: "Last name" %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:description) %>">
     <%= f.label :description, class: "control-label" %>
     <div class="controls">
       <%= f.text_area :description, rows: 3, class: "span4" %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:campus) %>">
     <%= f.label :campus, :class => "control-label" %>
     <div class="controls">
       <%= f.select :campus, options_for_select(Community::CAMPUSES.map { |k, v| [v, k] }, @community.campus) %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:host_day) %>">
     <%= f.label :host_day, "Day", :class => "control-label" %>
     <div class="controls">
       <%= f.select :host_day, options_for_select(Community::DAYS.map { |d| [d.titleize, d] }, @community.host_day) %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:kind_list) %>">
     <%= f.label :kind_list, "Kinds", class: "control-label" %>
     <% Community::MC_KINDS.each do |kind, description| %>
       <div class="controls">
@@ -42,36 +42,36 @@
       </div>
     <% end %>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:email) %>">
     <%= f.label :email, "E-mail", :class => "control-label" %>
     <div class="controls">
       <%= f.text_field :email %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:phone_number) %>">
     <%= f.label :phone_number, "Phone Number", :class => "control-label" %>
     <div class="controls">
       <%= f.text_field :phone_number %>
     </div>
   </div>
-  <div class="control-group">
-    <%= f.label :address, :class => "control-label" %>
+  <div class="control-group <%= error_classes_for_attributes(:address_line_1) %>">
+    <%= f.label :address_line_1, "Address", :class => "control-label" %>
     <div class="controls">
       <%= f.text_field :address_line_1, :placeholder => "5 Elm St" %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:address_line_2) %>">
     <div class="controls">
       <%= f.text_field :address_line_2 %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:address_city, :address_postal) %>">
     <div class="controls">
       <%= f.text_field :address_city, :placeholder => "City" %>
       <%= f.text_field :address_postal, :placeholder => "Zip", :class => "input-small" %>
     </div>
   </div>
-  <div class="control-group">
+  <div class="control-group <%= error_classes_for_attributes(:hidden) %>">
     <div class="controls">
       <label class="checkbox inline" name="hidden">
         <%= f.check_box :hidden %>
