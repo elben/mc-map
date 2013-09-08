@@ -1,4 +1,6 @@
 McMap::Application.routes.draw do
+  devise_for :admin_users
+
   root :to => 'map#index'
 
   namespace :admin2 do
