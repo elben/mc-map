@@ -7,8 +7,12 @@
 
 var AdminViews = {};
 
-// $tableContainer   - The container with a table, the DataTable search input, and
-//                     our own custom search input.
+// Prepares a DataTable, given a table container. Assumes certain look, feel and
+// behavior consistent across our admin.
+//
+// $tableContainer   - A container that contains table element, and optionally:
+//                     A .search-query input - To be used to as the search box.
+//                     A .dataTables_filter - The defualt search; to be hidden.
 // collectionName    - Noun used for pagination, etc. e.g. "communities"
 // dataTablesOptions - Passed into datatables as options.
 //
@@ -38,6 +42,8 @@ var createDataTable = function ($tableContainer, collectionName, dataTablesOptio
   $tableContainer.find(".search-query").keyup(function () {
     $table.fnFilter($(this).val());
   });
+
+  return $table;
 };
 
 $(function () {
