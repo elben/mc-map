@@ -1,4 +1,4 @@
-<%= form_for [:admin2, @community], {:html => {:class => "form-horizontal"}} do |f| %>
+<%= form_for [:admin, @community], {:html => {:class => "form-horizontal"}} do |f| %>
   <div class="control-group <%= error_classes_for_attributes(:leader_first_name, :leader_last_name) %>">
     <%= f.label :leader_first_name, "Leader", class: "control-label" %>
     <div class="controls">

@@ -1,6 +1,6 @@
 <div id="community">
   <ul class="breadcrumb">
-    <li><a href="<%= admin2_communities_path %>">Communities</a> <span class="divider">/</span></li>
+    <li><a href="<%= admin_communities_path %>">Communities</a> <span class="divider">/</span></li>
     <li class="active"><%= @community.title %></li>
   </ul>
 
@@ -62,11 +62,11 @@
         </td>
       </tr>
     </table>
-    <div><%= link_to "Edit Community", edit_admin2_community_path(@community), class: "btn" %></div>
+    <div><%= link_to "Edit Community", edit_admin_community_path(@community), class: "btn" %></div>
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
-    <%= render "admin2/shared/data_table_search" %>
+    <%= render "admin/shared/data_table_search" %>
 
     <table class="table">
       <thead>
@@ -108,7 +108,7 @@
   </div>
 
   <div id="community-members" class="sheet" data-sheet="members" style="display: none;">
-    <%= render "admin2/shared/data_table_search" %>
+    <%= render "admin/shared/data_table_search" %>
 
     <table class="table">
       <thead>

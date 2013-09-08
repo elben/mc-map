@@ -1,4 +1,4 @@
-class Admin2::CommunitiesController < Admin2::Admin2Controller
+class Admin::CommunitiesController < Admin::AdminController
   before_filter :prepare_kind_list, only: [:update, :create]
   before_filter :find_community, only: [:show, :edit, :update]
 
@@ -33,7 +33,7 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
 
     respond_to do |format|
       if @community.update_attributes(params[:community])
-        format.html { redirect_to admin2_community_path(@community), notice: "Community was successfully updated." }
+        format.html { redirect_to admin_community_path(@community), notice: "Community was successfully updated." }
         format.json { head :no_content }
       else
         flash[:alert] = "Please fix the errors below."
@@ -55,7 +55,7 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
       @community = Community.create(params[:community])
 
       if @community.valid?
-        format.html { redirect_to admin2_community_path(@community), notice: "Community was successfully created." }
+        format.html { redirect_to admin_community_path(@community), notice: "Community was successfully created." }
         format.json { head :no_content }
       else
         flash[:alert] = "Please fix the errors below."
