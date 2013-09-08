@@ -7,6 +7,40 @@
 
 var AdminViews = {};
 
+// $tableContainer   - The container with a table, the DataTable search input, and
+//                     our own custom search input.
+// collectionName    - Noun used for pagination, etc. e.g. "communities"
+// dataTablesOptions - Passed into datatables as options.
+//
+// Returns a DataTable.
+var createDataTable = function ($tableContainer, collectionName, dataTablesOptions) {
+  var defaults = {
+    // sDom and sPaginationType follows:
+    // http://datatables.net/blog/Twitter_Bootstrap_2
+    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+    "sPaginationType": "bootstrap", // Depends on dataTables_bootstrap_pagination.js
+    "oLanguage": {
+      "sInfo": "Showing _TOTAL_ _START_ to _END_ of _TOTAL_ " + collectionName,
+      "sInfoEmpty": "No " + collectionName + " to show",
+    },
+    "bLengthChange": false, // Hide num rows dropdown
+    "iDisplayLength": 50, // Display 50 rows at a time
+    "aaSorting": [[ 1, "asc" ]] // Default to sort first column
+      // "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false} ]
+  }
+
+  var options = $.extend(defaults, dataTablesOptions);
+
+  var $table = $tableContainer.find("table").dataTable(options);
+
+  // Hide default datatables search bar so we can use our own nicer one.
+  $tableContainer.find(".dataTables_filter").hide();
+
+  $tableContainer.find("#communities-search").keyup(function () {
+    $table.fnFilter($(this).val());
+  });
+};
+
 $(function () {
   // Initialize datatables for Bootstrap
   // http://datatables.net/blog/Twitter_Bootstrap_2
@@ -40,34 +74,13 @@ $(function () {
 
   AdminViews.CommunitiesView = Backbone.View.extend({
     navBarView: null,
-    table: null,
 
     initialize: function (options) {
       this.navBarView = buildNavBarView("communities");
-      this.table = $("table.communities");
-      this.table.dataTable({
-        // sDom and sPaginationType follows:
-        // http://datatables.net/blog/Twitter_Bootstrap_2
-        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-        "sPaginationType": "bootstrap", // Depends on dataTables_bootstrap_pagination.js
-        "oLanguage": {
-          "sLengthMenu": "Display _MENU_ records",
-          "sInfo": "Showing _TOTAL_ _START_ to _END_ of _TOTAL_ communities",
-          "sInfoEmpty": "No communities to show",
-        },
-        "bLengthChange": false, // Hide num rows dropdown
-        // "bFilter": false, // Hide search bar since we're building our own
-        "iDisplayLength": 50, // Display 50 rows at a time
+
+      createDataTable($("#communities"), "communities", {
         "aaSorting": [[ 1, "asc" ]], // Default to sort first column
         "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false} ]
-      });
-
-      // Hide default datatables search bar so we can use our own nicer one.
-      $("#DataTables_Table_0_filter").hide();
-
-      var self = this;
-      $('#communities-search').keyup(function () {
-        self.table.fnFilter($(this).val());
       });
     }
   });

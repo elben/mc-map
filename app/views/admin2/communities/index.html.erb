@@ -1,38 +1,40 @@
-<div class="row">
-  <div class="span6">
-  </div>
-  <div class="span6">
-    <div class="datatable-custom-search">
-      <input type="text" id="communities-search" class="search-query" placeholder="Search">
+<div id="communities">
+  <div class="row">
+    <div class="span6">
+    </div>
+    <div class="span6">
+      <div class="datatable-custom-search">
+        <input type="text" id="communities-search" class="search-query" placeholder="Search">
+      </div>
     </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="span12">
-    <table class="table communities">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Leader</th>
-          <th>Campus</th>
-          <th>Day</th>
-          <th>Kinds</th>
-          <th>E-mail</th>
-          <th>Members</th>
-        </tr>
-      </thead>
-      <% @communities.each do |c| %>
-        <tr>
-          <td><% if c.hidden? %><span class="label hidden-community">Hidden</span><% end %><%= link_to "View", admin2_community_path(c) %></td>
-          <td><%= c.leader %></td>
-          <td><%= c.campus_name %></td>
-          <td><%= c.host_day.titleize %></td>
-          <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
-          <td><%= c.email %></td>
-          <td><%= @members_count[c.id].to_i %></td>
-        </tr>
-      <% end %>
-    </table>
+  <div class="row">
+    <div class="span12">
+      <table class="table communities">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Leader</th>
+            <th>Campus</th>
+            <th>Day</th>
+            <th>Kinds</th>
+            <th>E-mail</th>
+            <th>Members</th>
+          </tr>
+        </thead>
+        <% @communities.each do |c| %>
+          <tr>
+            <td><% if c.hidden? %><span class="label hidden-community">Hidden</span><% end %><%= link_to "View", admin2_community_path(c) %></td>
+            <td><%= c.leader %></td>
+            <td><%= c.campus_name %></td>
+            <td><%= c.host_day.titleize %></td>
+            <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
+            <td><%= c.email %></td>
+            <td><%= @members_count[c.id].to_i %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
   </div>
 </div>
