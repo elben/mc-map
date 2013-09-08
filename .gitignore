@@ -19,3 +19,4 @@ pickle-email-*.html
 public/assets/*
 public/communities.json
 >>>>>>> cache
+.DS_Store
