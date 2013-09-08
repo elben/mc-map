@@ -20,7 +20,7 @@ var createDataTable = function ($tableContainer, collectionName, dataTablesOptio
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap", // Depends on dataTables_bootstrap_pagination.js
     "oLanguage": {
-      "sInfo": "Showing _TOTAL_ _START_ to _END_ of _TOTAL_ " + collectionName,
+      "sInfo": "Showing _START_ to _END_ of _TOTAL_ " + collectionName,
       "sInfoEmpty": "No " + collectionName + " to show",
     },
     "bLengthChange": false, // Hide num rows dropdown
@@ -36,7 +36,7 @@ var createDataTable = function ($tableContainer, collectionName, dataTablesOptio
   // Hide default datatables search bar so we can use our own nicer one.
   $tableContainer.find(".dataTables_filter").hide();
 
-  $tableContainer.find("#communities-search").keyup(function () {
+  $tableContainer.find(".search-query").keyup(function () {
     $table.fnFilter($(this).val());
   });
 };

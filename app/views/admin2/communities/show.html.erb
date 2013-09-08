@@ -66,17 +66,9 @@
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
-    <div class="row">
-      <div class="span6">
-      </div>
-      <div class="span6">
-        <div class="datatable-custom-search">
-          <input type="text" id="coaches-search" class="search-query" placeholder="Search">
-        </div>
-      </div>
-    </div>
+    <%= render "admin2/shared/data_table_search" %>
 
-    <table id="community-coaches-table" class="table">
+    <table class="table">
       <thead>
         <tr>
           <th>Name</th>
@@ -116,15 +108,7 @@
   </div>
 
   <div id="community-members" class="sheet" data-sheet="members" style="display: none;">
-    <div class="row">
-      <div class="span6">
-      </div>
-      <div class="span6">
-        <div class="datatable-custom-search">
-          <input type="text" id="members-search" class="search-query" placeholder="Search">
-        </div>
-      </div>
-    </div>
+    <%= render "admin2/shared/data_table_search" %>
 
     <table class="table">
       <thead>
