@@ -13,17 +13,19 @@
             <th>Kinds</th>
             <th>E-mail</th>
             <th>Members</th>
+            <th>Hidden</th>
           </tr>
         </thead>
         <% @communities.each do |c| %>
           <tr>
-            <td><% if c.hidden? %><span class="label hidden-community">Hidden</span><% end %><%= link_to "View", admin2_community_path(c) %></td>
+            <td><%= link_to "View", admin2_community_path(c) %></td>
             <td><%= c.leader %></td>
             <td><%= c.campus_name %></td>
             <td><%= c.host_day.titleize %></td>
             <td class="mc-kind"><%= (@taggings_hash[c.id] || []).join(", ") %></td>
             <td><%= c.email %></td>
             <td><%= @members_count[c.id].to_i %></td>
+            <td><% if c.hidden? %><span class="label hidden-community">Hidden</span><% end %></td>
           </tr>
         <% end %>
       </table>

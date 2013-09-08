@@ -26,7 +26,6 @@ var createDataTable = function ($tableContainer, collectionName, dataTablesOptio
     "bLengthChange": false, // Hide num rows dropdown
     "iDisplayLength": 50, // Display 50 rows at a time
     "aaSorting": [[ 1, "asc" ]] // Default to sort first column
-      // "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false} ]
   }
 
   var options = $.extend(defaults, dataTablesOptions);
@@ -80,7 +79,7 @@ $(function () {
 
       createDataTable($("#communities"), "communities", {
         "aaSorting": [[ 1, "asc" ]], // Default to sort first column
-        "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false} ]
+        "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false}, {} ]
       });
     }
   });
