@@ -1,4 +1,5 @@
 class Admin2::CommunitiesController < Admin2::Admin2Controller
+  before_filter :prepare_kind_list, only: [:update, :create]
   before_filter :find_community, only: [:show, :edit, :update]
 
   def index
@@ -80,6 +81,14 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
   end
 
   private
+
+  def prepare_kind_list
+    if params[:community]["kind_list"].nil?
+      # No kinds were given, so no checkbox values were sent. Add a blank list
+      # so Community validations will work.
+      params[:community]["kind_list"] = []
+    end
+  end
 
   def find_community
     @community = Community.find(params[:id])
