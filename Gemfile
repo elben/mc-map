@@ -10,7 +10,7 @@ gem 'jquery-rails'
 gem "jquery-ui-rails"
 gem "kaminari"
 gem "sentry-raven"
-gem 'activeadmin'
+gem 'devise'
 gem 'acts-as-taggable-on'
 gem 'paranoia', '~> 1.0'
 gem 'pg'
