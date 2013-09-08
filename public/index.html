@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript">
+      // Stone's Google Analytics code
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-3493264-23', 'mcmap.austinstone.org');
+      ga('send', 'pageview');
+
+      // mark us as framed if we are
+      if (window.self !== window.top) {
+        document.getElementsByTagName('html')[0].className += ' framed';
+      }
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Missional Community Finder | The Austin Stone Community Church</title>
+    <link href="/assets/application.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/normalize.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/fonts.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/leaflet.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/leaflet.ie.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/Control.Loading.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/marker-cluster.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/custom-marker.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/map.css?body=1" media="all" rel="stylesheet" type="text/css" />
+<link href="/assets/signup.css?body=1" media="all" rel="stylesheet" type="text/css" />
+
+    <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script><![endif]-->
+  </head>
+  <body>
+    <main>
+      <script type="text/x-mustache" id="template-community-search-result">
+  <li data-id="{{id}}" data-campus="{{campus}}" class="community-search-result">
+    <header>
+      <span>{{leader_first_name}} {{leader_last_name}}</span>{{#coleader_first_name}}, <span>{{coleader_first_name}} {{coleader_last_name}}</span>{{/coleader_first_name}}
+      <p>{{campus_display}}, meets <span class="community-search-result-host-day">{{host_day}}s</span></p>
+    </header>
+
+    <div class="community-search-result-short-info">
+      {{#kinds}}<span class="community-search-result-kind">{{.}}</span> {{/kinds}}
+    </div>
+
+    <div class="community-search-result-long-info">
+      {{#description}}
+      <p class="community-search-result-description">{{description}}</p>
+      {{/description}}
+
+      {{#address}}
+      <address>
+        <a href="https://www.google.com/maps/preview#!q={{address_query}}" target="_blank">
+          {{line_1}} {{line_2}}<br />
+          {{city}}, {{province}} {{postal}}
+        </a>
+      </address>
+      {{/address}}
+
+      <a class="community-search-result-sign-up-button custom-button custom-button-yellow custom-button-loadable" href="/signup?community_id={{id}}" target="_blank" title="Sign Up">Sign Up</a>
+    </div>
+  </li>
+</script>
+
+<script type="text/x-mustache" id="template-community-search-result-frame">
+  <iframe class="community-search-result-frame" frameborder="0" scrolling="no" src={{url}}></iframe>
+</script>
+
+
+<section id="map"></section>
+
+<div id="sidebar">
+
+  <div id="filters">
+    <h2 id="filters-header" class="mobile-header">Show Search Results</h2>
+
+    <nav>
+      <a class="filter-nav-button selected" href="#" data-tab-id="filter-tab-campus">Campus</a>
+      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-day">Day</a>
+      <a class="filter-nav-button" href="#" data-tab-id="filter-tab-kind">Kind</a>
+    </nav>
+
+    <div id="filter-tab-campus" class="filter-tab selected">
+      <div class="filter-tab-content">
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-stjam">
+  <label for="checkbox-campus-stjam">
+    <input type="checkbox" id="checkbox-campus-stjam" data-filter-name="campus"
+        value="stjam" checked />
+    <span>St. John AM</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-stjpm">
+  <label for="checkbox-campus-stjpm">
+    <input type="checkbox" id="checkbox-campus-stjpm" data-filter-name="campus"
+        value="stjpm" checked />
+    <span>St. John PM</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-dtam">
+  <label for="checkbox-campus-dtam">
+    <input type="checkbox" id="checkbox-campus-dtam" data-filter-name="campus"
+        value="dtam" checked />
+    <span>Downtown AM</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-dtpm">
+  <label for="checkbox-campus-dtpm">
+    <input type="checkbox" id="checkbox-campus-dtpm" data-filter-name="campus"
+        value="dtpm" checked />
+    <span>Downtown PM</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-south">
+  <label for="checkbox-campus-south">
+    <input type="checkbox" id="checkbox-campus-south" data-filter-name="campus"
+        value="south" checked />
+    <span>South</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-campus checkbox-filter-campus-west">
+  <label for="checkbox-campus-west">
+    <input type="checkbox" id="checkbox-campus-west" data-filter-name="campus"
+        value="west" checked />
+    <span>West</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+      </div>
+    </div>
+
+    <div id="filter-tab-day" class="filter-tab">
+      <div class="filter-tab-content">
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-monday">
+  <label for="checkbox-day-monday">
+    <input type="checkbox" id="checkbox-day-monday" data-filter-name="day"
+        value="monday" checked />
+    <span>Monday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-tuesday">
+  <label for="checkbox-day-tuesday">
+    <input type="checkbox" id="checkbox-day-tuesday" data-filter-name="day"
+        value="tuesday" checked />
+    <span>Tuesday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-wednesday">
+  <label for="checkbox-day-wednesday">
+    <input type="checkbox" id="checkbox-day-wednesday" data-filter-name="day"
+        value="wednesday" checked />
+    <span>Wednesday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-thursday">
+  <label for="checkbox-day-thursday">
+    <input type="checkbox" id="checkbox-day-thursday" data-filter-name="day"
+        value="thursday" checked />
+    <span>Thursday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-friday">
+  <label for="checkbox-day-friday">
+    <input type="checkbox" id="checkbox-day-friday" data-filter-name="day"
+        value="friday" checked />
+    <span>Friday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-saturday">
+  <label for="checkbox-day-saturday">
+    <input type="checkbox" id="checkbox-day-saturday" data-filter-name="day"
+        value="saturday" checked />
+    <span>Saturday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-day checkbox-filter-day-sunday">
+  <label for="checkbox-day-sunday">
+    <input type="checkbox" id="checkbox-day-sunday" data-filter-name="day"
+        value="sunday" checked />
+    <span>Sunday</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+      </div>
+    </div>
+
+    <div id="filter-tab-kind" class="filter-tab">
+      <div class="filter-tab-content">
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-open">
+  <label for="checkbox-kind-open">
+    <input type="checkbox" id="checkbox-kind-open" data-filter-name="kind"
+        value="open" checked />
+    <span>Open to Everyone</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-goer">
+  <label for="checkbox-kind-goer">
+    <input type="checkbox" id="checkbox-kind-goer" data-filter-name="kind"
+        value="goer" checked />
+    <span>Interested in the Nations (Goer MC)</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-over40">
+  <label for="checkbox-kind-over40">
+    <input type="checkbox" id="checkbox-kind-over40" data-filter-name="kind"
+        value="over40" checked />
+    <span>Over 40 Years Old</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-family">
+  <label for="checkbox-kind-family">
+    <input type="checkbox" id="checkbox-kind-family" data-filter-name="kind"
+        value="family" checked />
+    <span>Families with Children</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-women">
+  <label for="checkbox-kind-women">
+    <input type="checkbox" id="checkbox-kind-women" data-filter-name="kind"
+        value="women" checked />
+    <span>Women</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-college">
+  <label for="checkbox-kind-college">
+    <input type="checkbox" id="checkbox-kind-college" data-filter-name="kind"
+        value="college" checked />
+    <span>College</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-men">
+  <label for="checkbox-kind-men">
+    <input type="checkbox" id="checkbox-kind-men" data-filter-name="kind"
+        value="men" checked />
+    <span>Men</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-singles">
+  <label for="checkbox-kind-singles">
+    <input type="checkbox" id="checkbox-kind-singles" data-filter-name="kind"
+        value="singles" checked />
+    <span>Singles/Young Professionals</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+          <div class="checkbox-filter checkbox-filter-kind checkbox-filter-kind-newly_married">
+  <label for="checkbox-kind-newly_married">
+    <input type="checkbox" id="checkbox-kind-newly_married" data-filter-name="kind"
+        value="newly_married" checked />
+    <span>Nearly/Newly Married Couples</span>
+  </label>
+
+  <a href="#" class="checkbox-only">Only</a>
+</div>
+
+      </div>
+    </div>
+
+    <div id="filters-footer">
+      <input id="toggle-selection-checkbox" type="checkbox" checked />
+      <label for="toggle-selection-checkbox">Select/De-select All</label>
+    </div>
+  </div>
+
+  <div id="search-results">
+    <h2 id="search-results-header" class="mobile-header">Show Filters</h2>
+    <ul></ul>
+  </div>
+</div>
+
+    </main>
+
+    <script src="/assets/application.js?body=1" type="text/javascript"></script>
+<script src="/assets/jquery.js?body=1" type="text/javascript"></script>
+<script src="/assets/bootstrap-alert.js?body=1" type="text/javascript"></script>
+<script src="/assets/underscore.js?body=1" type="text/javascript"></script>
+<script src="/assets/backbone.js?body=1" type="text/javascript"></script>
+<script src="/assets/jquery.dataTables.min.js?body=1" type="text/javascript"></script>
+<script src="/assets/dataTables_bootstrap_paging.js?body=1" type="text/javascript"></script>
+<script src="/assets/admin2.js?body=1" type="text/javascript"></script>
+<script src="/assets/admin2/admin2.js?body=1" type="text/javascript"></script>
+<script src="/assets/admin2/communities.js?body=1" type="text/javascript"></script>
+<script src="/assets/communities.js?body=1" type="text/javascript"></script>
+<script src="/assets/leaflet.js?body=1" type="text/javascript"></script>
+<script src="/assets/leaflet.markercluster.js?body=1" type="text/javascript"></script>
+<script src="/assets/Control.Loading.js?body=1" type="text/javascript"></script>
+<script src="/assets/mustache.js?body=1" type="text/javascript"></script>
+<script src="/assets/scrollfix.js?body=1" type="text/javascript"></script>
+<script src="/assets/map.js?body=1" type="text/javascript"></script>
+<script src="/assets/members.js?body=1" type="text/javascript"></script>
+<script src="/assets/signup.js?body=1" type="text/javascript"></script>
+  </body>
+</html>
