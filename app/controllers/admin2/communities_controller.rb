@@ -16,6 +16,10 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
   def show
   end
 
+  def new
+    @community = Community.new
+  end
+
   def edit
   end
 
@@ -34,6 +38,28 @@ class Admin2::CommunitiesController < Admin2::Admin2Controller
         flash[:alert] = "Please fix the errors below."
         @error_keys = @community.errors.keys
         format.html { render action: "edit" }
+        format.json { render json: @community.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def create
+    if params[:community]["kind_list"].nil?
+      # No kinds were given, so no checkbox values were sent. Add a blank list
+      # so Community validations will work.
+      params[:community]["kind_list"] = []
+    end
+
+    respond_to do |format|
+      @community = Community.create(params[:community])
+
+      if @community.valid?
+        format.html { redirect_to admin2_community_path(@community), notice: "Community was successfully created." }
+        format.json { head :no_content }
+      else
+        flash[:alert] = "Please fix the errors below."
+        @error_keys = @community.errors.keys
+        format.html { render action: "new" }
         format.json { render json: @community.errors, status: :unprocessable_entity }
       end
     end

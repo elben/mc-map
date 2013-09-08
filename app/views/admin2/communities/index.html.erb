@@ -1,4 +1,11 @@
 <div id="communities">
+  <div class="row">
+    <div class="span12">
+    </div>
+  </div>
+  <% content_for :data_table_search_left do %>
+    <%= link_to "New Community", new_admin2_community_path, class: "btn" %>
+  <% end %>
   <%= render "admin2/shared/data_table_search" %>
 
   <div class="row">
