@@ -11,6 +11,7 @@
   </ul>
 
   <div id="community-info" class="sheet" data-sheet="info" style="display: none;">
+    <div><%= link_to "Edit Community", edit_admin2_community_path(@community), class: "btn" %></div>
     <% if @community.hidden? %>
       <span class="label">Hidden from map</span>
     <% end %>
@@ -62,7 +63,6 @@
         </td>
       </tr>
     </table>
-    <div><%= link_to "Edit", edit_admin2_community_path(@community) %></div>
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
