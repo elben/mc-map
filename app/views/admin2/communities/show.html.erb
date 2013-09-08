@@ -66,15 +66,23 @@
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">
-    <% if @community.coaches.blank? %>
-      No coaches.
-    <% else %>
-    <table class="table">
+    <div class="row">
+      <div class="span6">
+      </div>
+      <div class="span6">
+        <div class="datatable-custom-search">
+          <input type="text" id="coaches-search" class="search-query" placeholder="Search">
+        </div>
+      </div>
+    </div>
+
+    <table id="community-coaches-table" class="table">
       <thead>
         <tr>
           <th>Name</th>
           <th>E-mail</th>
           <th>Phone</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -88,7 +96,6 @@
         <% end %>
       </tbody>
     </table>
-    <% end %>
 
     <% unless @community.coaches.include?(current_admin_user) %>
       <%= form_tag(:controller => 'communities', :action => :add_coach) do %>
@@ -109,28 +116,33 @@
   </div>
 
   <div id="community-members" class="sheet" data-sheet="members" style="display: none;">
-    <% if @community.members.blank? %>
-      No members.
-    <% else %>
-      <div><%= @community.members.count %> members total.</div>
-      <table class="table">
-        <thead>
+    <div class="row">
+      <div class="span6">
+      </div>
+      <div class="span6">
+        <div class="datatable-custom-search">
+          <input type="text" id="members-search" class="search-query" placeholder="Search">
+        </div>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>E-mail</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @community.members.each do |member| %>
           <tr>
-            <th>Name</th>
-            <th>E-mail</th>
-            <th>Phone</th>
+            <td><%= member.name %></td>
+            <td><%= member.email %></td>
+            <td><%= member.phone_number %></td>
           </tr>
-        </thead>
-        <tbody>
-          <% @community.members.each do |member| %>
-            <tr>
-              <td><%= member.name %></td>
-              <td><%= member.email %></td>
-              <td><%= member.phone_number %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% end %>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

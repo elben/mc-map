@@ -62,10 +62,12 @@ $(function () {
         "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false} ]
       });
 
+      // Hide default datatables search bar so we can use our own nicer one.
       $("#DataTables_Table_0_filter").hide();
+
       var self = this;
-      $('#communities-search').keyup(function(){
-        self.table.fnFilter( $(this).val() );
+      $('#communities-search').keyup(function () {
+        self.table.fnFilter($(this).val());
       });
     }
   });
