@@ -64,7 +64,9 @@
         </td>
       </tr>
     </table>
-    <div><%= link_to "Edit Community", edit_admin_community_path(@community), class: "btn" %></div>
+    <% if can? :update, @community %>
+      <div><%= link_to "Edit Community", edit_admin_community_path(@community), class: "btn" %></div>
+    <% end %>
   </div>
 
   <div id="community-coaches" class="sheet" data-sheet="coaches" style="display: none;">

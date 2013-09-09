@@ -27,9 +27,16 @@ class Admin::CommunitiesController < Admin::AdminController
   end
 
   def edit
+
+    if cannot?(:update, @community)
+      flash[:alert] = "Sorry, can't edit because you are not a coach of this community."
+      redirect_to admin_community_path(@community)
+    end
   end
 
   def update
+    redirect_to :back if cannot?(:update, @community)
+
     if params[:community]["kind_list"].nil?
       # No kinds were given, so no checkbox values were sent. Add a blank list
       # so Community validations will work.
