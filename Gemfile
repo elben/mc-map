@@ -17,6 +17,7 @@ gem 'pg'
 gem 'rails', '3.2.14'
 gem 'puma'
 gem 'dalli'
+gem 'factory_girl_rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -35,6 +36,10 @@ group :development do
   gem "mailcatcher"
   gem "better_errors"
   gem "binding_of_caller"
+end
+
+group :test do
+  gem 'shoulda'
 end
 
 # To use ActiveModel has_secure_password
