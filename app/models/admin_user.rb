@@ -19,6 +19,14 @@ class AdminUser < ActiveRecord::Base
   # Communities they are coaching
   has_and_belongs_to_many :communities, join_table: :coaches_join
 
+  def display_name
+    if self.first_name.blank? && self.last_name.blank?
+      self.email
+    else
+      "#{self.name} - #{self.email}"
+    end
+  end
+
   def name
     "#{self.first_name} #{self.last_name}"
   end

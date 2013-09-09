@@ -105,7 +105,7 @@
 
     <%= form_tag({:controller => 'communities', :action => :add_coach}, {:class => "form-inline"}) do %>
       <fieldset>
-        <%= select_tag(:admin_user_id, options_from_collection_for_select(AdminUser.all, :id, :email)) %>
+        <%= select_tag(:admin_user_id, options_from_collection_for_select(AdminUser.all, :id, :display_name)) %>
         <%= submit_tag "Add coach", :class => "btn" %>
       </fieldset>
     <% end %>
