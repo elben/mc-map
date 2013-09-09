@@ -86,7 +86,7 @@ $(function () {
 
       createDataTable($("#communities"), "communities", {
         "aaSorting": [[ 1, "asc" ]], // Default to sort first column
-        "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {bSearchable: false}, {} ]
+        "aoColumns": [ {bSortable: false, bSearchable: false}, {}, {}, {}, {}, {}, {}, {bSearchable: false}, {} ]
       });
     }
   });
