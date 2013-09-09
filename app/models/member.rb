@@ -1,3 +1,5 @@
+require 'csv'
+
 class Member < ActiveRecord::Base
   attr_accessible :email, :name, :phone_number
 
@@ -7,6 +9,23 @@ class Member < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true
+
+  def self.to_csv(options={})
+    CSV.generate(options) do |csv|
+      header = []
+      header += self.column_names
+      header << "Number of communities sign up for"
+      csv << header
+
+      self.all.each do |member|
+        row = []
+        row += member.attributes.values_at(*self.column_names)
+        row << member.communities.count
+
+        csv << row
+      end
+    end
+  end
 
   private
 

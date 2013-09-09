@@ -12,6 +12,11 @@ class Admin::CommunitiesController < Admin::AdminController
       @taggings_hash[tagging.taggable_id] ||= []
       @taggings_hash[tagging.taggable_id] << tagging.tag
     end
+
+    respond_to do |format|
+        format.html {}
+        format.csv { send_data Community.to_csv }
+    end
   end
 
   def show

@@ -1,3 +1,5 @@
+require 'csv'
+
 class Community < ActiveRecord::Base
   acts_as_paranoid
   acts_as_taggable
@@ -275,6 +277,31 @@ class Community < ActiveRecord::Base
     MemberSignUpMailer.welcome_email(member, self).deliver
 
     return members
+  end
+
+  def self.to_csv(options={})
+    CSV.generate(options) do |csv|
+      header = []
+      header += self.column_names
+      header += MC_KINDS.keys.map { |k| "Kind: #{k}" } # Use MC_KINDS ordering
+      csv << header
+
+      self.all.each do |community|
+        row = []
+        row += community.attributes.values_at(*self.column_names)
+
+        # Match kind to columns specified in header
+        MC_KINDS.keys.each do |kind|
+          if community.kind_list.include?(kind.to_s)
+            row << kind
+          else
+            row << ""
+          end
+        end
+
+        csv << row
+      end
+    end
   end
 
   private

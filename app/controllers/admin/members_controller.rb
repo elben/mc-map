@@ -1,6 +1,11 @@
 class Admin::MembersController < Admin::AdminController
   def index
     @members = Member.all
+
+    respond_to do |format|
+      format.html {}
+      format.csv { send_data Member.to_csv }
+    end
   end
 
   def show
