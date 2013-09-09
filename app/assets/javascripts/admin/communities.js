@@ -1,6 +1,6 @@
 $(function () {
   var communitiesView = new AdminViews.CommunitiesView({
-    el: $("#communities"),
+    el: $("#communities")
   });
 
   var CommunityView = Backbone.View.extend({

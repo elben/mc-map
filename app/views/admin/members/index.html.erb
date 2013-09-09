@@ -1,0 +1,33 @@
+<div id="members">
+  <div class="row">
+    <div class="span12">
+    </div>
+  </div>
+  <% content_for :data_table_search_left do %>
+    <%= link_to "New Member", new_admin_member_path, class: "btn" %>
+  <% end %>
+  <%= render "admin/shared/data_table_search" %>
+
+  <div class="row">
+    <div class="span12">
+      <table class="table members">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Phone</th>
+            <th>Communities</th>
+          </tr>
+        </thead>
+        <% @members.each do |member| %>
+          <tr>
+            <td><%= link_to(member.name, admin_member_path(member)) %></td>
+            <td><%= link_to member.email, "mailto:#{member.email}" %></td>
+            <td><%= member.phone_number %></td>
+            <td><%= member.communities.count %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div id="member">
+  <ul class="breadcrumb">
+    <li><a href="<%= admin_members_path %>">Members</a> <span class="divider">/</span></li>
+    <li class="active"><%= @member.name %></li>
+  </ul>
+
+  <div class="row">
+    <table class="attributes-table">
+      <tr>
+        <td class="attribute-name">Name</td>
+        <td><%= @member.name %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">E-mail</td>
+        <td><%= @member.email %></td>
+      </tr>
+      <tr>
+        <td class="attribute-name">Phone</td>
+        <td><%= @member.phone_number %></td>
+      </tr>
+    </table>
+    <div><%= link_to "Edit Member", edit_admin_member_path(@member), class: "btn" %></div>
+  </div>
+
+  <div class="row">
+    <% if @member.communities.blank? %>
+    <% else %>
+      <h2>Communities</h2>
+
+      <ul>
+        <% @member.communities.each do |community| %>
+          <li>
+          <%= link_to community.title, admin_community_path(community) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>

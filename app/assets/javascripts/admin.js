@@ -91,6 +91,19 @@ $(function () {
     }
   });
 
+  AdminViews.MembersView = Backbone.View.extend({
+    navBarView: null,
+
+    initialize: function (options) {
+      this.navBarView = buildNavBarView("members");
+
+      createDataTable($("#members"), "members", {
+        "aaSorting": [[ 0, "asc" ]],
+        "aoColumns": [ {}, {}, {}, {} ]
+      });
+    }
+  });
+
   AdminViews.DashboardView = Backbone.View.extend({
     navBarView: null,
 
