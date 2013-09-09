@@ -41,7 +41,7 @@
       </tr>
       <tr>
         <td class="attribute-name">E-mail</td>
-        <td><%= @community.email %></td>
+        <td><%= link_to @community.email, "mailto:#{@community.email}" %></td>
       </tr>
       <tr>
         <td class="attribute-name">Phone</td>
@@ -51,13 +51,15 @@
         <td class="attribute-name">Address</td>
         <td>
           <address>
-            <% unless @community.address_line_1.blank? %>
-              <%= @community.address_line_1 %><br>
-            <% end %>
-            <% unless @community.address_line_2.blank? %>
-              <%= @community.address_line_2 %><br>
-            <% end %>
-            <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
+            <a href="https://www.google.com/maps?q=<%= @community.address %>" target="_blank">
+              <% unless @community.address_line_1.blank? %>
+                <%= @community.address_line_1 %><br>
+              <% end %>
+              <% unless @community.address_line_2.blank? %>
+                <%= @community.address_line_2 %><br>
+              <% end %>
+              <%= "#{@community.address_city}, #{@community.address_province} #{@community.address_postal}" unless @community.address_city.blank? %>
+            </a>
           </address>
         </td>
       </tr>
@@ -122,7 +124,7 @@
         <% @community.members.each do |member| %>
           <tr>
             <td><%= member.name %></td>
-            <td><%= member.email %></td>
+            <td><%= link_to member.email, "mailto:#{member.email}" %></td>
             <td><%= member.phone_number %></td>
           </tr>
         <% end %>
