@@ -20,4 +20,18 @@ FactoryGirl.define do
   factory :hidden_community, parent: :communtiy do
     hidden true
   end
+
+  factory :member do
+    name { Faker::Name.name }
+    email { Faker::Internet.safe_email }
+    phone_number { Faker::PhoneNumber.phone_number }
+  end
+
+  factory :admin_user do
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    email { Faker::Internet.safe_email }
+    password "password"
+    password_confirmation "password"
+  end
 end
