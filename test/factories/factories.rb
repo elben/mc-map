@@ -1,25 +1,23 @@
-# Factory.define do
-#   factory :community do
-#     # t.string   "slug"
-#     # t.string   "lat"
-#     # t.string   "lng"
-#     # t.string   "campus"
-#     # t.datetime "created_at",                             :null => false
-#     # t.datetime "updated_at",                             :null => false
-#     # t.datetime "deleted_at"
-#     # t.string   "email"
-#     # t.string   "phone_number"
-#     # t.string   "leader_first_name"
-#     # t.string   "leader_last_name"
-#     # t.string   "coleader_first_name"
-#     # t.string   "coleader_last_name"
-#     # t.string   "address_line_1"
-#     # t.string   "address_line_2"
-#     # t.string   "address_city"
-#     # t.string   "address_province"
-#     # t.string   "address_postal"
-#     # t.string   "host_day"
-#     # t.text     "description"
-#     # t.boolean  "hidden",              :default => false, :null => false
-#   end
-# end
+FactoryGirl.define do
+  factory :community do
+    lat "1"
+    lng "1"
+    leader_first_name  { Faker::Name.first_name }
+    leader_last_name { Faker::Name.last_name }
+    campus { Community::CAMPUSES.keys.sample.to_s }
+    host_day { Community::DAYS.sample }
+    kind_list "open"
+    email { Faker::Internet.safe_email }
+    phone_number { Faker::PhoneNumber.phone_number }
+    address_line_1 { Faker::Address.street_address }
+    address_line_2 { rand > 0.5 ? Faker::Address.secondary_address : nil }
+    address_city { ['Austin', 'Roundrock', 'Georgetown', 'San Marcos'].sample }
+    address_province { rand > 0.3 ? 'TX' : 'Texas' }
+    address_postal { Faker::Address.postcode }
+    description { Faker::Lorem.sentence }
+  end
+
+  factory :hidden_community, parent: :communtiy do
+    hidden true
+  end
+end

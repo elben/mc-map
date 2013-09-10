@@ -1,7 +1,7 @@
-require 'test_helper'
+# require 'test_helper'
 
-class MemberSignUpMailerTest < ActionMailer::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
-end
+# class MemberSignUpMailerTest < ActionMailer::TestCase
+#   # test "the truth" do
+#   #   assert true
+#   # end
+# end
