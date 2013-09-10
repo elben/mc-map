@@ -17,6 +17,7 @@ rerun.txt
 pickle-email-*.html
 .project
 config/database.yml
+config/puma.rb
 public/assets/*
 public/communities.json
 public/index.html
